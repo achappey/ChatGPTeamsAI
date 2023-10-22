@@ -13,7 +13,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         private readonly HttpClient _httpClient;
 
-        private const int PAGESIZE = 10;
+        private const int PAGESIZE = 5;
 
         internal SimplicateFunctionsClient(SimplicateToken token, HttpClient? client = null)
         {

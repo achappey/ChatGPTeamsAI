@@ -6,6 +6,7 @@ namespace ChatGPTeamsAI.Data.Extensions;
 
 internal static class HttpExtensions
 {
+
     public static async Task<T?> FromJson<T>(this HttpResponseMessage responseMessage)
     {
         if (responseMessage.IsSuccessStatusCode)

@@ -32,6 +32,7 @@ internal class Quote
 
     [JsonPropertyName("total_excl")]
     public double TotalExcl { get; set; }
+
 }
 
 internal class QuoteStatus
@@ -40,6 +41,6 @@ internal class QuoteStatus
     public string? Id { get; set; }
 
     [JsonPropertyName("label")]
-    public string? Label { get; set; }
+    public string? Label { get; set; }   
 
 }

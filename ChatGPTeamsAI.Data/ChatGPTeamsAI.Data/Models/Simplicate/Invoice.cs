@@ -1,6 +1,4 @@
 
-#nullable enable
-
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
@@ -25,21 +23,6 @@ internal class Invoice
 
     [JsonPropertyName("date")]
     public string? Date { get; set; } 
-
-  //  [JsonPropertyName("project_id")]
- //   public string? ProjectId { get; set; }
-
-   /* [JsonPropertyName("organization_id")]
-    public string? OrganizationId { get; set; }
-
-    [JsonPropertyName("my_organization_profile_id")]
-    public string? MyOrganizationProfileId { get; set; }  = null!;*/
-
-   // [JsonPropertyNameName("total_excluding_vat")]
-   // public decimal TotalExcludingVat { get; set; }
-
-  //  [JsonPropertyNameName("total_outstanding")]
-  //  public decimal TotalOutstanding { get; set; }
 
     [JsonPropertyName("subject")]
     public string? Subject { get; set; }

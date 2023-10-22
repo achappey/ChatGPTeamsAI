@@ -2,6 +2,7 @@
 using ChatGPTeamsAI.Data.Clients.Simplicate;
 using ChatGPTeamsAI.Data.Models.Output;
 using ChatGPTeamsAI.Data.Models;
+using ChatGPTeamsAI.Data.Clients.Microsoft;
 
 namespace ChatGPTeamsAI.Data;
 
@@ -16,8 +17,6 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
 {
     private readonly Configuration _config;
 
-    private const string MICROSOFT = "Microsoft";
-
     public ChatGPTeamsAIData(Configuration config)
     {
         _config = config;
@@ -30,9 +29,17 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             throw new UnauthorizedAccessException("No Simplicate credentials available");
         }
 
-        var client = new SimplicateFunctionsClient(_config.SimplicateToken);
+        if (_config.GraphApiToken == null)
+        {
+            throw new UnauthorizedAccessException("No Microsoft Graph credentials available");
+        }
 
-        return client.GetAvailableActions();
+        var simplicateClient = new SimplicateFunctionsClient(_config.SimplicateToken);
+        var simplicateActions = simplicateClient.GetAvailableActions();
+        var microsoftClient = new GraphFunctionsClient(_config.GraphApiToken);
+        var microsoftActions = microsoftClient.GetAvailableActions();
+
+        return microsoftActions.Concat(simplicateActions).OrderBy(a => a.Category);
     }
 
     public async Task<ActionResponse> ExecuteAction(Models.Input.Action action)
@@ -48,16 +55,12 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
 
           ChatGPTeamsAIClientResponse? actionResult = null;
 
-          switch (function.Publisher)
+          actionResult = function.Publisher switch
           {
-              case SimplicateFunctionsClient.SIMPLICATE:
-                  actionResult = await ExecuteSimplicateActionAsync(action);
-                  break;
-              default:
-                  throw new InvalidOperationException("Unknown publisher");
-          }
-
-
+              SimplicateFunctionsClient.SIMPLICATE => await ExecuteSimplicateActionAsync(action),
+              GraphFunctionsClient.MICROSOFT => await ExecuteMicrosoftActionAsync(action),
+              _ => throw new InvalidOperationException("Unknown publisher"),
+          };
           return actionResult != null ? ToDataResponse(actionResult) : new ActionResponse()
           {
               Error = "Something went wrong",
@@ -87,6 +90,19 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         }
 
         var client = new SimplicateFunctionsClient(_config.SimplicateToken);
+
+        return await client.ExecuteAction(action);
+    }
+
+    
+    private async Task<ChatGPTeamsAIClientResponse?> ExecuteMicrosoftActionAsync(Models.Input.Action action)
+    {
+        if (_config.GraphApiToken == null)
+        {
+            throw new UnauthorizedAccessException("No Microsoft credentials available");
+        }
+
+        var client = new GraphFunctionsClient(_config.GraphApiToken);
 
         return await client.ExecuteAction(action);
     }

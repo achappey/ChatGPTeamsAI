@@ -1,5 +1,6 @@
 ﻿using ChatGPTeamsAI.Data;
 using ChatGPTeamsAI.Data.Models;
+using ChatGPTeamsAI.Data.Models.Output;
 using Newtonsoft.Json;
 
 Console.WriteLine("ChatGPTeamsAIData Test");
@@ -17,6 +18,8 @@ Console.WriteLine("Retrieving actions...");
 var availableActions = chatGPTeamsAIData.GetAvailableActions();
 
 Console.WriteLine($"Actions: {availableActions.Count()} items");
+
+Dictionary<ActionDescription, ActionResponse> errors = new Dictionary<ActionDescription, ActionResponse>();
 
 foreach (var action in availableActions)
 {
@@ -36,6 +39,7 @@ foreach (var action in availableActions)
     if (response.Error != null)
     {
         summary = $"Error: {response.Error}";
+        errors.Add(action, response);
     }
     else if (response.Data != null)
     {
@@ -49,6 +53,12 @@ foreach (var action in availableActions)
     Console.WriteLine($"Action: {action.Name} Result: {summary}");
 
     await Task.Delay(1000);
+}
+
+
+foreach (var action in errors)
+{
+    Console.WriteLine($"Errors action: {action.Key.Name} Publisher: {action.Key.Publisher} Error: {action.Value.Error}");
 }
 
 internal class Settings

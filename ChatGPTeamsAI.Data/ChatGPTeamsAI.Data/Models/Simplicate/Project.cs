@@ -6,6 +6,9 @@ using System.Text.Json.Serialization;
 
 internal class Project
 {
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
     [JsonPropertyName("project_manager")]
     public Manager? ProjectManager { get; set; }
 

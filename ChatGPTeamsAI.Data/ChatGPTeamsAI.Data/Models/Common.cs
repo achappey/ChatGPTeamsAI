@@ -7,6 +7,7 @@ internal interface IBaseClient
 {
     internal abstract Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Input.Action action);
     internal abstract IEnumerable<ActionDescription> GetAvailableActions();
+    
 }
 
 internal class ChatGPTeamsAIClientResponse
