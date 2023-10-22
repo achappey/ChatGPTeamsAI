@@ -1,5 +1,6 @@
 ﻿using ChatGPTeamsAI.Data.Attributes;
 using ChatGPTeamsAI.Data.Extensions;
+using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Simplicate;
 
 namespace ChatGPTeamsAI.Data.Clients.Simplicate
@@ -7,15 +8,22 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     internal partial class SimplicateFunctionsClient
     {
         [MethodDescription("HRM", "Fetches all leave types.")]
-        public async Task<SimplicateDataCollectionResponse<LeaveType>?>? GetAllLeaveTypes()
+        public async Task<ChatGPTeamsAIClientResponse>? GetAllLeaveTypes()
         {
             var response = await _httpClient.GetAsync("hrm/leavetype");
 
-            return await response.FromJson<SimplicateDataCollectionResponse<LeaveType>?>();
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.FromJson<SimplicateDataCollectionResponse<LeaveType>>();
+
+                return ToChatGPTeamsAIResponse(result);
+            }
+
+            throw new Exception(response.ReasonPhrase);
         }
 
         [MethodDescription("HRM", "Search for employees using multiple filters.")]
-        public async Task<SimplicateDataCollectionResponse<Employee>?>? SearchEmployees(
+        public async Task<ChatGPTeamsAIClientResponse>? SearchEmployees(
             [ParameterDescription("Employee name.")] string? employeeName = null,
             [ParameterDescription("Function.")] string? function = null,
             [ParameterDescription("Employment status (e.g., active).")] string? employmentStatus = null,
@@ -30,7 +38,9 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(employmentStatus)) filters["[employment_status]"] = $"*{employmentStatus}*";
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
 
-            return await FetchSimplicateDataCollection<Employee>(filters, "hrm/employee", pageNumber);
+            var result = await FetchSimplicateDataCollection<Employee>(filters, "hrm/employee", pageNumber);
+
+            return ToChatGPTeamsAIResponse(result);
         }
 
 

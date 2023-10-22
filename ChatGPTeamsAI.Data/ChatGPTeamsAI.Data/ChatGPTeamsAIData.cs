@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using AdaptiveCards;
+﻿using AdaptiveCards;
 using ChatGPTeamsAI.Data.Clients.Simplicate;
 using ChatGPTeamsAI.Data.Models.Output;
 using ChatGPTeamsAI.Data.Models;
@@ -16,7 +15,6 @@ public interface IChatGPTeamsAIData
 public class ChatGPTeamsAIData : IChatGPTeamsAIData
 {
     private readonly Configuration _config;
-
 
     private const string MICROSOFT = "Microsoft";
 
@@ -135,7 +133,6 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             {
                 Title = "Previous",
                 Data = prevPage,
-           //     AdditionalProperties = new SerializableDictionary<string, object>() { { "Data", JsonSerializer.Serialize(prevPage) } }
             });
         }
 
@@ -144,8 +141,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             card.Actions.Add(new AdaptiveSubmitAction
             {
                 Title = "Next",
-                Data = nextPage,
-                //AdditionalProperties = new SerializableDictionary<string, object>() { { "Data", JsonSerializer.Serialize(nextPage) } }
+                Data = nextPage
             });
         }
 

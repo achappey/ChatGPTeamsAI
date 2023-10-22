@@ -1,5 +1,6 @@
 ﻿using ChatGPTeamsAI.Data.Attributes;
 using ChatGPTeamsAI.Data.Extensions;
+using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Simplicate;
 
 namespace ChatGPTeamsAI.Data.Clients.Simplicate
@@ -8,7 +9,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     {
 
         [MethodDescription("Projects", "Search for projects using multiple filters.")]
-        public async Task<SimplicateDataCollectionResponse<Project>?>? SearchProjects(
+        public async Task<ChatGPTeamsAIClientResponse?> SearchProjects(
             [ParameterDescription("The project name.")] string? projectName = null,
             [ParameterDescription("The project manager's name.")] string? projectManager = null,
             [ParameterDescription("Project status label.")] string? projectStatusLabel = null,
@@ -27,7 +28,10 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(projectNumber)) filters["[project_number]"] = $"*{projectNumber}*";
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
 
-            return await FetchSimplicateDataCollection<Project>(filters, "projects/project", pageNumber);
+            var result = await FetchSimplicateDataCollection<Project>(filters, "projects/project", pageNumber);
+
+            return ToChatGPTeamsAIResponse(result);
+
         }
 
         [MethodDescription("Projects", "Gets a single project by id.")]

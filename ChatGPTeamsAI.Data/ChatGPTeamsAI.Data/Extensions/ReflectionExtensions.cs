@@ -5,6 +5,7 @@ using CsvHelper.Configuration;
 using System.Globalization;
 using CsvHelper;
 using ChatGPTeamsAI.Data.Models.Output;
+using CsvHelper.TypeConversion;
 
 namespace ChatGPTeamsAI.Data.Extensions;
 
@@ -99,12 +100,23 @@ internal static class ReflectionExtensions
         {
             if (result is System.Collections.IEnumerable listResult)
             {
-                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { };
-                using (var writer = new StringWriter())
-                using (var csv = new CsvWriter(writer, config))
+                if (listResult.Cast<object>().Any())
                 {
-                    csv.WriteRecords(listResult);
-                    return writer.ToString();
+                    var type = listResult.Cast<object>().First().GetType();
+                    var classMap = GetDynamicClassMap(type);
+
+                    var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                    {
+                        // Andere configuratieopties
+                    };
+
+                    using (var writer = new StringWriter())
+                    using (var csv = new CsvWriter(writer, config))
+                    {
+                        csv.Context.RegisterClassMap(classMap);
+                        csv.WriteRecords(listResult);
+                        return writer.ToString();
+                    }
                 }
             }
             else
@@ -115,6 +127,14 @@ internal static class ReflectionExtensions
 
         return result?.ToString();
     }
+
+    public static ClassMap GetDynamicClassMap(Type type)
+    {
+        var dynamicClassMapType = typeof(DynamicClassMap<>).MakeGenericType(type);
+        return (ClassMap)Activator.CreateInstance(dynamicClassMapType);
+    }
+
+
 
     public static List<object?> GetOrderedArguments(this MethodInfo method, IDictionary<string, object?>? arguments)
     {
@@ -208,4 +228,63 @@ internal static class ReflectionExtensions
         { typeof(bool), "boolean" },
         { typeof(string), "string" },
     };
+}
+public class DynamicClassMap<T> : ClassMap<T>
+{
+    public DynamicClassMap()
+    {
+        var type = typeof(T);
+        foreach (var property in type.GetProperties())
+        {
+            if (property.PropertyType.IsClass 
+                && property.PropertyType != typeof(string) 
+                && !typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType))
+            {
+                foreach (var nestedProperty in property.PropertyType.GetProperties())
+                {
+                    var name = $"{property.Name}:{nestedProperty.Name}";
+                    Map(type, property).Name(name).TypeConverter<NestedPropertyConverter>();
+                }
+            }
+            else if (!typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType) 
+                     || property.PropertyType == typeof(string))
+            {
+                Map(type, property);
+            }
+        }
+    }
+}
+
+public class NestedPropertyConverter : DefaultTypeConverter
+{
+    public override string ConvertToString(object value, IWriterRow row, MemberMapData memberMapData)
+    {
+        if (value != null)
+        {
+            var properties = memberMapData.Names.First().Split(':');
+            var parentProperty = value.GetType().GetProperty(properties[0]);
+            if (parentProperty == null)
+            {
+                // De waarde is het geneste object, dus pas de logica aan om de geneste eigenschap te verkrijgen
+                var nestedProperty = value.GetType().GetProperty(properties[1]);
+                if (nestedProperty != null)
+                {
+                    return nestedProperty.GetValue(value)?.ToString();
+                }
+            }
+            else
+            {
+                var parentValue = parentProperty.GetValue(value);
+                if (parentValue != null)
+                {
+                    var nestedProperty = parentProperty.PropertyType.GetProperty(properties[1]);
+                    if (nestedProperty != null)
+                    {
+                        return nestedProperty.GetValue(parentValue)?.ToString();
+                    }
+                }
+            }
+        }
+        return base.ConvertToString(value, row, memberMapData);
+    }
 }

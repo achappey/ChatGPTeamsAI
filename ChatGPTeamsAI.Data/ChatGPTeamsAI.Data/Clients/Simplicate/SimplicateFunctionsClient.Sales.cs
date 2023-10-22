@@ -1,5 +1,6 @@
 ﻿using ChatGPTeamsAI.Data.Attributes;
 using ChatGPTeamsAI.Data.Extensions;
+using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Simplicate;
 
 namespace ChatGPTeamsAI.Data.Clients.Simplicate
@@ -8,7 +9,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     {
 
         [MethodDescription("Sales", "Search for sales using multiple filters.")]
-        public async Task<SimplicateDataCollectionResponse<Sales>?>? SearchSales(
+        public async Task<ChatGPTeamsAIClientResponse>? SearchSales(
             [ParameterDescription("The name of the responsible employee.")] string? responsibleEmployeeName = null,
             [ParameterDescription("Organization name.")] string? organizationName = null,
             [ParameterDescription("Person name.")] string? personName = null,
@@ -21,11 +22,13 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(personName)) filters["[person.full_name]"] = $"*{personName}*";
             if (!string.IsNullOrEmpty(subject)) filters["[subject]"] = $"*{subject}*";
 
-            return await FetchSimplicateDataCollection<Sales>(filters, "sales/sales", pageNumber);
+            var result = await FetchSimplicateDataCollection<Sales>(filters, "sales/sales", pageNumber);
+
+            return ToChatGPTeamsAIResponse(result);
         }
 
         [MethodDescription("Sales", "Search for quotes using multiple filters.")]
-        public async Task<SimplicateDataCollectionResponse<Quote>?>? SearchQuotes(
+        public async Task<ChatGPTeamsAIClientResponse>? SearchQuotes(
             [ParameterDescription("Quote number.")] string? quoteNumber = null,
             [ParameterDescription("Status label.")] string? statusLabel = null,
             [ParameterDescription("Quote subject.")] string? quoteSubject = null,
@@ -38,15 +41,19 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(quoteSubject)) filters["[quote_subject]"] = $"*{quoteSubject}*";
             if (!string.IsNullOrEmpty(customerReference)) filters["[customer_reference]"] = $"*{customerReference}*";
 
-            return await FetchSimplicateDataCollection<Quote>(filters, "sales/quote", pageNumber);
+            var result = await FetchSimplicateDataCollection<Quote>(filters, "sales/quote", pageNumber);
+
+            return ToChatGPTeamsAIResponse(result);
         }
 
         [MethodDescription("Sales", "Fetches all revenue groups.")]
-        public async Task<SimplicateResponseBase<IEnumerable<RevenueGroup>?>?> GetAllRevenueGroups()
+        public async Task<ChatGPTeamsAIClientResponse?> GetAllRevenueGroups()
         {
             var response = await _httpClient.GetAsync("sales/revenuegroup");
 
-            return await response.FromJson<SimplicateResponseBase<IEnumerable<RevenueGroup>?>>();
+            var result = await response.FromJson<SimplicateDataCollectionResponse<RevenueGroup>?>();
+
+            return ToChatGPTeamsAIResponse(result);
         }
     }
 

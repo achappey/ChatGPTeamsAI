@@ -33,11 +33,11 @@ internal class Employee
     [JsonPropertyName("work_email")]
     public string? WorkEmail { get; set; }
 
-    [JsonPropertyName("hourly_sales_tariff")]
-    public double HourlySalesTariff { get; set; }
+   // [JsonPropertyName("hourly_sales_tariff")]
+   // public double? HourlySalesTariff { get; set; }
 
-    [JsonPropertyName("hourly_cost_tariff")]
-    public double HourlyCostTariff { get; set; }
+   // [JsonPropertyName("hourly_cost_tariff")]
+//    public double? HourlyCostTariff { get; set; }
 
     [JsonPropertyName("created_at")]
     public string? CreatedAt { get; set; }

@@ -9,7 +9,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     internal partial class SimplicateFunctionsClient
     {
         [MethodDescription("Invoices", "Search for invoices using multiple filters.")]
-        public async Task<SimplicateDataCollectionResponse<Invoice>?>? SearchInvoices(
+        public async Task<ChatGPTeamsAIClientResponse>? SearchInvoices(
             [ParameterDescription("The invoice number.")] string? invoiceNumber = null,
             [ParameterDescription("Organization name.")] string? organizationName = null,
             [ParameterDescription("My Organization profile id.")] string? myOrganizationProfileId = null,
@@ -30,11 +30,13 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(dateAfter)) filters["[date][ge]"] = dateAfter;
             if (!string.IsNullOrEmpty(dateBefore)) filters["[date][le]"] = dateBefore;
 
-            return await FetchSimplicateDataCollection<Invoice>(filters, "invoices/invoice", pageNumber);
+            var result = await FetchSimplicateDataCollection<Invoice>(filters, "invoices/invoice", pageNumber);
+
+            return ToChatGPTeamsAIResponse(result);
         }
 
         [MethodDescription("Invoices", "Gets expired invoices using multiple filters.")]
-        public async Task<SimplicateDataCollectionResponse<Invoice>> GetExpiredInvoices(
+        public async Task<ChatGPTeamsAIClientResponse> GetExpiredInvoices(
             [ParameterDescription("The invoice number.")] string? invoiceNumber = null,
             [ParameterDescription("Organization name.")] string? organizationName = null,
             [ParameterDescription("My Organization profile id.")] string? myOrganizationProfileId = null,
@@ -57,10 +59,12 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             var groupedHours = response
                 .Where(a => a.Status.Name == "label_Expired");
 
-            return new SimplicateDataCollectionResponse<Invoice>()
+            var result = new SimplicateDataCollectionResponse<Invoice>()
             {
                 Data = groupedHours
             };
+
+            return ToChatGPTeamsAIResponse(result);
         }
 
         [MethodDescription("Invoices", "Adds a new invoice to Simplicate.")]
@@ -118,27 +122,48 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         }
 
         [MethodDescription("Invoices", "Fetches all payment terms from Simplicate.")]
-        public async Task<SimplicateDataCollectionResponse<PaymentTerm>?>? GetPaymentTerms()
+        public async Task<ChatGPTeamsAIClientResponse>? GetPaymentTerms()
         {
             var response = await _httpClient.GetAsync("invoices/paymentterm");
 
-            return await response.FromJson<SimplicateDataCollectionResponse<PaymentTerm>?>();
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.FromJson<SimplicateDataCollectionResponse<PaymentTerm>>();
+
+                return ToChatGPTeamsAIResponse(result);
+            }
+
+            throw new Exception(response.ReasonPhrase);
         }
 
         [MethodDescription("Invoices", "Fetches all VAT classes from Simplicate.")]
-        public async Task<SimplicateResponseBase<IEnumerable<VATClass>?>?> GetVATClasses()
+        public async Task<ChatGPTeamsAIClientResponse?> GetVATClasses()
         {
             var response = await _httpClient.GetAsync("invoices/vatclass");
 
-            return await response.FromJson<SimplicateResponseBase<IEnumerable<VATClass>?>>();
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.FromJson<SimplicateDataCollectionResponse<VATClass>>();
+
+                return ToChatGPTeamsAIResponse(result);
+            }
+
+            throw new Exception(response.ReasonPhrase);
         }
 
         [MethodDescription("Invoices", "Gets all invoice statuses.")]
-        public async Task<SimplicateResponseBase<IEnumerable<InvoiceStatus>?>?> GetAllInvoiceStatuses()
+        public async Task<ChatGPTeamsAIClientResponse?> GetAllInvoiceStatuses()
         {
             var response = await _httpClient.GetAsync("invoices/invoicestatus");
 
-            return await response.FromJson<SimplicateResponseBase<IEnumerable<InvoiceStatus>?>>();
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.FromJson<SimplicateDataCollectionResponse<InvoiceStatus>>();
+
+                return ToChatGPTeamsAIResponse(result);
+            }
+
+            throw new Exception(response.ReasonPhrase);
         }
     }
 }
