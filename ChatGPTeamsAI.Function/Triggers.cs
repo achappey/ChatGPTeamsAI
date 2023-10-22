@@ -81,6 +81,7 @@ namespace ChatGPTeamsAI.Function
             var client = new ChatGPTeamsAIData(config.Configuration);
             var result = await client.ExecuteAction(config.Action);
             var response = data.CreateResponse(HttpStatusCode.OK);
+            response.Headers.Add("Content-Type", "application/json; charset=utf-8");
             await response.WriteStringAsync(JsonConvert.SerializeObject(result));
 
             return response;
@@ -89,13 +90,17 @@ namespace ChatGPTeamsAI.Function
         [Function("AvailableActions")]
         public async Task<HttpResponseData> AvailableActions([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestData data)
         {
-            var bodyString = await data.ReadAsStringAsync();
-            var config = JsonConvert.DeserializeObject<Data.Models.Configuration>(bodyString);
+            var config = await data.ReadFromJsonAsync<Data.Models.Configuration>();  
             var client = new ChatGPTeamsAIData(config);
             var result = client.GetAvailableActions();
             var response = data.CreateResponse(HttpStatusCode.OK);
-            await response.WriteStringAsync(JsonConvert.SerializeObject(result));
+            
+            var json = JsonConvert.SerializeObject(new Actions() {
+                ActionDescriptions = result
+            });
 
+            response.Headers.Add("Content-Type", "application/json; charset=utf-8");
+            await response.WriteStringAsync(json);
             return response;
         }
     }
@@ -116,6 +121,12 @@ namespace ChatGPTeamsAI.Function
     {
         public required Data.Models.Configuration Configuration { get; set; }
         public required Data.Models.Input.Action Action { get; set; }
+
+    }
+
+    public class Actions
+    {
+        public required IEnumerable<Data.Models.Output.ActionDescription> ActionDescriptions { get; set; }
 
     }
 }
