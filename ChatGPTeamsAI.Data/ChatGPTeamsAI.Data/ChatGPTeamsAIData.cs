@@ -75,8 +75,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         {
             ExecutedAction = clientResponse.ExecutedAction,
             Data = clientResponse.Data,
-            PagingCard = RenderPagingCard(clientResponse.ItemsPerPage,
-             clientResponse.TotalItems, clientResponse.TotalPages, clientResponse.CurrentPage,
+            PagingCard = RenderPagingCard(clientResponse.TotalItems, clientResponse.TotalPages, clientResponse.CurrentPage,
               clientResponse.NextPageAction, clientResponse.PreviousPageAction)?.ToJson(),
             DataCard = clientResponse.DataCard?.ToJson()
         };
@@ -94,7 +93,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         return await client.ExecuteAction(action);
     }
 
-    
+
     private async Task<ChatGPTeamsAIClientResponse?> ExecuteMicrosoftActionAsync(Models.Input.Action action)
     {
         if (_config.GraphApiToken == null)
@@ -123,21 +122,47 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         }
     }
 
-    public static AdaptiveCard RenderPagingCard(int? itemCount, int? totalItemCount, int? pageCount, int? currentPageCount,
+    public static AdaptiveCard? RenderPagingCard(int? totalItemCount, int? pageCount, int? currentPageCount,
      Models.Input.Action? nextPage = null, Models.Input.Action? prevPage = null)
     {
+        if (nextPage == null && prevPage == null)
+        {
+            return null;
+        }
+
         var factSet = new AdaptiveFactSet
         {
-            Facts = new List<AdaptiveFact>
-        {
-            new AdaptiveFact { Title = "Item Count", Value = itemCount.ToString() },
-            new AdaptiveFact { Title = "Total Item Count", Value = totalItemCount.ToString() },
-            new AdaptiveFact { Title = "Page Count", Value = pageCount.ToString() },
-            new AdaptiveFact { Title = "Current Page", Value = currentPageCount.ToString() }
-        }
+            Facts = new List<AdaptiveFact>()
         };
 
-        var card = new AdaptiveCard(new AdaptiveSchemaVersion("1.3"))
+        if (currentPageCount.HasValue)
+        {
+            factSet.Facts.Add(new AdaptiveFact
+            {
+                Title = "Current Page",
+                Value = currentPageCount.Value.ToString()
+            });
+        }
+        
+        if (pageCount.HasValue)
+        {
+            factSet.Facts.Add(new AdaptiveFact
+            {
+                Title = "Page Count",
+                Value = pageCount.Value.ToString()
+            });
+        }
+
+        if (totalItemCount.HasValue)
+        {
+            factSet.Facts.Add(new AdaptiveFact
+            {
+                Title = "Total Item Count",
+                Value = totalItemCount.Value.ToString()
+            });
+        }
+
+        var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3))
         {
             Body = new List<AdaptiveElement> { factSet },
             Actions = new List<AdaptiveAction>()

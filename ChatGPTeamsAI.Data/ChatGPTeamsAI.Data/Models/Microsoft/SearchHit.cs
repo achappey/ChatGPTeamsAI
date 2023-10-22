@@ -2,17 +2,17 @@ using System.Web;
 
 namespace ChatGPTeamsAI.Data.Models.Microsoft;
 
-public class SearchHit
+internal class SearchHit
 {
-    public string Summary { get; set; }
-    public Resource Resource { get; set; }
+    public string? Summary { get; set; }
+    public Resource? Resource { get; set; }
 }
 
-public class Resource
+internal class Resource
 {
-    public string _webUrl { get; set; }
+    public string? _webUrl { get; set; }
 
-    public string WebUrl
+    public string? WebUrl
     {
         get => HttpUtility.UrlEncode(_webUrl);
         set

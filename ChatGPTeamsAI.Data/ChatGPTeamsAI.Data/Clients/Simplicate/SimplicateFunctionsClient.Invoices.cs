@@ -9,7 +9,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     internal partial class SimplicateFunctionsClient
     {
         [MethodDescription("Invoices", "Search for invoices using multiple filters.")]
-        public async Task<ChatGPTeamsAIClientResponse>? SearchInvoices(
+        public async Task<ChatGPTeamsAIClientResponse?> SearchInvoices(
             [ParameterDescription("The invoice number.")] string? invoiceNumber = null,
             [ParameterDescription("Organization name.")] string? organizationName = null,
             [ParameterDescription("My Organization profile id.")] string? myOrganizationProfileId = null,
@@ -36,7 +36,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         }
 
         [MethodDescription("Invoices", "Gets expired invoices using multiple filters.")]
-        public async Task<ChatGPTeamsAIClientResponse> GetExpiredInvoices(
+        public async Task<ChatGPTeamsAIClientResponse?> GetExpiredInvoices(
             [ParameterDescription("The invoice number.")] string? invoiceNumber = null,
             [ParameterDescription("Organization name.")] string? organizationName = null,
             [ParameterDescription("My Organization profile id.")] string? myOrganizationProfileId = null,
@@ -122,7 +122,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         }
 
         [MethodDescription("Invoices", "Fetches all payment terms from Simplicate.")]
-        public async Task<ChatGPTeamsAIClientResponse>? GetPaymentTerms()
+        public async Task<ChatGPTeamsAIClientResponse?> GetPaymentTerms()
         {
             var response = await _httpClient.GetAsync("invoices/paymentterm");
 

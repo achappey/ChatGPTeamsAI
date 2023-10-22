@@ -2,7 +2,7 @@ using AutoMapper;
 
 namespace ChatGPTeamsAI.Data.Profiles;
 
-public class MicrosoftProfile : Profile
+internal class MicrosoftProfile : Profile
 {
     public MicrosoftProfile()
     {

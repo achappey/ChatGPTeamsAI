@@ -9,7 +9,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     {
 
         [MethodDescription("Sales", "Search for sales using multiple filters.")]
-        public async Task<ChatGPTeamsAIClientResponse>? SearchSales(
+        public async Task<ChatGPTeamsAIClientResponse?> SearchSales(
             [ParameterDescription("The name of the responsible employee.")] string? responsibleEmployeeName = null,
             [ParameterDescription("Organization name.")] string? organizationName = null,
             [ParameterDescription("Person name.")] string? personName = null,
@@ -28,7 +28,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         }
 
         [MethodDescription("Sales", "Search for quotes using multiple filters.")]
-        public async Task<ChatGPTeamsAIClientResponse>? SearchQuotes(
+        public async Task<ChatGPTeamsAIClientResponse?> SearchQuotes(
             [ParameterDescription("Quote number.")] string? quoteNumber = null,
             [ParameterDescription("Status label.")] string? statusLabel = null,
             [ParameterDescription("Quote subject.")] string? quoteSubject = null,

@@ -1,41 +1,38 @@
 
 namespace ChatGPTeamsAI.Data.Models.Microsoft;
 
-public class Insights
+internal class Insights
 {
-    public ResourceVisualization ResourceVisualization { get; set; }
-    public ResourceReference ResourceReference { get; set; }
-//    public string Id { get; set; }
+    public ResourceVisualization? ResourceVisualization { get; set; }
+    public ResourceReference? ResourceReference { get; set; }
 
 }
 
-public class UsedInsight : Insights
+internal class UsedInsight : Insights
 {
 }
 
-public class Trending : Insights
+internal class Trending : Insights
 {
 }
 
-public class SharedInsight : Insights
+internal class SharedInsight : Insights
 {
 }
 
-public class ResourceVisualization
+internal class ResourceVisualization
 {
-    public string Title { get; set; }
-    public string Type { get; set; }
+    public string? Title { get; set; }
+    public string? Type { get; set; }
 
 }
 
-public class ResourceReference
+internal class ResourceReference
 {
-    public string WebUrl { get; set; }
-//    public string Id { get; set; }
-
+    public string? WebUrl { get; set; }
 }
 
-public enum ResourceType
+internal enum ResourceType
 {
     PowerPoint,
     Word,

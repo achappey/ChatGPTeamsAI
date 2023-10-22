@@ -130,8 +130,8 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         }
 
         [MethodDescription("Teams", "Searches the chat logs based on the provided member and chat type.")]
-        public async Task<IEnumerable<Models.Microsoft.TeamsChat>> SearchChat(
-            [ParameterDescription("The chat member to filter on.")] string member = null,
+        public async Task<ChatGPTeamsAIClientResponse?> SearchChat(
+            [ParameterDescription("The chat member to filter on.")] string? member = null,
             [ParameterDescription("The type of chat to filter on.")] ChatType? chatType = null)
         {
             var graphClient = GetAuthenticatedClient();
@@ -156,11 +156,11 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
             var items = await request.Expand("members").Select("id,webUrl").GetAsync();
 
-            return items.Select(_mapper.Map<Models.Microsoft.TeamsChat>);
+            return ToChatGPTeamsAIResponse(items.Select(_mapper.Map<Models.Microsoft.TeamsChat>));
         }
 
         [MethodDescription("Me", "Changes the password of the current user.")]
-        public async Task<string> ChangeMyPassword(
+        public async Task<ChatGPTeamsAIClientResponse?> ChangeMyPassword(
             [ParameterDescription("The new password.")] string newPassword,
             [ParameterDescription("The current password.")] string currentPassword)
         {
@@ -170,33 +170,38 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 .Request()
                 .PostAsync();
 
-            return newPassword;
+            return new ChatGPTeamsAIClientResponse()
+            {
+                Data = JsonConvert.SerializeObject(SuccessResponse()),
+                Type = typeof(NoOutputResponse).ToString()
+            };
         }
 
-        // Get information about the user.
         [MethodDescription("Me", "Retrieves the profile of the current user.")]
-        public async Task<string> MyProfile()
+        public async Task<ChatGPTeamsAIClientResponse?> MyProfile()
         {
             var graphClient = GetAuthenticatedClient();
             var me = await graphClient.Me.Request().GetAsync();
-            return JsonConvert.SerializeObject(_mapper.Map<Models.Microsoft.User>(me));
+
+            return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.User>(me));
         }
 
-        // gets information about the user's manager.
         [MethodDescription("Me", "Retrieves information about the current user's manager.")]
-        public async Task<Models.Microsoft.User> MyManager()
+        public async Task<ChatGPTeamsAIClientResponse?> MyManager()
         {
             var graphClient = GetAuthenticatedClient();
-            var manager = await graphClient.Me.Manager.Request().GetAsync() as User;
-            return _mapper.Map<Models.Microsoft.User>(manager);
+            var manager = await graphClient.Me.Manager.Request().GetAsync();
+
+            return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.User>(manager));
+
         }
 
         [MethodDescription("Mail", "Gets mail for the user using the Microsoft Graph API")]
-        public async Task<string> SearchMail(
-            [ParameterDescription("Subject of the email to search for")] string subject = null,
-            [ParameterDescription("Sender of the email to search for")] string from = null,
-            [ParameterDescription("Start date in ISO 8601 format.")] string fromDate = null,
-            [ParameterDescription("End date in ISO 8601 format")] string toDate = null)
+        public async Task<ChatGPTeamsAIClientResponse?> SearchMail(
+            [ParameterDescription("Subject of the email to search for")] string? subject = null,
+            [ParameterDescription("Sender of the email to search for")] string? from = null,
+            [ParameterDescription("Start date in ISO 8601 format.")] string? fromDate = null,
+            [ParameterDescription("End date in ISO 8601 format")] string? toDate = null)
         {
             var graphClient = GetAuthenticatedClient();
 
@@ -229,22 +234,17 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 .Request()
                 .Filter(filterQuery)
                 .Select(selectQuery)
+                .Top(PAGESIZE)
                 .GetAsync();
 
-   return JsonConvert.SerializeObject(messages
-                .Take(10)
-                .Select(_mapper.Map<Models.Microsoft.Email>));
-
-   /*         return messages
-                .Take(10)
-                .Select(_mapper.Map<Models.Graph.Email>);*/
+            return ToChatGPTeamsAIResponse(messages.Select(_mapper.Map<Models.Microsoft.Email>));
         }
 
         // Search for teams based on team name or description.
         [MethodDescription("Teams", "Searches for your teams based on name or description.")]
-        public async Task<IEnumerable<Models.Microsoft.Team>> SearchTeams(
-            [ParameterDescription("The team name to filter on.")] string name = null,
-            [ParameterDescription("The description to filter on.")] string description = null)
+        public async Task<ChatGPTeamsAIClientResponse?> SearchTeams(
+            [ParameterDescription("The team name to filter on.")] string? name = null,
+            [ParameterDescription("The description to filter on.")] string? description = null)
         {
             var graphClient = GetAuthenticatedClient();
 
@@ -257,7 +257,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 (string.IsNullOrEmpty(description) || string.IsNullOrEmpty(group.Description) || group.Description.ToLower().Contains(description.ToLower()))
             );
 
-            return filteredGroups.Select(t => _mapper.Map<Models.Microsoft.Team>(t));
+            return ToChatGPTeamsAIResponse(filteredGroups.Select(_mapper.Map<Models.Microsoft.Team>));
         }
     }
 }
