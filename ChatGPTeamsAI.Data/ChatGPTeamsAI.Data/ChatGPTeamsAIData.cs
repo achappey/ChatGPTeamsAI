@@ -134,7 +134,8 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             card.Actions.Add(new AdaptiveSubmitAction
             {
                 Title = "Previous",
-                AdditionalProperties = new SerializableDictionary<string, object>() { { "Data", JsonSerializer.Serialize(prevPage) } }
+                Data = prevPage,
+           //     AdditionalProperties = new SerializableDictionary<string, object>() { { "Data", JsonSerializer.Serialize(prevPage) } }
             });
         }
 
@@ -143,7 +144,8 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             card.Actions.Add(new AdaptiveSubmitAction
             {
                 Title = "Next",
-                AdditionalProperties = new SerializableDictionary<string, object>() { { "Data", JsonSerializer.Serialize(nextPage) } }
+                Data = nextPage,
+                //AdditionalProperties = new SerializableDictionary<string, object>() { { "Data", JsonSerializer.Serialize(nextPage) } }
             });
         }
 
