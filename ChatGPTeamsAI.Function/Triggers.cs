@@ -90,8 +90,8 @@ namespace ChatGPTeamsAI.Function
         public async Task<HttpResponseData> AvailableActions([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestData data)
         {
             var bodyString = await data.ReadAsStringAsync();
-            var config = JsonConvert.DeserializeObject<ActionRequest>(bodyString);
-            var client = new ChatGPTeamsAIData(config.Configuration);
+            var config = JsonConvert.DeserializeObject<Data.Models.Configuration>(bodyString);
+            var client = new ChatGPTeamsAIData(config);
             var result = client.GetAvailableActions();
             var response = data.CreateResponse(HttpStatusCode.OK);
             await response.WriteStringAsync(JsonConvert.SerializeObject(result));
