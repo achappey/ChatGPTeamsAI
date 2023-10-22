@@ -130,11 +130,9 @@ internal static class ReflectionExtensions
 
     public static ClassMap GetDynamicClassMap(Type type)
     {
-        var dynamicClassMapType = typeof(DynamicClassMap<>).MakeGenericType(type);
+        Type dynamicClassMapType = typeof(DynamicClassMap<>).MakeGenericType(type);
         return (ClassMap)Activator.CreateInstance(dynamicClassMapType);
     }
-
-
 
     public static List<object?> GetOrderedArguments(this MethodInfo method, IDictionary<string, object?>? arguments)
     {
@@ -236,8 +234,8 @@ public class DynamicClassMap<T> : ClassMap<T>
         var type = typeof(T);
         foreach (var property in type.GetProperties())
         {
-            if (property.PropertyType.IsClass 
-                && property.PropertyType != typeof(string) 
+            if (property.PropertyType.IsClass
+                && property.PropertyType != typeof(string)
                 && !typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType))
             {
                 foreach (var nestedProperty in property.PropertyType.GetProperties())
@@ -246,7 +244,7 @@ public class DynamicClassMap<T> : ClassMap<T>
                     Map(type, property).Name(name).TypeConverter<NestedPropertyConverter>();
                 }
             }
-            else if (!typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType) 
+            else if (!typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType)
                      || property.PropertyType == typeof(string))
             {
                 Map(type, property);
@@ -257,7 +255,7 @@ public class DynamicClassMap<T> : ClassMap<T>
 
 public class NestedPropertyConverter : DefaultTypeConverter
 {
-    public override string ConvertToString(object value, IWriterRow row, MemberMapData memberMapData)
+    public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
     {
         if (value != null)
         {
@@ -265,7 +263,6 @@ public class NestedPropertyConverter : DefaultTypeConverter
             var parentProperty = value.GetType().GetProperty(properties[0]);
             if (parentProperty == null)
             {
-                // De waarde is het geneste object, dus pas de logica aan om de geneste eigenschap te verkrijgen
                 var nestedProperty = value.GetType().GetProperty(properties[1]);
                 if (nestedProperty != null)
                 {
@@ -285,6 +282,7 @@ public class NestedPropertyConverter : DefaultTypeConverter
                 }
             }
         }
+
         return base.ConvertToString(value, row, memberMapData);
     }
 }

@@ -8,7 +8,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     internal partial class SimplicateFunctionsClient
     {
         [MethodDescription("HRM", "Fetches all leave types.")]
-        public async Task<ChatGPTeamsAIClientResponse>? GetAllLeaveTypes()
+        public async Task<ChatGPTeamsAIClientResponse?> GetAllLeaveTypes()
         {
             var response = await _httpClient.GetAsync("hrm/leavetype");
 
@@ -23,7 +23,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         }
 
         [MethodDescription("HRM", "Search for employees using multiple filters.")]
-        public async Task<ChatGPTeamsAIClientResponse>? SearchEmployees(
+        public async Task<ChatGPTeamsAIClientResponse?> SearchEmployees(
             [ParameterDescription("Employee name.")] string? employeeName = null,
             [ParameterDescription("Function.")] string? function = null,
             [ParameterDescription("Employment status (e.g., active).")] string? employmentStatus = null,

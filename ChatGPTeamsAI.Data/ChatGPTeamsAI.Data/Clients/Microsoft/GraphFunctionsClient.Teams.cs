@@ -299,7 +299,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public async Task<Models.Microsoft.Channel> CreateChannel(
             [ParameterDescription("The ID of the Microsoft Teams team to create the channel in.")] string teamId,
             [ParameterDescription("The name of the channel.")] string channelName,
-            [ParameterDescription("The description of the channel.")] string channelDescription = null)
+            [ParameterDescription("The description of the channel.")] string? channelDescription = null)
         {
             var graphClient = GetAuthenticatedClient();
 

@@ -81,13 +81,13 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         [MethodDescription("Groups", "Searches for groups based on name or description.")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchGroups(
-                [ParameterDescription("The group name to filter on.")] string name = null,
-                [ParameterDescription("The description to filter on.")] string description = null,
-                [ParameterDescription("The next page skip token.")] string skipToken = null)
+                [ParameterDescription("The group name to filter on.")] string? name = null,
+                [ParameterDescription("The description to filter on.")] string? description = null,
+                [ParameterDescription("The next page skip token.")] string? skipToken = null)
         {
             var graphClient = GetAuthenticatedClient();
 
-            string searchQuery = null;
+            string? searchQuery = null;
 
             if (!string.IsNullOrEmpty(name) || !string.IsNullOrEmpty(description))
             {
@@ -114,7 +114,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         }
 
 
-        private ChatGPTeamsAIClientResponse? ToChatGPTeamsAIResponse<T>(IEnumerable<T>? response, string? skipToken = null)
+        private ChatGPTeamsAIClientResponse? ToChatGPTeamsAIResponse<T>(T? response, string? skipToken = null)
         {
             if (response == null)
             {

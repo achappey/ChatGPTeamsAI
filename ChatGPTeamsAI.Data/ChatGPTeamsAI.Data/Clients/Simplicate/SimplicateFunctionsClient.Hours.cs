@@ -30,8 +30,8 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("Hours", "Gets hours per employee using multiple filters.")]
-        public async Task<IEnumerable<dynamic>> SearchHoursPerEmployee(
+        [MethodDescription("Hours", "Gets total hours per employee using multiple filters.")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetTotalHoursPerEmployee(
               [ParameterDescription("Employee name.")] string? employeeName = null,
               [ParameterDescription("Project name.")] string? projectName = null,
               [ParameterDescription("Status.")] HourStatus? status = null,
@@ -61,11 +61,11 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 })
                 .Where(y => y.TotalHours > 0);
 
-            return groupedHours;
+            return ToChatGPTeamsAIResponse(new SimplicateDataCollectionResponse<dynamic>() { Data = groupedHours });
         }
 
         [MethodDescription("Hours", "Gets hours per project using multiple filters.")]
-        public async Task<IEnumerable<dynamic>> GetHoursPerProject(
+        public async Task<ChatGPTeamsAIClientResponse?> GetHoursPerProject(
               [ParameterDescription("Employee name.")] string? employeeName = null,
               [ParameterDescription("Project name.")] string? projectName = null,
               [ParameterDescription("Status.")] HourStatus? status = null,
@@ -95,7 +95,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 })
                 .Where(y => y.TotalHours > 0);
 
-            return groupedHours;
+               return ToChatGPTeamsAIResponse(new SimplicateDataCollectionResponse<dynamic>() { Data = groupedHours });
         }
 
         [MethodDescription("Hours", "Add a new hours registration.")]
