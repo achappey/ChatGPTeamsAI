@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+**/*Development*.*
+**/*-appPackage/**
+ChatGPTeamsAI/**
+Microsoft.TeamsAI/**
+
 # User-specific files
 *.rsuser
 *.suo
