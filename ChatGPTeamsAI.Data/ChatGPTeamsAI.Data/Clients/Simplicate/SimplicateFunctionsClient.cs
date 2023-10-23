@@ -87,7 +87,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 };
             }
 
-            var dataCard = RenderCard(response?.Data);
+            var dataCard = RenderCard(response.Data);
 
             return new ChatGPTeamsAIClientResponse()
             {
@@ -101,6 +101,33 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 Properties = response?.Metadata != null ? new Dictionary<string, object> { { "metadata", response.Metadata } } : null
             };
         }
+
+        private ChatGPTeamsAIClientResponse? ToChatGPTeamsAIResponse<T>(SimplicateResponseBase<T>? response)
+        {
+            if (response == null)
+            {
+                return new ChatGPTeamsAIClientResponse()
+                {
+                    Type = typeof(T).ToString(),
+                    Error = "Something went wrong"
+                };
+            }
+
+            var dataCard = RenderCard(response.Data);
+
+            return new ChatGPTeamsAIClientResponse()
+            {
+                Data = dataCard == null ? response?.Data.RenderData() : null,
+                DataCard = dataCard,
+                TotalItems = response?.Metadata?.Count,
+                TotalPages = response?.Metadata?.PageCount,
+                CurrentPage = response?.Metadata?.PageNumber,
+                ItemsPerPage = response?.Metadata?.Limit,
+                Type = typeof(T).ToString(),
+                Properties = response?.Metadata != null ? new Dictionary<string, object> { { "metadata", response.Metadata } } : null
+            };
+        }
+
 
         private async Task<SimplicateDataCollectionResponse<T>?> FetchSimplicateDataCollection<T>(
                   Dictionary<string, string>? filters,

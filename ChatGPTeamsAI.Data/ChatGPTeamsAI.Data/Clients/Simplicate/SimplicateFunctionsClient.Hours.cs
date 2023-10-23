@@ -99,7 +99,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         }
 
         [MethodDescription("Hours", "Add a new hours registration.")]
-        public async Task<NoOutputResponse> AddNewHour(
+        public async Task<ChatGPTeamsAIClientResponse?> AddNewHour(
             [ParameterDescription("Employee ID.")] string employeeId,
             [ParameterDescription("Project ID.")] string projectId,
             [ParameterDescription("Project Service ID.")] string projectServiceId,
@@ -124,7 +124,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             if (response.IsSuccessStatusCode)
             {
-                return SuccessResponse();
+                return ToChatGPTeamsAIResponse(new SimplicateResponseBase<NoOutputResponse>() { Data = SuccessResponse() });
             }
 
             throw new Exception(response.ReasonPhrase);

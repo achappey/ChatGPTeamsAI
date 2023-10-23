@@ -10,14 +10,9 @@ internal class SearchHit
 
 internal class Resource
 {
-    public string? _webUrl { get; set; }
+    public string? WebUrl { get; set; }
 
-    public string? WebUrl
-    {
-        get => HttpUtility.UrlEncode(_webUrl);
-        set
-        {
-            _webUrl = value;
-        }
-    }
+    public string? Name { get; set; }
+    
+    public DateTimeOffset? LastModifiedDateTime { get; set; }
 }

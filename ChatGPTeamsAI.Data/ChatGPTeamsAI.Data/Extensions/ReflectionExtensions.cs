@@ -59,6 +59,13 @@ internal static class ReflectionExtensions
 
         if (action.Entities != null)
         {
+            var parameterNames = parameters.Select(p => p.Name).ToList();
+            var unknownKeys = action.Entities.Keys.Where(k => !parameterNames.Contains(k)).ToList();
+            if (unknownKeys.Any())
+            {
+                throw new ArgumentException($"Unknown parameters: {string.Join(", ", unknownKeys)}");
+            }
+
             foreach (var key in action.Entities.Keys.ToList())
             {
                 if (action.Entities[key] is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Null)
