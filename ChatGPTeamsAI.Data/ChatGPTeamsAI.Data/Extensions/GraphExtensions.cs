@@ -9,4 +9,9 @@ internal static class GraphExtensions
     {
         return queryOptions.FirstOrDefault(a => a.Name == "$skiptoken")?.Value;
     }
+
+    public static string? GetSkip(this IList<QueryOption> queryOptions)
+    {
+        return queryOptions.FirstOrDefault(a => a.Name.EndsWith("skip"))?.Value;
+    }
 }

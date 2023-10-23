@@ -43,21 +43,32 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public override async Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Models.Input.Action action)
         {
             var result = await this.ExecuteMethodAsync(action) as ChatGPTeamsAIClientResponse ?? throw new ArgumentException("Something went wrong");
-            var functionDefintition = GetAvailableActions().FirstOrDefault(a => a.Name == action.Name) ?? throw new ArgumentException("Action missing");
-            var skipToken = result.Properties != null && result.Properties.ContainsKey("skipToken") ? result.Properties["skipToken"] as string : null;
+            var functionDefinition = GetAvailableActions().FirstOrDefault(a => a.Name == action.Name) ?? throw new ArgumentException("Action missing");
 
-            result.NextPageAction = GetNextPageAction(action, functionDefintition, skipToken);
+            // Retrieve both skipToken and skip values if available
+            string? skipToken = result.Properties?.ContainsKey("skipToken") == true ? result.Properties["skipToken"] as string : null;
+            string? skip = result.Properties?.ContainsKey("skip") == true ? result.Properties["skip"] as string : null;
+
+            // Ensure only one is used
+            if (skipToken != null && skip != null)
+            {
+                throw new InvalidOperationException("Both skipToken and skip properties are set. Only one is allowed.");
+            }
+
+            result.NextPageAction = GetNextPageAction(action, functionDefinition, skipToken, skip);
 
             result.ExecutedAction = action;
             return result;
         }
 
         private Models.Input.Action? GetNextPageAction(Models.Input.Action currentPageAction,
-            ActionDescription action, string? skipToken,
-            string pageNumberPropertyName = "skipToken")
+            ActionDescription action, string? skipToken, string? skip)
         {
-            var hasPageNumberParameter = action.Parameters?.Properties?.Any(p => p.Name == pageNumberPropertyName) ?? false;
-            if (!hasPageNumberParameter || skipToken == null)
+            string? pageProperty = skipToken != null ? "skipToken" : skip != null ? "skip" : null;
+            string? pageValue = skipToken ?? skip;
+
+            var hasPageProperty = action.Parameters?.Properties?.Any(p => p.Name == pageProperty) ?? false;
+            if (!hasPageProperty || pageValue == null)
             {
                 return null;
             }
@@ -65,7 +76,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             var pageActionEntities = new Dictionary<string, object?>(
                 currentPageAction.Entities ?? new Dictionary<string, object?>());
 
-            pageActionEntities[pageNumberPropertyName] = skipToken;
+            pageActionEntities[pageProperty] = pageValue;
 
             return new Models.Input.Action
             {
@@ -73,6 +84,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 Entities = pageActionEntities
             };
         }
+
 
         public override IEnumerable<ActionDescription> GetAvailableActions()
         {
@@ -94,7 +106,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 [ParameterDescription("The description to filter on.")] string? description = null,
                 [ParameterDescription("The next page skip token.")] string? skipToken = null)
         {
-            
+
 
             string? searchQuery = null;
 
@@ -123,7 +135,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         }
 
 
-        private ChatGPTeamsAIClientResponse? ToChatGPTeamsAIResponse<T>(T? response, string? skipToken = null)
+        private ChatGPTeamsAIClientResponse? ToChatGPTeamsAIResponse<T>(T? response, string? skipToken = null, string? skip = null)
         {
             if (response == null)
             {
@@ -136,12 +148,22 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
             var dataCard = RenderCard(response);
 
+            Dictionary<string, object>? properties = null;
+            if (skipToken != null)
+            {
+                properties = new Dictionary<string, object> { { "skipToken", skipToken } };
+            }
+            else if (skip != null)
+            {
+                properties = new Dictionary<string, object> { { "skip", skip } };
+            }
+
             return new ChatGPTeamsAIClientResponse()
             {
                 Data = dataCard == null ? response?.RenderData() : null,
                 DataCard = dataCard,
                 Type = typeof(T).ToString(),
-                Properties = skipToken != null ? new Dictionary<string, object> { { "skipToken", skipToken } } : null
+                Properties = properties
             };
         }
 
@@ -178,7 +200,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         //         return photoResponse;
         //     }
         // }
-      
+
     }
 
 

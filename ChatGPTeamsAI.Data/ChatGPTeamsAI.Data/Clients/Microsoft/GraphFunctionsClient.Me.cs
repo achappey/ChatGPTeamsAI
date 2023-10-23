@@ -1,4 +1,5 @@
 ﻿using ChatGPTeamsAI.Data.Attributes;
+using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using Microsoft.Graph;
 using Newtonsoft.Json;
@@ -7,11 +8,11 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 {
     internal partial class GraphFunctionsClient
     {
-        [MethodDescription("Mail", "Sends an email using the Microsoft Graph API")]
+        [MethodDescription("Mail", "Sends an email from the current user")]
         public async Task<ChatGPTeamsAIClientResponse?> SendMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
-            [ParameterDescription("The email addresses to cc the email to seperated by ;")] string ccAddresses,
+            [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
             [ParameterDescription("The subject of the email")] string subject,
-            [ParameterDescription("HTML content")] string html)
+            [ParameterDescription("Content in HTML format")] string html)
         {
             if (string.IsNullOrWhiteSpace(toAddresses))
             {
@@ -27,7 +28,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             {
                 throw new ArgumentNullException(nameof(html));
             }
-            
+
             var recipients = toAddresses.Split(";").Select(a =>
             {
                 return new Recipient
@@ -98,7 +99,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 throw new ArgumentNullException(nameof(comment));
             }
 
-            
+
             var recipients = toAddresses.Split(";").Select(a =>
             {
                 return new Recipient
@@ -135,12 +136,12 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         }
 
-        [MethodDescription("Teams", "Searches the chat logs based on the provided member and chat type.")]
+        [MethodDescription("Teams", "Searches the chat logs based on the provided member and chat type")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchChat(
-            [ParameterDescription("The chat member to filter on.")] string? member = null,
-            [ParameterDescription("The type of chat to filter on.")] ChatType? chatType = null)
+            [ParameterDescription("The chat member to filter on")] string? member = null,
+            [ParameterDescription("The type of chat to filter on")] ChatType? chatType = null)
         {
-            
+
             var filterQuery = string.Empty;
 
             if (!string.IsNullOrEmpty(member))
@@ -165,12 +166,12 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(items.Select(_mapper.Map<Models.Microsoft.TeamsChat>));
         }
 
-        [MethodDescription("Me", "Changes the password of the current user.")]
+        [MethodDescription("Me", "Changes the password of the current user")]
         public async Task<ChatGPTeamsAIClientResponse?> ChangeMyPassword(
-            [ParameterDescription("The new password.")] string newPassword,
-            [ParameterDescription("The current password.")] string currentPassword)
+            [ParameterDescription("The new password")] string newPassword,
+            [ParameterDescription("The current password")] string currentPassword)
         {
-            
+
 
             await _graphClient.Me.ChangePassword(currentPassword, newPassword)
                 .Request()
@@ -183,19 +184,19 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             };
         }
 
-        [MethodDescription("Me", "Retrieves the profile of the current user.")]
+        [MethodDescription("Me", "Retrieves the profile of the current user")]
         public async Task<ChatGPTeamsAIClientResponse?> MyProfile()
         {
-            
+
             var me = await _graphClient.Me.Request().GetAsync();
 
             return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.User>(me));
         }
 
-        [MethodDescription("Me", "Retrieves information about the current user's manager.")]
+        [MethodDescription("Me", "Retrieves information about the current user's manager")]
         public async Task<ChatGPTeamsAIClientResponse?> MyManager()
         {
-            
+
             var manager = await _graphClient.Me.Manager.Request().GetAsync();
 
             return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.User>(manager));
@@ -206,11 +207,10 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public async Task<ChatGPTeamsAIClientResponse?> SearchMail(
             [ParameterDescription("Subject of the email to search for")] string? subject = null,
             [ParameterDescription("Sender of the email to search for")] string? from = null,
-            [ParameterDescription("Start date in ISO 8601 format.")] string? fromDate = null,
-            [ParameterDescription("End date in ISO 8601 format")] string? toDate = null)
+            [ParameterDescription("Start date in ISO 8601 format")] string? fromDate = null,
+            [ParameterDescription("End date in ISO 8601 format")] string? toDate = null,
+            [ParameterDescription("The number of items to skip")] string? skip = null)
         {
-            
-
             var filterQueries = new List<string>();
 
             if (!string.IsNullOrEmpty(subject))
@@ -234,25 +234,35 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             }
 
             var filterQuery = string.Join(" and ", filterQueries);
-            var selectQuery = "id,webLink,bodyPreview,subject,receivedDateTime";
+           // var selectQuery = "id,webLink,bodyPreview,subject,receivedDateTime";
+
+            var filterOptions = new List<QueryOption>();
+            if (!string.IsNullOrEmpty(filterQuery))
+            {
+                filterOptions.Add(new QueryOption("$filter", $"{filterQuery}"));
+            }
+
+            if (!string.IsNullOrEmpty(skip))
+            {
+                filterOptions.Add(new QueryOption("$skip", skip));
+            }
+
+          //  filterOptions.Add(new QueryOption("$select", selectQuery));
 
             var messages = await _graphClient.Me.Messages
-                .Request()
-                .Filter(filterQuery)
-                .Select(selectQuery)
+                .Request(filterOptions)
                 .Top(PAGESIZE)
                 .GetAsync();
 
-            return ToChatGPTeamsAIResponse(messages.Select(_mapper.Map<Models.Microsoft.Email>));
+            return ToChatGPTeamsAIResponse(messages.Select(_mapper.Map<Models.Microsoft.Email>), null, messages.NextPageRequest?.QueryOptions.GetSkip());
         }
 
-        // Search for teams based on team name or description.
         [MethodDescription("Teams", "Searches for your teams based on name or description.")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchTeams(
             [ParameterDescription("The team name to filter on.")] string? name = null,
             [ParameterDescription("The description to filter on.")] string? description = null)
         {
-            
+
 
             var groups = await _graphClient.Me.JoinedTeams
                                 .Request()

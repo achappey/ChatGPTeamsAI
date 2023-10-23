@@ -13,6 +13,11 @@ if(settings == null) {
 
 IChatGPTeamsAIData chatGPTeamsAIData = new ChatGPTeamsAIData(settings.ChatGPTeamsAIConfig);
 
+Console.WriteLine("Would you like to test:");
+Console.WriteLine("1. All actions");
+Console.WriteLine("2. Actions in config/settings only");
+string choice = Console.ReadLine();
+
 Console.WriteLine("Retrieving actions...");
 
 var availableActions = chatGPTeamsAIData.GetAvailableActions();
@@ -23,6 +28,12 @@ Dictionary<ActionDescription, ActionResponse> errors = new Dictionary<ActionDesc
 
 foreach (var action in availableActions)
 {
+     if (choice == "2" && (settings.ActionEntities == null || !settings.ActionEntities.ContainsKey(action.Name)))
+    {
+        Console.WriteLine($"Skipping action: {action.Name}");
+        continue;
+    }
+
     Console.WriteLine($"Executing action: {action.Name}");
 
     var entities = settings.ActionEntities != null && settings.ActionEntities.ContainsKey(action.Name) ?
