@@ -35,7 +35,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                               string query, EntityType type,
                               string? skipToken = null)
         {
-            var graphClient = GetAuthenticatedClient();
+            
 
             if (string.IsNullOrEmpty(query))
             {
@@ -59,7 +59,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 Size = PAGESIZE
             };
 
-            var searchResponse = await graphClient.Search
+            var searchResponse = await _graphClient.Search
                 .Query(new List<SearchRequestObject>() {
                          searchRequest
                 })

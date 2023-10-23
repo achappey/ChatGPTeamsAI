@@ -8,10 +8,10 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
     internal partial class GraphFunctionsClient
     {
         [MethodDescription("Mail", "Sends an email using the Microsoft Graph API")]
-        public async Task<NoOutputResponse> SendMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
+        public async Task<ChatGPTeamsAIClientResponse?> SendMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
             [ParameterDescription("The email addresses to cc the email to seperated by ;")] string ccAddresses,
             [ParameterDescription("The subject of the email")] string subject,
-           [ParameterDescription("HTML content")] string html)
+            [ParameterDescription("HTML content")] string html)
         {
             if (string.IsNullOrWhiteSpace(toAddresses))
             {
@@ -27,8 +27,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             {
                 throw new ArgumentNullException(nameof(html));
             }
-
-            var graphClient = GetAuthenticatedClient();
+            
             var recipients = toAddresses.Split(";").Select(a =>
             {
                 return new Recipient
@@ -51,7 +50,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 };
             }) : null;
 
-            // Create the message.
             var email = new Message
             {
                 Body = new ItemBody
@@ -73,15 +71,19 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             }
             };
 
-            await graphClient.Me.SendMail(email, true)
+            await _graphClient.Me.SendMail(email, true)
                     .Request()
                     .PostAsync();
 
-            return SuccessResponse();
+            return new ChatGPTeamsAIClientResponse()
+            {
+                Data = JsonConvert.SerializeObject(SuccessResponse()),
+                Type = typeof(NoOutputResponse).ToString()
+            };
         }
 
         [MethodDescription("Mail", "Replies an email using the Microsoft Graph API")]
-        public async Task<NoOutputResponse> ReplyMail(
+        public async Task<ChatGPTeamsAIClientResponse> ReplyMail(
             [ParameterDescription("The ID of the e-mail.")] string id,
             [ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
             [ParameterDescription("The comment on the email")] string comment)
@@ -96,7 +98,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 throw new ArgumentNullException(nameof(comment));
             }
 
-            var graphClient = GetAuthenticatedClient();
+            
             var recipients = toAddresses.Split(";").Select(a =>
             {
                 return new Recipient
@@ -121,11 +123,15 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             }
             };
 
-            await graphClient.Me.Messages[id].Reply(email, comment)
+            await _graphClient.Me.Messages[id].Reply(email, comment)
             .Request()
             .PostAsync();
 
-            return SuccessResponse();
+            return new ChatGPTeamsAIClientResponse()
+            {
+                Data = JsonConvert.SerializeObject(SuccessResponse()),
+                Type = typeof(NoOutputResponse).ToString()
+            };
 
         }
 
@@ -134,7 +140,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The chat member to filter on.")] string? member = null,
             [ParameterDescription("The type of chat to filter on.")] ChatType? chatType = null)
         {
-            var graphClient = GetAuthenticatedClient();
+            
             var filterQuery = string.Empty;
 
             if (!string.IsNullOrEmpty(member))
@@ -147,7 +153,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 filterQuery += (string.IsNullOrEmpty(filterQuery) ? "" : " and ") + $"chatType eq '{chatType.Value}'";
             }
 
-            var request = graphClient.Me.Chats.Request();
+            var request = _graphClient.Me.Chats.Request();
 
             if (!string.IsNullOrEmpty(filterQuery))
             {
@@ -164,9 +170,9 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The new password.")] string newPassword,
             [ParameterDescription("The current password.")] string currentPassword)
         {
-            var graphClient = GetAuthenticatedClient();
+            
 
-            await graphClient.Me.ChangePassword(currentPassword, newPassword)
+            await _graphClient.Me.ChangePassword(currentPassword, newPassword)
                 .Request()
                 .PostAsync();
 
@@ -180,8 +186,8 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         [MethodDescription("Me", "Retrieves the profile of the current user.")]
         public async Task<ChatGPTeamsAIClientResponse?> MyProfile()
         {
-            var graphClient = GetAuthenticatedClient();
-            var me = await graphClient.Me.Request().GetAsync();
+            
+            var me = await _graphClient.Me.Request().GetAsync();
 
             return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.User>(me));
         }
@@ -189,8 +195,8 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         [MethodDescription("Me", "Retrieves information about the current user's manager.")]
         public async Task<ChatGPTeamsAIClientResponse?> MyManager()
         {
-            var graphClient = GetAuthenticatedClient();
-            var manager = await graphClient.Me.Manager.Request().GetAsync();
+            
+            var manager = await _graphClient.Me.Manager.Request().GetAsync();
 
             return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.User>(manager));
 
@@ -203,7 +209,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("Start date in ISO 8601 format.")] string? fromDate = null,
             [ParameterDescription("End date in ISO 8601 format")] string? toDate = null)
         {
-            var graphClient = GetAuthenticatedClient();
+            
 
             var filterQueries = new List<string>();
 
@@ -230,7 +236,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             var filterQuery = string.Join(" and ", filterQueries);
             var selectQuery = "id,webLink,bodyPreview,subject,receivedDateTime";
 
-            var messages = await graphClient.Me.Messages
+            var messages = await _graphClient.Me.Messages
                 .Request()
                 .Filter(filterQuery)
                 .Select(selectQuery)
@@ -246,9 +252,9 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The team name to filter on.")] string? name = null,
             [ParameterDescription("The description to filter on.")] string? description = null)
         {
-            var graphClient = GetAuthenticatedClient();
+            
 
-            var groups = await graphClient.Me.JoinedTeams
+            var groups = await _graphClient.Me.JoinedTeams
                                 .Request()
                                 .GetAsync();
 

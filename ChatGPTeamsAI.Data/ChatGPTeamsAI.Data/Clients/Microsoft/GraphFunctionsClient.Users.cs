@@ -13,7 +13,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                                                                         [ParameterDescription("The mail to filter on")] string? mail = null,
                                                                         [ParameterDescription("The next page skip token")] string? skipToken = null)
         {
-            var graphClient = GetAuthenticatedClient();
+            
             string? searchQuery = null;
 
             if (!string.IsNullOrEmpty(displayName) || !string.IsNullOrEmpty(mail))
@@ -42,7 +42,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 filterOptions.Add(new QueryOption("$skiptoken", skipToken));
             }
 
-            var users = await graphClient.Users.Request(filterOptions)
+            var users = await _graphClient.Users.Request(filterOptions)
                                         .Top(PAGESIZE).Header("ConsistencyLevel", "eventual").GetAsync();
 
             var items = users.CurrentPage.Select(_mapper.Map<Models.Microsoft.User>);
@@ -57,7 +57,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                                                                        [ParameterDescription("The mail to filter on")] string? mail = null,
                                                                        [ParameterDescription("The next page skip token")] string? skipToken = null)
         {
-            var graphClient = GetAuthenticatedClient();
+            
 
             string? searchQuery = null;
 
@@ -87,7 +87,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 filterOptions.Add(new QueryOption("$skiptoken", skipToken));
             }
 
-            var users = await graphClient.Users
+            var users = await _graphClient.Users
             .Request(filterOptions)
             .Top(PAGESIZE)
             .Header("ConsistencyLevel", "eventual")
@@ -105,8 +105,8 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public async Task<Models.Microsoft.User> GetUser(
             [ParameterDescription("The ID of the user.")] string userId)
         {
-            var graphClient = GetAuthenticatedClient();
-            var user = await graphClient.Users[userId].Request().GetAsync();
+            
+            var user = await _graphClient.Users[userId].Request().GetAsync();
 
             return _mapper.Map<Models.Microsoft.User>(user);
         }
@@ -121,7 +121,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                                                                 [ParameterDescription("The user principal name (email address) of the user.")] string userPrincipalName,
                                                                 [ParameterDescription("The password of the user.")] string password)
                 {
-                    var graphClient = GetAuthenticatedClient();
+                    
 
                     var user = new User
                     {
@@ -140,7 +140,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                         }
                     };
 
-                    var createdUser = await graphClient.Users
+                    var createdUser = await _graphClient.Users
                         .Request()
                         .AddAsync(user);
 
@@ -157,7 +157,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                                                                 [ParameterDescription("The job title of the user.")] string jobTitle = null,
                                                                 [ParameterDescription("Enable or disable the user's account.")] bool? accountEnabled = null)
                 {
-                    var graphClient = GetAuthenticatedClient();
+                    
 
                     var userToUpdate = new User()
                     {
@@ -171,11 +171,11 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                     if (!string.IsNullOrEmpty(jobTitle)) userToUpdate.JobTitle = jobTitle;
                     if (accountEnabled.HasValue) userToUpdate.AccountEnabled = accountEnabled.Value;
 
-                    await graphClient.Users[userId]
+                    await _graphClient.Users[userId]
                         .Request()
                         .UpdateAsync(userToUpdate);
 
-                    var updatedUser = await graphClient.Users[userId]
+                    var updatedUser = await _graphClient.Users[userId]
                         .Request()
                         .GetAsync();
 

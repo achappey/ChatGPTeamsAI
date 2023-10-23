@@ -11,9 +11,9 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 {
     internal partial class GraphFunctionsClient : BaseClient
     {
-        private readonly string _token;
-
         private readonly IMapper _mapper;
+
+        private readonly GraphServiceClient _graphClient;
 
         private const int PAGESIZE = 5;
 
@@ -26,8 +26,18 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 throw new ArgumentNullException(nameof(token));
             }
 
-            _token = token;
             _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(new MicrosoftProfile())));
+
+            _graphClient = new GraphServiceClient(
+               new DelegateAuthenticationProvider(
+                   requestMessage =>
+                   {
+                       requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", token);
+
+                       requestMessage.Headers.Add("Prefer", "outlook.timezone=\"" + TimeZoneInfo.Local.Id + "\"");
+
+                       return Task.CompletedTask;
+                   }));
         }
 
         public override async Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Models.Input.Action action)
@@ -73,8 +83,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public async Task<Models.Microsoft.Email> GetMail(
             [ParameterDescription("The ID of the e-mail.")] string id)
         {
-            var graphClient = GetAuthenticatedClient();
-            var message = await graphClient.Me.Messages[id].Request().GetAsync();
+            var message = await _graphClient.Me.Messages[id].Request().GetAsync();
 
             return _mapper.Map<Models.Microsoft.Email>(message);
         }
@@ -85,7 +94,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 [ParameterDescription("The description to filter on.")] string? description = null,
                 [ParameterDescription("The next page skip token.")] string? skipToken = null)
         {
-            var graphClient = GetAuthenticatedClient();
+            
 
             string? searchQuery = null;
 
@@ -106,7 +115,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 filterOptions.Add(new QueryOption("$skiptoken", skipToken));
             }
 
-            var groups = await graphClient.Groups.Request(filterOptions)
+            var groups = await _graphClient.Groups.Request(filterOptions)
                             .Header("ConsistencyLevel", "eventual")
                             .GetAsync();
 
@@ -169,25 +178,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         //         return photoResponse;
         //     }
         // }
-
-        // Get an Authenticated Microsoft Graph client using the token issued to the user.
-        private GraphServiceClient GetAuthenticatedClient()
-        {
-            var graphClient = new GraphServiceClient(
-                new DelegateAuthenticationProvider(
-                    requestMessage =>
-                    {
-                        // Append the access token to the request.
-                        requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", _token);
-
-                        // Get event times in the current time zone.
-                        requestMessage.Headers.Add("Prefer", "outlook.timezone=\"" + TimeZoneInfo.Local.Id + "\"");
-
-                        return Task.CompletedTask;
-                    }));
-
-            return graphClient;
-        }
+      
     }
 
 

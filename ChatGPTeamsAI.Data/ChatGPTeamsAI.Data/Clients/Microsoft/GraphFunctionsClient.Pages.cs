@@ -14,7 +14,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The name to filter on.")] string? name = null,
             [ParameterDescription("The next page skip token.")] string? skipToken = null)
         {
-            var graphClient = GetAuthenticatedClient();
+            
 
             var filterOptions = new List<QueryOption>();
             if (!string.IsNullOrEmpty(name))
@@ -27,7 +27,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 filterOptions.Add(new QueryOption("$skiptoken", skipToken));
             }
 
-            var pages = await graphClient.Sites[siteId].Pages
+            var pages = await _graphClient.Sites[siteId].Pages
                         .Request(filterOptions)
                         .GetAsync();
 

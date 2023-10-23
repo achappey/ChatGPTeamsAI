@@ -7,7 +7,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 {
     internal partial class GraphFunctionsClient
     {
-        [MethodDescription("Calendar", "Gets events for the specified user")]
+        [MethodDescription("Calendar", "Gets Outlook calender events for the specified user")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchEvents(
                 [ParameterDescription("The user id")] string userId,
                 [ParameterDescription("Subject of the event to search for")] string? subject = null,
@@ -15,8 +15,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 [ParameterDescription("Date in ISO 8601 format")] string? date = null,
                 [ParameterDescription("The next page skip token")] string? skipToken = null)
         {
-            var graphClient = GetAuthenticatedClient();
-
             var filterQueries = new List<string>();
 
             if (!string.IsNullOrEmpty(subject))
@@ -46,7 +44,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             var filterQuery = string.Join(" and ", filterQueries);
             var selectQuery = "id,subject,start,end";
 
-            var events = await graphClient.Users[userId].Events
+            var events = await _graphClient.Users[userId].Events
                 .Request(filterOptions)
                 .Filter(filterQuery)
                 .Top(PAGESIZE)

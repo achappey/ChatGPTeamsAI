@@ -8,7 +8,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     internal partial class SimplicateFunctionsClient
     {
 
-        [MethodDescription("Sales", "Search for sales using multiple filters.")]
+        [MethodDescription("Sales", "Search for sales using multiple filters")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchSales(
             [ParameterDescription("The name of the responsible employee.")] string? responsibleEmployeeName = null,
             [ParameterDescription("Organization name.")] string? organizationName = null,
