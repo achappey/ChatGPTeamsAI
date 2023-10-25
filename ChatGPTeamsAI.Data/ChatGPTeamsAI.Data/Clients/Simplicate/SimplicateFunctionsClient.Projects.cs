@@ -8,7 +8,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     internal partial class SimplicateFunctionsClient
     {
 
-        [MethodDescription("Projects", "Search for projects using multiple filters.")]
+        [MethodDescription("Projects", "Search for projects using multiple filters")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchProjects(
             [ParameterDescription("The project name.")] string? projectName = null,
             [ParameterDescription("The project manager's name.")] string? projectManager = null,
@@ -34,11 +34,13 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         }
 
-        [MethodDescription("Projects", "Gets a single project by id.")]
-        public async Task<SimplicateResponseBase<Project>?> GetProject(
+        [MethodDescription("Projects", "Gets all details of a single project")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetProject(
             [ParameterDescription("The project id.")] string projectId)
         {
-            return await FetchSimplicateDataItem<Project>($"projects/project/{projectId}");
+            var result = await FetchSimplicateDataItem<Project>($"projects/project/{projectId}");
+
+             return ToChatGPTeamsAIResponse(result);
         }
     }
 }

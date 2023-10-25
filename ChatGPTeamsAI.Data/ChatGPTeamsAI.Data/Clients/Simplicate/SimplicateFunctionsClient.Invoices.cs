@@ -8,15 +8,15 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 {
     internal partial class SimplicateFunctionsClient
     {
-        [MethodDescription("Invoices", "Search for invoices using multiple filters.")]
+        [MethodDescription("Invoices", "Search for invoices")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchInvoices(
-            [ParameterDescription("The invoice number.")] string? invoiceNumber = null,
-            [ParameterDescription("Organization name.")] string? organizationName = null,
-            [ParameterDescription("My Organization profile id.")] string? myOrganizationProfileId = null,
-            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
-            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? dateAfter = null,
-            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? dateBefore = null,
-            [ParameterDescription("The page number.")] long pageNumber = 1)
+            [ParameterDescription("Invoice number")] string? invoiceNumber = null,
+            [ParameterDescription("Name of the invoice company")] string? organizationName = null,
+            [ParameterDescription("Name of the invoicer company")] string? myOrganizationProfileName = null,
+            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
+            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateAfter = null,
+            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateBefore = null,
+            [ParameterDescription("Page number")] long pageNumber = 1)
         {
             dateAfter?.EnsureValidDateFormat();
             dateBefore?.EnsureValidDateFormat();
@@ -25,7 +25,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             var filters = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(invoiceNumber)) filters["[invoice_number]"] = $"*{invoiceNumber}*";
             if (!string.IsNullOrEmpty(organizationName)) filters["[organization.name]"] = $"*{organizationName}*";
-            if (!string.IsNullOrEmpty(myOrganizationProfileId)) filters["[my_organization_profile_id]"] = $"{myOrganizationProfileId}";
+            if (!string.IsNullOrEmpty(myOrganizationProfileName)) filters["[my_organization_profile.organization.name]"] = $"*{myOrganizationProfileName}*";
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
             if (!string.IsNullOrEmpty(dateAfter)) filters["[date][ge]"] = dateAfter;
             if (!string.IsNullOrEmpty(dateBefore)) filters["[date][le]"] = dateBefore;
@@ -35,7 +35,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("Invoices", "Gets expired invoices using multiple filters.")]
+        [MethodDescription("Invoices", "Gets expired invoices using multiple filters")]
         public async Task<ChatGPTeamsAIClientResponse?> GetExpiredInvoices(
             [ParameterDescription("The invoice number.")] string? invoiceNumber = null,
             [ParameterDescription("Organization name.")] string? organizationName = null,
@@ -67,7 +67,25 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("Invoices", "Adds a new invoice to Simplicate.")]
+        [MethodDescription("Invoices", "Search for invoice propositions")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetPropositions(
+            [ParameterDescription("Project name")] string? projectName = null,
+            [ParameterDescription("Project number")] string? projectNumber = null,
+            [ParameterDescription("Projectmanager")] string? projectManager = null,
+            [ParameterDescription("Organization name")] string? organizationName = null,
+            [ParameterDescription("Pagenumber")] long pageNumber = 1)
+        {
+            var filters = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(projectName)) filters["[project.name]"] = $"*{projectName}*";
+            if (!string.IsNullOrEmpty(projectNumber)) filters["[project.project_number]"] = $"*{projectNumber}*";
+            if (!string.IsNullOrEmpty(projectManager)) filters["[project.project_manager.name]"] = $"*{projectManager}*";
+            if (!string.IsNullOrEmpty(organizationName)) filters["[project.organization.name]"] = $"*{organizationName}*";
+
+            var result = await FetchSimplicateDataCollection<Proposition>(filters, "invoices/proposition", pageNumber);
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+        [MethodDescription("Invoices", "Adds a new invoice to Simplicate")]
         public async Task<NoOutputResponse> AddNewInvoice(
             [ParameterDescription("The payment term ID.")] string paymentTermId,
             [ParameterDescription("VAT class ID for the invoice line.")] string vatClassId,

@@ -117,7 +117,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             return new ChatGPTeamsAIClientResponse()
             {
-                Data = dataCard == null ? response?.Data.RenderData() : null,
+                Data = response?.Data.RenderData(),
                 DataCard = dataCard,
                 TotalItems = response?.Metadata?.Count,
                 TotalPages = response?.Metadata?.PageCount,

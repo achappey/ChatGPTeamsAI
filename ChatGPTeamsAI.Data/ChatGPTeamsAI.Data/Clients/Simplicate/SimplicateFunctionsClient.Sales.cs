@@ -27,7 +27,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("Sales", "Search for quotes using multiple filters.")]
+        [MethodDescription("Sales", "Search for quotes using multiple filters")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchQuotes(
             [ParameterDescription("Quote number.")] string? quoteNumber = null,
             [ParameterDescription("Status label.")] string? statusLabel = null,
@@ -46,7 +46,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("Sales", "Fetches all revenue groups.")]
+        [MethodDescription("Sales", "Fetches all revenue groups")]
         public async Task<ChatGPTeamsAIClientResponse?> GetAllRevenueGroups()
         {
             var response = await _httpClient.GetAsync("sales/revenuegroup");

@@ -139,7 +139,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         {
             factSet.Facts.Add(new AdaptiveFact
             {
-                Title = "Current Page",
+                Title = "Page",
                 Value = currentPageCount.Value.ToString()
             });
         }
@@ -148,7 +148,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         {
             factSet.Facts.Add(new AdaptiveFact
             {
-                Title = "Page Count",
+                Title = "Total pages",
                 Value = pageCount.Value.ToString()
             });
         }
@@ -157,7 +157,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         {
             factSet.Facts.Add(new AdaptiveFact
             {
-                Title = "Total Item Count",
+                Title = "Total items",
                 Value = totalItemCount.Value.ToString()
             });
         }

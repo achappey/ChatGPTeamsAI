@@ -7,7 +7,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 {
     internal partial class SimplicateFunctionsClient
     {
-        [MethodDescription("Timeline", "Search for timeline events using multiple filters")]
+        [MethodDescription("Timeline", "Search for Simplicate timeline events")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchTimelineMessages(
             [ParameterDescription("Created at or after this date and time in ISO 8601 format (yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
             [ParameterDescription("Created at or before this date and time in ISO 8601 format (yyyy-MM-dd HH:mm:ss).")] string? createdBefore = null,
