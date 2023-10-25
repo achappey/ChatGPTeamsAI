@@ -23,9 +23,9 @@ internal class ProjectsCardRenderer : CardRenderer
 
             foreach (var project in projects)
             {
-                columnSet.Columns[0].Items.Add(new AdaptiveTextBlock { Text = string.IsNullOrEmpty(project.ProjectNumber) ? project.ProjectNumber : "-", IsSubtle = true, Separator = isFirstProject });
-                columnSet.Columns[1].Items.Add(new AdaptiveTextBlock { Text = string.IsNullOrEmpty(project.Name) ? project.Name : "-", IsSubtle = true, Separator = isFirstProject });
-                columnSet.Columns[2].Items.Add(new AdaptiveTextBlock { Text = string.IsNullOrEmpty(project.ProjectManager?.Name) ? project.ProjectManager?.Name : "-", IsSubtle = true, Separator = isFirstProject });
+                columnSet.Columns[0].Items.Add(new AdaptiveTextBlock { Text = !string.IsNullOrEmpty(project.ProjectNumber) ? project.ProjectNumber : "-", IsSubtle = true, Separator = isFirstProject });
+                columnSet.Columns[1].Items.Add(new AdaptiveTextBlock { Text = !string.IsNullOrEmpty(project.Name) ? project.Name : "-", IsSubtle = true, Separator = isFirstProject });
+                columnSet.Columns[2].Items.Add(new AdaptiveTextBlock { Text = project.ProjectManager != null && !string.IsNullOrEmpty(project.ProjectManager?.Name) ? project.ProjectManager?.Name : "-", IsSubtle = true, Separator = isFirstProject });
 
                 isFirstProject = false;
             }
