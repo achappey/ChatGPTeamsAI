@@ -1,5 +1,6 @@
 
 using AdaptiveCards;
+using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models.Simplicate;
 
 namespace ChatGPTeamsAI.Cards.Simplicate;
@@ -9,50 +10,20 @@ internal class ProjectsCardRenderer : ICardRenderer
     public AdaptiveCard Render(object item)
     {
         var project = item as IEnumerable<Project>;
-
         var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
 
         var rows = project.Select(t =>
+    {
+        return new AdaptiveTableRow()
         {
-            return new AdaptiveTableRow()
+            Cells = new List<AdaptiveTableCell>()
             {
-                Cells = new List<AdaptiveTableCell>() {
-                                new AdaptiveTableCell() {
-                                       Items =
-                {
-                    new AdaptiveTextBlock
-                    {
-                        Text = t.Name,
-                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                        Wrap = true
-                    }
-                }
-            },
-            new AdaptiveTableCell() {
-                Items =
-                        {
-                            new AdaptiveTextBlock
-                            {
-                                Text = t.ProjectNumber,
-                                HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                                Wrap = true
-                            }
-                        }
-            },
-              new AdaptiveTableCell() {
-                Items =
-                        {
-                            new AdaptiveTextBlock
-                            {
-                                Text = t.ProjectManager?.Name,
-                                HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                                Wrap = true
-                            }
-                        }
+                t.Name?.CreateCell(),
+                t.ProjectNumber?.CreateCell(),
+                t.ProjectManager?.Name?.CreateCell(),
             }
-        }
-            };
-        }).ToList();
+        };
+    }).ToList();
 
         card.Body.Add(new AdaptiveTable
         {
