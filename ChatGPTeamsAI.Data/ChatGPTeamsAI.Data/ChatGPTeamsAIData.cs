@@ -3,6 +3,7 @@ using ChatGPTeamsAI.Data.Clients.Simplicate;
 using ChatGPTeamsAI.Data.Models.Output;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Clients.Microsoft;
+using ChatGPTeamsAI.Data.Extensions;
 
 namespace ChatGPTeamsAI.Data;
 
@@ -77,7 +78,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             Data = clientResponse.Data,
             PagingCard = RenderPagingCard(clientResponse.TotalItems, clientResponse.TotalPages, clientResponse.CurrentPage,
               clientResponse.NextPageAction, clientResponse.PreviousPageAction)?.ToJson(),
-            DataCard = clientResponse.DataCard?.ToJson()
+            DataCard = clientResponse.DataCard?.WithPagingButtons(clientResponse.NextPageAction, clientResponse.PreviousPageAction)?.ToJson()
         };
     }
 
@@ -122,6 +123,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         }
     }
 
+  
     public static AdaptiveCard? RenderPagingCard(int? totalItemCount, int? pageCount, int? currentPageCount,
      Models.Input.Action? nextPage = null, Models.Input.Action? prevPage = null)
     {
@@ -143,7 +145,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
                 Value = currentPageCount.Value.ToString()
             });
         }
-        
+
         if (pageCount.HasValue)
         {
             factSet.Facts.Add(new AdaptiveFact

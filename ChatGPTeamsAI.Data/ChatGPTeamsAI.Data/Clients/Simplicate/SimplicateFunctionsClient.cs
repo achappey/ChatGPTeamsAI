@@ -4,6 +4,7 @@ using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Cards.Simplicate;
 using ChatGPTeamsAI.Data.Models.Output;
+using System.Collections.Generic;
 
 namespace ChatGPTeamsAI.Data.Clients.Simplicate
 {
@@ -24,6 +25,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             _httpClient.DefaultRequestHeaders.Add("Authentication-Secret", token.ApiSecret);
 
             _cardRenderers.Add(typeof(Project), new ProjectCardRenderer());
+            _cardRenderers.Add(typeof(List<Project>), new ProjectsCardRenderer());
         }
 
         public override async Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Models.Input.Action action)
@@ -91,7 +93,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             return new ChatGPTeamsAIClientResponse()
             {
-                Data = dataCard == null ? response?.Data.RenderData() : null,
+                Data = response?.Data.RenderData(),
                 DataCard = dataCard,
                 TotalItems = response?.Metadata?.Count,
                 TotalPages = response?.Metadata?.PageCount,

@@ -14,4 +14,5 @@ internal static class GraphExtensions
     {
         return queryOptions.FirstOrDefault(a => a.Name.EndsWith("skip"))?.Value;
     }
+
 }
