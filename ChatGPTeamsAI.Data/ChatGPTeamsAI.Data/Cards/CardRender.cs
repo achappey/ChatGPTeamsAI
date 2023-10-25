@@ -12,7 +12,7 @@ internal abstract class CardRenderer : ICardRenderer
 {
     //AdaptiveCard Render(object data);
 
-    
+
     public static AdaptiveTableCell CreateCell(string? value)
     {
         var cell = new AdaptiveTableCell();
@@ -21,6 +21,15 @@ internal abstract class CardRenderer : ICardRenderer
             cell.Items.Add(new AdaptiveTextBlock
             {
                 Text = value,
+                HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                Wrap = true
+            });
+        }
+        else
+        {
+            cell.Items.Add(new AdaptiveTextBlock
+            {
+                Text = " ",
                 HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
                 Wrap = true
             });
