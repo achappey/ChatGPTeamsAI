@@ -7,8 +7,29 @@ internal class ProjectsCardRenderer : CardRenderer
 {
     public override AdaptiveCard Render(object item)
     {
-        var project = item as IEnumerable<Project>;
-        var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 5));
+        var projects = item as IEnumerable<Project>;
+        var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
+
+        var columnSet = new AdaptiveColumnSet();
+
+        // Headers
+        columnSet.Columns.Add(new AdaptiveColumn { Items = { new AdaptiveTextBlock { Text = "Zone", IsSubtle = true, Weight = AdaptiveTextWeight.Bolder } } });
+        columnSet.Columns.Add(new AdaptiveColumn { Items = { new AdaptiveTextBlock { Text = "Today In Counter", IsSubtle = true, Weight = AdaptiveTextWeight.Bolder } } });
+        columnSet.Columns.Add(new AdaptiveColumn { Items = { new AdaptiveTextBlock { Text = "Monthly Count (A)", IsSubtle = true, Weight = AdaptiveTextWeight.Bolder } } });
+
+        bool isFirstProject = true;
+        // Project data
+        foreach (var project in projects)
+        {
+            columnSet.Columns[0].Items.Add(new AdaptiveTextBlock { Text = project.ProjectNumber, IsSubtle = true, Separator = isFirstProject });
+            columnSet.Columns[1].Items.Add(new AdaptiveTextBlock { Text = project.Name, IsSubtle = true, Separator = isFirstProject });
+            columnSet.Columns[2].Items.Add(new AdaptiveTextBlock { Text = project.ProjectManager?.Name, IsSubtle = true, Separator = isFirstProject });
+
+            isFirstProject = false;
+        }
+
+        card.Body.Add(columnSet);
+        /*
 
         var rows = project.Select(t =>
     {
@@ -35,7 +56,7 @@ internal class ProjectsCardRenderer : CardRenderer
             Rows = rows
         });
 
-
+*/
 
         return card;
 
@@ -69,5 +90,5 @@ internal class ProjectsCardRenderer : CardRenderer
 
                 return card2;*/
     }
-  
+
 }
