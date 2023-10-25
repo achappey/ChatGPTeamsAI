@@ -8,7 +8,7 @@ internal class ProjectsCardRenderer : CardRenderer
     public override AdaptiveCard Render(object item)
     {
         var project = item as IEnumerable<Project>;
-        var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
+        var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 5));
 
         var rows = project.Select(t =>
     {
