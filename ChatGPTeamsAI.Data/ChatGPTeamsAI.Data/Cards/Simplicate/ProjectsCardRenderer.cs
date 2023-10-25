@@ -1,16 +1,14 @@
-
 using AdaptiveCards;
-using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models.Simplicate;
 
 namespace ChatGPTeamsAI.Cards.Simplicate;
 
-internal class ProjectsCardRenderer : ICardRenderer
+internal class ProjectsCardRenderer : CardRenderer
 {
-    public AdaptiveCard Render(object item)
+    public override AdaptiveCard Render(object item)
     {
         var project = item as IEnumerable<Project>;
-        var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
+        var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
 
         var rows = project.Select(t =>
     {
@@ -18,9 +16,9 @@ internal class ProjectsCardRenderer : ICardRenderer
         {
             Cells = new List<AdaptiveTableCell>()
             {
-                t.Name?.CreateCell(),
-                t.ProjectNumber?.CreateCell(),
-                t.ProjectManager?.Name?.CreateCell(),
+                CreateCell(t.Name),
+                CreateCell(t.ProjectNumber),
+                CreateCell(t.ProjectManager?.Name)
             }
         };
     }).ToList();
@@ -71,4 +69,5 @@ internal class ProjectsCardRenderer : ICardRenderer
 
                 return card2;*/
     }
+  
 }
