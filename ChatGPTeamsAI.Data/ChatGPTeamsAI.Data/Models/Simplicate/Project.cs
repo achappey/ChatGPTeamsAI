@@ -3,6 +3,7 @@
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
+using ChatGPTeamsAI.Data.Attributes;
 
 internal class Project
 {
@@ -19,6 +20,7 @@ internal class Project
     public OrganizationProject? OrganizationDetails { get; set; }
 
     [JsonPropertyName("project_number")]
+    [ColumnName]
     public string? ProjectNumber { get; set; }
 
     [JsonPropertyName("billable")]
@@ -30,14 +32,26 @@ internal class Project
     [JsonPropertyName("end_date")]
     public string? EndDate { get; set; }
 
-     [JsonPropertyName("name")]
+    [ColumnName]
+    [JsonPropertyName("name")]
     public string? Name { get; set; }
-    
+
+    [ColumnName]
+    [JsonPropertyName("projectManagerName")]
+    public string? ProjectManagerName
+    {
+        get
+        {
+            return ProjectManager?.Name;
+        }
+        set { }
+    }
+
     [JsonPropertyName("note")]
     public string? Note { get; set; }
-   
-     
-   [JsonPropertyName("simplicate_url")]
+
+
+    [JsonPropertyName("simplicate_url")]
     public string? SimplicateUrl { get; set; }
 }
 

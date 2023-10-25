@@ -25,3 +25,16 @@ internal sealed class ParameterDescriptionAttribute : Attribute
         Description = description;
     }
 }
+
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+internal class ColumnNameAttribute : Attribute
+{
+    public string Name { get; set; }
+
+    public ColumnNameAttribute() { }
+
+    public ColumnNameAttribute(string name)
+    {
+        Name = name;
+    }
+}

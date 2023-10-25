@@ -4,7 +4,8 @@ using ChatGPTeamsAI.Data.Models.Simplicate;
 
 namespace ChatGPTeamsAI.Cards.Simplicate;
 
-internal class ProjectCardRenderer : ICardRenderer
+//: ICardRenderer
+internal class ProjectCardRenderer 
 {
     public AdaptiveCard Render(object item)
     {

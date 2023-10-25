@@ -1,5 +1,6 @@
 using AdaptiveCards;
 using ChatGPTeamsAI.Cards;
+using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Output;
 
@@ -8,6 +9,7 @@ namespace ChatGPTeamsAI.Data;
 internal abstract class BaseClient : IBaseClient
 {
     protected readonly Dictionary<Type, object> _cardRenderers = new Dictionary<Type, object>();
+    protected readonly CardRenderer defaultRender = new CardRenderer();
 
     public abstract IEnumerable<ActionDescription> GetAvailableActions();
 
@@ -23,10 +25,14 @@ internal abstract class BaseClient : IBaseClient
         var dataType = data.GetType();
         if (_cardRenderers.TryGetValue(dataType, out var rendererObj) && rendererObj is ICardRenderer renderer)
         {
-            return renderer.Render(data);
+      //      return renderer.Render(data);
         }
+        //var defaultRender = new CardRenderer();
 
-        return null;
+        return defaultRender.DefaultRender(data);
+      //  base.RenderData(data)
+
+     //   return null;
     }
 
     public static NoOutputResponse SuccessResponse()
