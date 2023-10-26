@@ -7,14 +7,17 @@ internal class Employee
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 
+    [JsonPropertyName("function")]
+    public string? Function { get; set; }
+
+    [JsonPropertyName("work_email")]
+    public string? WorkEmail { get; set; }
+
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
     [JsonPropertyName("person_id")]
     public string? PersonId { get; set; }
-
-    [JsonPropertyName("function")]
-    public string? Function { get; set; }
 
     [JsonPropertyName("employment_status")]
     public string? EmploymentStatus { get; set; }
@@ -27,9 +30,6 @@ internal class Employee
 
     [JsonPropertyName("work_mobile")]
     public string? WorkMobile { get; set; }
-
-    [JsonPropertyName("work_email")]
-    public string? WorkEmail { get; set; }
 
    // [JsonPropertyName("hourly_sales_tariff")]
    // public double? HourlySalesTariff { get; set; }

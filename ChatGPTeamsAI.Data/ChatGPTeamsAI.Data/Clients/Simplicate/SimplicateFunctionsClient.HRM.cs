@@ -43,7 +43,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("HRM", "Search for leave balances")]
+        [MethodDescription("HRM", "Search for employee leave balances")]
         public async Task<ChatGPTeamsAIClientResponse?> FetchLeaveBalances(
             [ParameterDescription("Employee name")] string? employeeName = null,
             [ParameterDescription("Year")] int? year = null,
@@ -58,7 +58,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("HRM", "Search for absences")]
+        [MethodDescription("HRM", "Search for employee absences")]
         public async Task<ChatGPTeamsAIClientResponse?> FetchAbsences(
             [ParameterDescription("Employee name")] string? employeeName = null,
             [ParameterDescription("Year")] int? year = null,
