@@ -5,6 +5,23 @@ using System.Text.Json.Serialization;
 
 internal class Hour
 {
+
+    [JsonPropertyName("start_date")]
+    public string? StartDate { get; set; }
+
+    [JsonPropertyName("hours")]
+    public double Hours { get; set; }
+
+    [JsonPropertyName("projectName")]
+    public string? ProjectName
+    {
+        get
+        {
+            return Project?.Name;
+        }
+        set { }
+    }
+
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
@@ -23,11 +40,6 @@ internal class Hour
     [JsonPropertyName("tariff")]
     public double Tariff { get; set; }
 
-    [JsonPropertyName("hours")]
-    public double Hours { get; set; }
-
-    [JsonPropertyName("start_date")]
-    public string? StartDate { get; set; }
 
     [JsonPropertyName("end_date")]
     public string? EndDate { get; set; }

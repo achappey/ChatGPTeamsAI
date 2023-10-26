@@ -7,22 +7,32 @@ internal class Invoice
 {
 
     [JsonPropertyName("invoice_number")]
-    public string? InvoiceNumber { get; set; } 
+    public string? InvoiceNumber { get; set; }
+
+    [JsonPropertyName("date")]
+    public string? Date { get; set; }
+
+    [JsonPropertyName("organizationName")]
+    public string? OrganizationName
+    {
+        get
+        {
+            return Organization?.Name;
+        }
+        set { }
+    }
 
     [JsonPropertyName("comments")]
     public string? Comments { get; set; }
 
-     [JsonPropertyName("status")]
+    [JsonPropertyName("status")]
     public InvoiceStatus Status { get; set; } = null!;
 
     [JsonPropertyName("payment_term")]
-    public PaymentTerm PaymentTerm { get; set; }  = null!;
+    public PaymentTerm PaymentTerm { get; set; } = null!;
 
     [JsonPropertyName("simplicate_url")]
-    public string? SimplicateUrl { get; set; }  = null!;
-
-    [JsonPropertyName("date")]
-    public string? Date { get; set; } 
+    public string? SimplicateUrl { get; set; } = null!;
 
     [JsonPropertyName("subject")]
     public string? Subject { get; set; }
@@ -31,10 +41,10 @@ internal class Invoice
     public ProjectInvoice? Project { get; set; } = null;
 
     [JsonPropertyName("organization")]
-    public OrganizationInvoice? Organization { get; set; }  = null!;
+    public OrganizationInvoice? Organization { get; set; } = null!;
 
     [JsonPropertyName("my_organization_profile")]
-    public MyOrganizationInvoice? MyOrganization { get; set; }  = null!;
+    public MyOrganizationInvoice? MyOrganization { get; set; } = null!;
 
 }
 
@@ -47,7 +57,7 @@ internal class OrganizationInvoice
 internal class MyOrganizationInvoice
 {
     [JsonPropertyName("organization")]
-    public OrganizationInvoice? Organization { get; set; }  = null!;
+    public OrganizationInvoice? Organization { get; set; } = null!;
 }
 
 internal class InvoiceStatus

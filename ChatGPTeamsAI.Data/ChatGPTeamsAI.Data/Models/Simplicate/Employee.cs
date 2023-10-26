@@ -1,19 +1,17 @@
-
-
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
 
 internal class Employee
 {
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
     [JsonPropertyName("person_id")]
     public string? PersonId { get; set; }
-
-    [JsonPropertyName("name")]
-    public string? Name { get; set; }
 
     [JsonPropertyName("function")]
     public string? Function { get; set; }

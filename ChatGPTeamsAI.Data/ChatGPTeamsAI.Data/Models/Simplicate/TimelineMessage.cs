@@ -8,16 +8,18 @@ using System.Text.Json.Serialization;
 
 internal class TimelineMessage
 {
-    private string? _content { get; set; }
-
-    [JsonPropertyName("message_type")]
-    public MessageType? MessageType { get; set; }
-
-    [JsonPropertyName("linked_to")]
-    public List<LinkedTo>? LinkedTo { get; set; }
-
     [JsonPropertyName("created_at")]
     public string? CreatedAt { get; set; }
+
+    [JsonPropertyName("linkedToName")]
+    public string? LinkedToName
+    {
+        get
+        {
+            return LinkedTo.FirstOrDefault()?.Label;
+        }
+        set { }
+    }
 
     [JsonPropertyName("content")]
     public string? Content
@@ -28,6 +30,18 @@ internal class TimelineMessage
             _content = value;
         }
     }
+
+    private string? _content { get; set; }
+
+    [JsonPropertyName("message_type")]
+    public MessageType? MessageType { get; set; }
+
+
+    [JsonPropertyName("linked_to")]
+    public List<LinkedTo>? LinkedTo { get; set; }
+
+
+
 
 }
 
