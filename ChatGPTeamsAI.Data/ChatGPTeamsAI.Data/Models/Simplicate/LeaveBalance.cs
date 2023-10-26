@@ -1,10 +1,12 @@
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
+using ChatGPTeamsAI.Data.Attributes;
 
 internal class LeaveBalance
 {
     [JsonPropertyName("employeeName")]
+    [ListColumn]
     public string? EmployeeName
     {
         get
@@ -15,10 +17,23 @@ internal class LeaveBalance
     }
 
     [JsonPropertyName("balance")]
+    [ListColumn]
     public double Balance { get; set; }
 
     [JsonPropertyName("year")]
+    [ListColumn]
     public int Year { get; set; }
+
+    [JsonPropertyName("leaveTypeLabel")]
+    [FormColumn]
+    public string? LeaveTypeLabel
+    {
+        get
+        {
+            return LeaveType?.Label;
+        }
+        set { }
+    }
 
     [JsonPropertyName("leavetype")]
     public LeaveType? LeaveType { get; set; }

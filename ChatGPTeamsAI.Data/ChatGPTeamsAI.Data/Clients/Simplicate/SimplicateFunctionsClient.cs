@@ -36,9 +36,34 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             result.NextPageAction = GetPageAction(action, functionDefintition, metadata, true);
             result.PreviousPageAction = GetPageAction(action, functionDefintition, metadata, false);
+            result.ExportPageAction = GetExportAction(action, functionDefintition);
 
             result.ExecutedAction = action;
             return result;
+        }
+
+        private Models.Input.Action? GetExportAction(Models.Input.Action currentPageAction,
+                   ActionDescription action,
+                   string pageNumberPropertyName = "pageNumber")
+        {
+            if (action.ExportAction == null)
+            {
+                return null;
+            }
+
+            var pageActionEntities = new Dictionary<string, object?>(
+                         currentPageAction.Entities ?? new Dictionary<string, object?>());
+
+            if (pageActionEntities.ContainsKey(pageNumberPropertyName))
+            {
+                pageActionEntities = pageActionEntities.Where(a => a.Key != pageNumberPropertyName).ToDictionary(a => a.Key, a => a.Value);
+            }
+
+            return new Models.Input.Action
+            {
+                Name = action.ExportAction,
+                Entities = pageActionEntities
+            };
         }
 
         private Models.Input.Action? GetPageAction(Models.Input.Action currentPageAction,
@@ -159,7 +184,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             // Make the request
             var response = await _httpClient.GetAsync($"{endpointUrl}?{queryString}");
-
+            var dsadsa = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
                 return await response.FromJson<SimplicateDataCollectionResponse<T>?>();

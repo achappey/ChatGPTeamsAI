@@ -3,13 +3,16 @@
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
+using ChatGPTeamsAI.Data.Attributes;
 
 internal class Sales
 {
     [JsonPropertyName("subject")]
+    [ListColumn]
     public string? Subject { get; set; }
 
     [JsonPropertyName("responsibleEmployeeName")]
+    [ListColumn]
     public string? ResponsibleEmployeeName
     {
         get
@@ -20,6 +23,7 @@ internal class Sales
     }
 
     [JsonPropertyName("organizationName")]
+    [ListColumn]
     public string? OrganizationeName
     {
         get
@@ -31,6 +35,14 @@ internal class Sales
 
     [JsonPropertyName("id")]
     public string? Id { get; set; }
+
+    [JsonPropertyName("expected_revenue")]
+    [FormColumn]
+    public string? ExpectedRevenue { get; set; }
+
+    [JsonPropertyName("chance_to_score")]
+    [FormColumn]
+    public string? ChanceToScore { get; set; }
 
     [JsonPropertyName("responsible_employee")]
     public SalesEmployee? ResponsibleEmployee { get; set; }
@@ -44,7 +56,28 @@ internal class Sales
     [JsonPropertyName("status")]
     public Status? Status { get; set; }
 
+    [JsonPropertyName("start_date")]
+    [FormColumn]
+    public string? StartDate { get; set; }
+
+    [JsonPropertyName("end_date")]
+    [FormColumn]
+    public string? EndDate { get; set; }
+
+    [JsonPropertyName("created_at")]
+    [FormColumn]
+    public string? CreatedAt { get; set; }
+
+    [JsonPropertyName("updated_at")]
+    [FormColumn]
+    public string? UpdatedAt { get; set; }
+
+    [JsonPropertyName("note")]
+    [FormColumn]
+    public string? Note { get; set; }
+
     [JsonPropertyName("simplicate_url")]
+    [LinkColumn]
     public string? SimplicateUrl { get; set; }
 
 }

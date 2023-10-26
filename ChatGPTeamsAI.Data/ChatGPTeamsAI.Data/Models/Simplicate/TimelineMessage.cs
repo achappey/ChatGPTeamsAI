@@ -5,23 +5,27 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using ChatGPTeamsAI.Data.Attributes;
 
 internal class TimelineMessage
 {
     [JsonPropertyName("created_at")]
+    [ListColumn]
     public string? CreatedAt { get; set; }
 
     [JsonPropertyName("linkedToName")]
+    [ListColumn]
     public string? LinkedToName
     {
         get
         {
-            return LinkedTo.FirstOrDefault()?.Label;
+            return LinkedTo?.FirstOrDefault()?.Label;
         }
         set { }
     }
 
     [JsonPropertyName("content")]
+    [ListColumn]
     public string? Content
     {
         get => _content?.Substring(0, Math.Min(_content?.Length ?? 0, 200));
@@ -31,8 +35,6 @@ internal class TimelineMessage
         }
     }
 
-    private string? _content { get; set; }
-
     [JsonPropertyName("message_type")]
     public MessageType? MessageType { get; set; }
 
@@ -40,7 +42,7 @@ internal class TimelineMessage
     [JsonPropertyName("linked_to")]
     public List<LinkedTo>? LinkedTo { get; set; }
 
-
+    private string? _content { get; set; }
 
 
 }

@@ -1,10 +1,12 @@
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
+using ChatGPTeamsAI.Data.Attributes;
 
 internal class Employee
 {
     [JsonPropertyName("name")]
+    [ListColumn]
     public string? Name { get; set; }
 
     [JsonPropertyName("function")]
@@ -20,28 +22,35 @@ internal class Employee
     public string? PersonId { get; set; }
 
     [JsonPropertyName("employment_status")]
+    [FormColumn]
     public string? EmploymentStatus { get; set; }
 
     [JsonPropertyName("civil_status")]
-    public string? CivilStatus { get; set; }
+    public CivilStatus? CivilStatus { get; set; }
 
     [JsonPropertyName("work_phone")]
+    [FormColumn]
     public string? WorkPhone { get; set; }
 
     [JsonPropertyName("work_mobile")]
+    [FormColumn]
     public string? WorkMobile { get; set; }
 
-   // [JsonPropertyName("hourly_sales_tariff")]
-   // public double? HourlySalesTariff { get; set; }
+    [JsonPropertyName("hourly_sales_tariff")]
+    [FormColumn]
+    public string? HourlySalesTariff { get; set; }
 
-   // [JsonPropertyName("hourly_cost_tariff")]
-//    public double? HourlyCostTariff { get; set; }
+    [JsonPropertyName("hourly_cost_tariff")]
+    [FormColumn]
+    public string? HourlyCostTariff { get; set; }
 
     [JsonPropertyName("created_at")]
+    [FormColumn]
     public string? CreatedAt { get; set; }
 
     [JsonPropertyName("simplicate_url")]
-    public string? SimplicateUrl { get; set; }
+    [LinkColumn]
+    public string? Simplicate { get; set; }
 }
 
 internal class Avatar
@@ -57,4 +66,10 @@ internal class Avatar
 
     [JsonPropertyName("color")]
     public string? Color { get; set; }
+}
+
+internal class CivilStatus
+{
+    [JsonPropertyName("label")]
+    public string? Label { get; set; }
 }

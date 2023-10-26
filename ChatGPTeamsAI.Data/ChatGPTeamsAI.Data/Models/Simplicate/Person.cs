@@ -1,33 +1,84 @@
 
 
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using ChatGPTeamsAI.Data.Attributes;
 
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 internal class Person
 {
-    
+
     [JsonPropertyName("full_name")]
+    [ListColumn]
     public string? FullName { get; set; }
 
+    [ListColumn]
+    [JsonPropertyName("email")]
     public string? Email { get; set; }
 
+    [ListColumn]
+    [JsonPropertyName("phone")]
     public string? Phone { get; set; }
 
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
+    [JsonPropertyName("initials")]
+    [FormColumn]
     public string? Initials { get; set; }
 
+    [JsonPropertyName("first_name")]
+    [FormColumn]
+    public string? FirstName { get; set; }
+
+    [JsonPropertyName("gender")]
+    [FormColumn]
+    public string? Gender { get; set; }
+
+    [JsonPropertyName("family_name")]
+    [FormColumn]
+    public string? FamilyName { get; set; }
+
     [JsonPropertyName("linkedin_url")]
-    public string? LinkedinUrl { get; set; }
+    [LinkColumn]
+    public string? LinkedIn { get; set; }
+
+    [JsonPropertyName("website_url")]
+    [LinkColumn]
+    public string? Website { get; set; }
+
+    [JsonPropertyName("relation_number")]
+    [FormColumn]
+    public string? RelationNumber { get; set; }
 
     [JsonPropertyName("simplicate_url")]
-    public string? SimplicateUrl { get; set; }
+    [LinkColumn]
+    public string? Simplicate { get; set; }
+
+    [JsonPropertyName("relationManagerName")]
+    [FormColumn]
+    public string? RelationManagerName
+    {
+        get
+        {
+            return RelationManager?.Name;
+        }
+        set { }
+    }
 
     [JsonPropertyName("relation_manager")]
     public RelationManager? RelationManager { get; set; }
+
+    [JsonPropertyName("organizations")]
+    [FormColumn]
+    public string? Organizations
+    {
+        get
+        {
+            return string.Join(",", LinkedAsContactToOrganization?.Select(a => a.Name));
+        }
+        set { }
+    }
 
     [JsonPropertyName("linked_as_contact_to_organization")]
     public IEnumerable<LinkedContactPerson>? LinkedAsContactToOrganization { get; set; }

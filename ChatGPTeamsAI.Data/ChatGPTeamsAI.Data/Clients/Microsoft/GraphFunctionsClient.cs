@@ -40,6 +40,15 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                    }));
         }
 
+        public async Task<string> UploadFile(string fileName, byte[] file)
+        {
+            using var stream = new MemoryStream(file);
+
+            var driveItem = await _graphClient.Me.Drive.Root.ItemWithPath(fileName).Content.Request().PutAsync<DriveItem>(stream);
+
+            return driveItem.WebUrl;
+        }
+
         public override async Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Models.Input.Action action)
         {
             var result = await this.ExecuteMethodAsync(action) as ChatGPTeamsAIClientResponse ?? throw new ArgumentException("Something went wrong");

@@ -4,7 +4,6 @@ using ChatGPTeamsAI.Data.Models.Simplicate;
 
 namespace ChatGPTeamsAI.Cards.Simplicate;
 
-//: ICardRenderer
 internal class ProjectCardRenderer 
 {
     public AdaptiveCard Render(object item)
@@ -75,12 +74,12 @@ internal class ProjectCardRenderer
             factSet.Facts.Add(new AdaptiveFact { Title = "Enddate", Value = $"{{DATE({project.EndDate}, SHORT)}}" });
         }
 
-        if (!string.IsNullOrEmpty(project?.SimplicateUrl))
+        if (!string.IsNullOrEmpty(project?.Simplicate))
         {
             card.Actions.Add(new AdaptiveOpenUrlAction
             {
                 Title = "View",
-                Url = new Uri(project.SimplicateUrl)
+                Url = new Uri(project.Simplicate)
             });
         }
 
@@ -88,33 +87,5 @@ internal class ProjectCardRenderer
         return card;
 
 
-
-        /*
-
-                var card2 = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3))
-                {
-                    Body = {
-                            new AdaptiveTextBlock()
-                            {
-                                Text = project?.Name,
-                                Weight = AdaptiveTextWeight.Bolder,
-                                Size = AdaptiveTextSize.Medium
-                            },
-                            new AdaptiveTextBlock()
-                            {
-                                Text = project?.Note
-                            },
-                            new AdaptiveTextBlock()
-                            {
-                                Text = $"Start Date: {project?.StartDate}"
-                            },
-                            new AdaptiveTextBlock()
-                            {
-                                Text = $"End Date: {project?.EndDate}"
-                            }
-                        }
-                };
-
-                return card2;*/
     }
 }

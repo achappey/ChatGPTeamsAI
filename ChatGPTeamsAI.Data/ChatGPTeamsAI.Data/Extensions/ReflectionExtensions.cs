@@ -36,6 +36,7 @@ internal static class ReflectionExtensions
                 Publisher = publisher,
                 Category = method.GetCustomAttribute<MethodDescriptionAttribute>()?.Category ?? string.Empty,
                 Description = method.GetCustomAttribute<MethodDescriptionAttribute>()?.Description ?? string.Empty,
+                ExportAction = method.GetCustomAttribute<MethodDescriptionAttribute>()?.ExportAction ?? string.Empty,
                 Parameters = functionParameters
             });
         }

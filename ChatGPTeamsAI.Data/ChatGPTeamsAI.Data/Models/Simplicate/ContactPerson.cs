@@ -1,10 +1,34 @@
 
 using System.Text.Json.Serialization;
+using ChatGPTeamsAI.Data.Attributes;
 
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 internal class ContactPerson
 {
+
+    [JsonPropertyName("personFullName")]
+    [ListColumn]
+    public string? PersonName
+    {
+        get
+        {
+            return Person?.FullName;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("organizationName")]
+    [ListColumn]
+    public string? OrganizationName
+    {
+        get
+        {
+            return Organization?.Name;
+        }
+        set { }
+    }
+
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
@@ -14,28 +38,33 @@ internal class ContactPerson
     [JsonPropertyName("person")]
     public PersonContactPerson? Person { get; set; }
 
-    [JsonPropertyName("created_at")]
-    public string? CreatedAt { get; set; }
-
-    [JsonPropertyName("updated_at")]
-    public string? UpdatedAt { get; set; }
-
     [JsonPropertyName("is_active")]
+    [FormColumn]
     public bool IsActive { get; set; }
 
     [JsonPropertyName("work_function")]
+    [ListColumn]
     public string? WorkFunction { get; set; }
 
+    [FormColumn]
     [JsonPropertyName("work_email")]
     public string? WorkEmail { get; set; }
 
     [JsonPropertyName("work_phone")]
+    [FormColumn]
     public string? WorkPhone { get; set; }
 
     [JsonPropertyName("work_mobile")]
+    [FormColumn]
     public string? WorkMobile { get; set; }
 
+    [JsonPropertyName("created_at")]
+    [FormColumn]
+    public string? CreatedAt { get; set; }
 
+    [JsonPropertyName("updated_at")]
+    [FormColumn]
+    public string? UpdatedAt { get; set; }
 }
 
 

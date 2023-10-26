@@ -2,16 +2,19 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using ChatGPTeamsAI.Data.Attributes;
 
 internal class Hour
 {
-
+    [ListColumn]
     [JsonPropertyName("start_date")]
     public string? StartDate { get; set; }
 
+    [ListColumn]
     [JsonPropertyName("hours")]
     public double Hours { get; set; }
 
+    [ListColumn]
     [JsonPropertyName("projectName")]
     public string? ProjectName
     {
@@ -35,12 +38,14 @@ internal class Hour
     public HourProjectService? ProjectService { get; set; }
 
     [JsonPropertyName("status")]
+    [FormColumn]
     public string? Status { get; set; }
 
     [JsonPropertyName("tariff")]
+    [FormColumn]
     public double Tariff { get; set; }
 
-
+    [FormColumn]
     [JsonPropertyName("end_date")]
     public string? EndDate { get; set; }
 

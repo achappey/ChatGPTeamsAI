@@ -7,10 +7,13 @@ internal sealed class MethodDescriptionAttribute : Attribute
 
     public string Category { get; }
 
-    public MethodDescriptionAttribute(string category, string description)
+    public string? ExportAction { get; }
+
+    public MethodDescriptionAttribute(string category, string description, string? exportAction = null)
     {
         Description = description;
         Category = category;
+        ExportAction = exportAction;
     }
 }
 
@@ -27,14 +30,19 @@ internal sealed class ParameterDescriptionAttribute : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-internal class ColumnNameAttribute : Attribute
+internal class ListColumnAttribute : Attribute
 {
-    public string Name { get; set; }
+    public ListColumnAttribute() { }
+}
 
-    public ColumnNameAttribute() { }
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+internal class FormColumnAttribute : Attribute
+{
+    public FormColumnAttribute() { }
+}
 
-    public ColumnNameAttribute(string name)
-    {
-        Name = name;
-    }
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+internal class LinkColumnAttribute : Attribute
+{
+    public LinkColumnAttribute() { }
 }

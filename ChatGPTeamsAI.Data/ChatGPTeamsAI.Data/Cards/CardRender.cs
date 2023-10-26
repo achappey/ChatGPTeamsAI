@@ -44,32 +44,42 @@ internal class CardRenderer : ICardRenderer
 
     public AdaptiveCard DefaultRender(object item)
     {
-
         if (item is IEnumerable<object> itemsList)
         {
-            // Als het een lijst is, roep dan DefaultListRender aan
-            //return DefaultListRender<typeof(item)(itemsList);
 
-            var itemType = item.GetType().GetGenericArguments()[0];
-            // Roep de juiste overload van DefaultListRender aan op basis van het type
-            return (AdaptiveCard)typeof(CardRenderer)
-                .GetMethod("DefaultListRender")
-                .MakeGenericMethod(itemType)
-                .Invoke(this, new object[] { itemsList });
+            if (!itemsList.Any())
+            {
+                return RenderEmptyListCard();
+            }
+
+            return DefaultListRender(itemsList);
         }
         else
         {
-            // Als het een enkel item is, roep dan DefaultItemRender aan
             return DefaultItemRender(item);
         }
     }
+
+    public AdaptiveCard RenderEmptyListCard()
+    {
+        var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
+
+        card.Body.Add(new AdaptiveTextBlock
+        {
+            Text = "No items",
+            Weight = AdaptiveTextWeight.Bolder
+        });
+
+        return card;
+    }
+
 
     public AdaptiveCard DefaultItemRender(object item)
     {
         var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
 
         var typeProperties = item.GetType().GetProperties();
-        var columnProperties = typeProperties.Where(p => p.GetCustomAttribute<ColumnNameAttribute>() != null).ToList();
+        var columnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
 
         if (columnProperties.Count < 5)
         {
@@ -81,11 +91,9 @@ internal class CardRenderer : ICardRenderer
 
         foreach (var property in columnProperties)
         {
-            var columnNameAttribute = property.GetCustomAttribute<ColumnNameAttribute>();
-            var columnName = columnNameAttribute?.Name ?? property.Name;
             var value = property.GetValue(item)?.ToString() ?? " ";
 
-            factSet.Facts.Add(new AdaptiveFact { Title = columnName, Value = value });
+            factSet.Facts.Add(new AdaptiveFact { Title = property.Name, Value = value });
         }
 
         card.Body.Add(factSet);
@@ -93,37 +101,54 @@ internal class CardRenderer : ICardRenderer
         return card;
     }
 
-    public AdaptiveCard DefaultListRender<T>(IEnumerable<object> items)
+    public static AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url)
     {
-        //var enu = items.getE
-        //items as Enumerable
+        // Initialize Adaptive Card
+        AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
+
+        // Create FactSet
+        AdaptiveFactSet factSet = new AdaptiveFactSet();
+        factSet.Facts.Add(new AdaptiveFact("Items", numberOfItems.ToString()));
+
+        // Add FactSet to Card
+        card.Body.Add(factSet);
+
+        // Create URL Action Button
+        AdaptiveOpenUrlAction urlAction = new AdaptiveOpenUrlAction
+        {
+            Title = fileName,
+            Url = new Uri(url)
+        };
+
+        // Add Action to Card
+        card.Actions.Add(urlAction);
+
+        return card;
+    }
+
+    public AdaptiveCard DefaultListRender(IEnumerable<object> items)
+    {
         var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
-        // var columnSet = new AdaptiveColumnSet();
 
-        var typeProperties = typeof(T).GetProperties();
-        var columnProperties = typeProperties.Where(p => p.GetCustomAttribute<ColumnNameAttribute>() != null).ToList();
+        var typeProperties = items.First().GetType().GetProperties();
+        var columnProperties = typeProperties.Where(p => p.GetCustomAttribute<ListColumnAttribute>() != null).ToList();
 
-        // Als er geen eigenschappen zijn met het ColumnNameAttribute, neem dan de eerste drie eigenschappen
         if (!columnProperties.Any())
         {
             columnProperties = typeProperties.Take(3).ToList();
         }
 
-        var columnSet = new AdaptiveColumnSet();
+        var columnSetHeader = new AdaptiveColumnSet();
 
-        // Voeg eerst de kolommen en hun koppen toe
         foreach (var property in columnProperties)
         {
-            var columnNameAttribute = property.GetCustomAttribute<ColumnNameAttribute>();
-            var columnName = columnNameAttribute != null && !string.IsNullOrEmpty(columnNameAttribute.Name) ? columnNameAttribute.Name : property.Name;
-
-            columnSet.Columns.Add(new AdaptiveColumn
+            columnSetHeader.Columns.Add(new AdaptiveColumn
             {
                 Items =
         {
             new AdaptiveTextBlock
             {
-                Text = columnName,
+                Text = property.Name,
                 IsSubtle = true,
                 Weight = AdaptiveTextWeight.Bolder
             }
@@ -131,17 +156,35 @@ internal class CardRenderer : ICardRenderer
             });
         }
 
-        // Voeg vervolgens de gegevens toe voor elk item in de lijst
+        columnSetHeader.Columns.Add(new AdaptiveColumn { Width = "auto" });
+        card.Body.Add(columnSetHeader);
+
         bool isFirstItem = true;
+        int toggleId = 1;
+
+        var formColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
+        var linkColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null).ToList();
+
+        if (!formColumnProperties.Any())
+        {
+            formColumnProperties = typeProperties.Take(5).ToList();
+        }
 
         foreach (var item in items)
         {
+            var columnSetItem = new AdaptiveColumnSet();
+
+            for (int i = 0; i < columnProperties.Count; i++)
+            {
+                columnSetItem.Columns.Add(new AdaptiveColumn());
+            }
+
             for (int i = 0; i < columnProperties.Count; i++)
             {
                 var propertyValue = columnProperties[i].GetValue(item)?.ToString();
                 var text = !string.IsNullOrEmpty(propertyValue) ? propertyValue : " ";
 
-                columnSet.Columns[i].Items.Add(new AdaptiveTextBlock
+                columnSetItem.Columns[i].Items.Add(new AdaptiveTextBlock
                 {
                     Text = text,
                     IsSubtle = true,
@@ -150,11 +193,81 @@ internal class CardRenderer : ICardRenderer
             }
 
             isFirstItem = false;
-        }
 
-        card.Body.Add(columnSet);
+            columnSetItem.Columns.Add(new AdaptiveColumn
+            {
+                Width = "auto",
+                Items = new List<AdaptiveElement>() {
+                         new  AdaptiveImage
+                        {
+                            Id = $"chevronDown{toggleId}",
+                            Url = new Uri("https://adaptivecards.io/content/down.png"),
+                            PixelWidth = 20
+                        }
+                        },
+                SelectAction = new AdaptiveToggleVisibilityAction
+                {
+                    TargetElements = new List<AdaptiveTargetElement> { new AdaptiveTargetElement($"cardContent{toggleId}") }
+                }
+            });
+
+            var toggleContainer = new AdaptiveContainer
+            {
+                Id = $"cardContent{toggleId}",
+                IsVisible = false,
+            };
+
+            var factSet = new AdaptiveFactSet();
+
+            foreach (var property in formColumnProperties)
+            {
+                var value = property.GetValue(item)?.ToString() ?? " ";
+
+                factSet.Facts.Add(new AdaptiveFact
+                {
+                    Title = property.Name,
+                    Value = value
+                });
+            }
+
+            toggleContainer.Items.Add(factSet);
+
+            var columnSet = new AdaptiveColumnSet();
+
+            foreach (var linkColumns in linkColumnProperties)
+            {
+                var value = linkColumns.GetValue(item)?.ToString() ?? null;
+
+                if (!string.IsNullOrEmpty(value))
+                {
+                    if (!value.StartsWith("http"))
+                    {
+                        value = $"https://{value}";
+                    }
+
+                    columnSet.Columns.Add(new AdaptiveColumn()
+                    {
+                        Items = new List<AdaptiveElement>() {
+                            new AdaptiveTextBlock
+                                {
+                                    Text = linkColumns.Name
+                                }
+                        },
+                        SelectAction = new AdaptiveOpenUrlAction
+                        {
+                            Url = new Uri(value),
+                        }
+                    });
+                }
+            }
+
+            toggleContainer.Items.Add(columnSet);
+            card.Body.Add(columnSetItem);
+            card.Body.Add(toggleContainer);
+
+            toggleId++;
+        }
 
         return card;
     }
-
 }

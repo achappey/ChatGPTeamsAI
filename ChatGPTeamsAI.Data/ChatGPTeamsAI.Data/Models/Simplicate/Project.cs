@@ -20,23 +20,26 @@ internal class Project
     public OrganizationProject? OrganizationDetails { get; set; }
 
     [JsonPropertyName("project_number")]
-    [ColumnName]
+    [ListColumn]
     public string? ProjectNumber { get; set; }
 
     [JsonPropertyName("billable")]
+    [FormColumn]
     public bool Billable { get; set; }
 
     [JsonPropertyName("start_date")]
+    [FormColumn]
     public string? StartDate { get; set; }
 
+    [FormColumn]
     [JsonPropertyName("end_date")]
     public string? EndDate { get; set; }
 
-    [ColumnName]
+    [ListColumn]
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 
-    [ColumnName]
+    [ListColumn]
     [JsonPropertyName("projectManagerName")]
     public string? ProjectManagerName
     {
@@ -48,11 +51,12 @@ internal class Project
     }
 
     [JsonPropertyName("note")]
+    [FormColumn]
     public string? Note { get; set; }
 
-
     [JsonPropertyName("simplicate_url")]
-    public string? SimplicateUrl { get; set; }
+    [LinkColumn]
+    public string? Simplicate { get; set; }
 }
 
 internal class OrganizationProject

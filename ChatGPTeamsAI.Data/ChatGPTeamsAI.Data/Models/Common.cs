@@ -17,6 +17,7 @@ internal class ChatGPTeamsAIClientResponse
     public Input.Action? ExecutedAction { get; set; }
     public Input.Action? NextPageAction { get; set; }
     public Input.Action? PreviousPageAction { get; set; }
+    public Input.Action? ExportPageAction { get; set; }
     public AdaptiveCard? DataCard { get; set; }
     public int? TotalItems { get; set; }
     public int? TotalPages { get; set; }

@@ -4,7 +4,6 @@ public class ActionResponse
 {
     public string? Data { get; set; }
     public string? Error { get; set; }
-    public string? PagingCard { get; set; }
     public string? DataCard { get; set; }
     public Input.Action? ExecutedAction { get; set; }
 }
@@ -15,6 +14,7 @@ public class ActionDescription
     public required string Category { get; set; }
     public required string Description { get; set; }
     public required string Publisher { get; set; }
+    public string? ExportAction { get; set; }
     public Parameters? Parameters { get; set; }
 }
 
