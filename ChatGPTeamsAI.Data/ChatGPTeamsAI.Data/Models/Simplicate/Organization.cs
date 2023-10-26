@@ -5,9 +5,6 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 internal class Organization
 {
-    [JsonPropertyName("id")]
-    public string? Id { get; set; }
-
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 
@@ -16,6 +13,9 @@ internal class Organization
 
     [JsonPropertyName("phone")]
     public string? Phone { get; set; }
+
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
 
     [JsonPropertyName("coc_code")]
     public string? CocCode { get; set; }

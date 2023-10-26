@@ -6,20 +6,20 @@ using System.Text.Json.Serialization;
 
 internal class Quote
 {
-    [JsonPropertyName("id")]
-    public string? Id { get; set; }
-
     [JsonPropertyName("quote_number")]
     public string? QuoteNumber { get; set; }
 
     [JsonPropertyName("quote_date")]
     public string? QuoteDate { get; set; }
 
-    [JsonPropertyName("quotestatus")]
-    public QuoteStatus? QuoteStatus { get; set; }
-
     [JsonPropertyName("quote_subject")]
     public string? QuoteSubject { get; set; }
+
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [JsonPropertyName("quotestatus")]
+    public QuoteStatus? QuoteStatus { get; set; }
 
     [JsonPropertyName("customer_reference")]
     public string? CustomerReference { get; set; }

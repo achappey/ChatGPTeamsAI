@@ -6,6 +6,29 @@ using System.Text.Json.Serialization;
 
 internal class Sales
 {
+    [JsonPropertyName("subject")]
+    public string? Subject { get; set; }
+
+    [JsonPropertyName("responsibleEmployeeName")]
+    public string? ResponsibleEmployeeName
+    {
+        get
+        {
+            return ResponsibleEmployee?.Name;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("organizationName")]
+    public string? OrganizationeName
+    {
+        get
+        {
+            return Organization?.Name;
+        }
+        set { }
+    }
+
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
@@ -20,9 +43,6 @@ internal class Sales
 
     [JsonPropertyName("status")]
     public Status? Status { get; set; }
-
-    [JsonPropertyName("subject")]
-    public string? Subject { get; set; }
 
     [JsonPropertyName("simplicate_url")]
     public string? SimplicateUrl { get; set; }

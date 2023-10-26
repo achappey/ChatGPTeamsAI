@@ -8,17 +8,17 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 internal class Person
 {
     
-    [JsonPropertyName("id")]
-    public string? Id { get; set; }
-
     [JsonPropertyName("full_name")]
     public string? FullName { get; set; }
 
     public string? Email { get; set; }
 
-    public string? Initials { get; set; }
-
     public string? Phone { get; set; }
+
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    public string? Initials { get; set; }
 
     [JsonPropertyName("linkedin_url")]
     public string? LinkedinUrl { get; set; }

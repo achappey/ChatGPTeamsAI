@@ -4,8 +4,6 @@ using System.Text.Json.Serialization;
 
 internal class Proposition
 {
-    [JsonPropertyName("id")]
-    public string? Id { get; set; }
 
     [JsonPropertyName("total_hours")]
     public double TotalHours { get; set; }
@@ -33,6 +31,9 @@ internal class Proposition
 
     [JsonPropertyName("project")]
     public PropositionProject? Project { get; set; }
+
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
 
 }
 
