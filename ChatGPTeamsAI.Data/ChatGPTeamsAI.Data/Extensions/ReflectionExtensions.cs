@@ -115,7 +115,7 @@ internal static class ReflectionExtensions
 
                     var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                     {
-                        Delimiter = ";"
+                        //Delimiter = ";"
                     };
 
                     using (var writer = new StringWriter())
