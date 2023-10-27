@@ -11,13 +11,13 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("Projects", "Search for projects", "ExportProjects")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchProjects(
-            [ParameterDescription("The project name.")] string? projectName = null,
-            [ParameterDescription("The project manager's name.")] string? projectManager = null,
-            [ParameterDescription("Project status label.")] string? projectStatusLabel = null,
-            [ParameterDescription("Organization name.")] string? organizationName = null,
-            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
-            [ParameterDescription("Project number.")] string? projectNumber = null,
-            [ParameterDescription("The page number.")] long pageNumber = 1)
+            [ParameterDescription("The project name")] string? projectName = null,
+            [ParameterDescription("The project manager's name")] string? projectManager = null,
+            [ParameterDescription("Project status label")] string? projectStatusLabel = null,
+            [ParameterDescription("Organization name")] string? organizationName = null,
+            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
+            [ParameterDescription("Project number")] string? projectNumber = null,
+            [ParameterDescription("The page number")] long pageNumber = 1)
         {
             createdAfter?.EnsureValidDateFormat();
 

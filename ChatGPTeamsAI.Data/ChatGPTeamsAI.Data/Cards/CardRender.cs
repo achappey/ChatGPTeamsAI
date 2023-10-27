@@ -101,7 +101,7 @@ internal class CardRenderer : ICardRenderer
         return card;
     }
 
-    public static AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url, string name, IDictionary<string, object>? entities = null)
+    public static AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url, string name)
     {
         AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
 
@@ -112,24 +112,7 @@ internal class CardRenderer : ICardRenderer
             Size = AdaptiveTextSize.Large
         });
 
-        if (entities != null)
-        {
-            AdaptiveFactSet entityFactSet = new AdaptiveFactSet();
-
-            foreach (var entity in entities)
-            {
-                if (entity.Value != null && !string.IsNullOrEmpty(entity.Value.ToString()))
-                {
-                    entityFactSet.Facts.Add(new AdaptiveFact(entity.Key, entity.Value.ToString()));
-                }
-
-            }
-
-            card.Body.Add(entityFactSet);
-
-        }
-
-        AdaptiveFactSet factSet = new AdaptiveFactSet() { Separator = true };
+        AdaptiveFactSet factSet = new AdaptiveFactSet();
         factSet.Facts.Add(new AdaptiveFact("Items", numberOfItems.ToString()));
         factSet.Facts.Add(new AdaptiveFact("Filename", fileName));
         card.Body.Add(factSet);
@@ -273,6 +256,7 @@ internal class CardRenderer : ICardRenderer
         var factSet = new AdaptiveFactSet();
 
         var formColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
+
         if (!formColumnProperties.Any())
         {
             formColumnProperties = typeProperties.Take(5).ToList();

@@ -84,7 +84,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         {
             ExecutedAction = clientResponse.ExecutedAction,
             Data = clientResponse.Data,
-            DataCard = CardRenderer.CreateExportCard(clientResponse.TotalItems.Value, filename, webUrl, clientResponse.ExecutedAction.Name, clientResponse.ExecutedAction.Entities)?.ToJson()
+            DataCard = CardRenderer.CreateExportCard(clientResponse.TotalItems.Value, filename, webUrl, clientResponse.ExecutedAction.Name)?.ToJson()
         };
     }
 

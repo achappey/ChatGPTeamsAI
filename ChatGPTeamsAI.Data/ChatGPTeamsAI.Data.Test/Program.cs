@@ -7,7 +7,8 @@ Console.WriteLine("ChatGPTeamsAIData Test");
 
 Settings? settings = ConfigurationExtensions.LoadSettings();
 
-if(settings == null) {
+if (settings == null)
+{
     throw new Exception("Settings missing");
 }
 
@@ -16,6 +17,8 @@ IChatGPTeamsAIData chatGPTeamsAIData = new ChatGPTeamsAIData(settings.ChatGPTeam
 Console.WriteLine("Would you like to test:");
 Console.WriteLine("1. All actions");
 Console.WriteLine("2. Actions in config/settings only");
+Console.WriteLine("3. All Simplicate actions");
+Console.WriteLine("4. All Microsoft actions");
 string choice = Console.ReadLine();
 
 Console.WriteLine("Retrieving actions...");
@@ -28,7 +31,19 @@ Dictionary<ActionDescription, ActionResponse> errors = new Dictionary<ActionDesc
 
 foreach (var action in availableActions)
 {
-     if (choice == "2" && (settings.ActionEntities == null || !settings.ActionEntities.ContainsKey(action.Name)))
+    if (choice == "2" && (settings.ActionEntities == null || !settings.ActionEntities.ContainsKey(action.Name)))
+    {
+        Console.WriteLine($"Skipping action: {action.Name}");
+        continue;
+    }
+
+    if (choice == "3" && (action.Publisher == "Microsoft 365" || action.Name.StartsWith("Export")))
+    {
+        Console.WriteLine($"Skipping action: {action.Name}");
+        continue;
+    }
+
+    if (choice == "4" && (action.Publisher == "Simplicate"))
     {
         Console.WriteLine($"Skipping action: {action.Name}");
         continue;

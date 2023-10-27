@@ -15,8 +15,9 @@ internal class Invoice
     [ListColumn]
     public string? Date { get; set; }
 
-    [JsonPropertyName("organizationName")]
+    [FormColumn]
     [ListColumn]
+    [JsonPropertyName("organizationName")]
     public string? OrganizationName
     {
         get
@@ -37,6 +38,17 @@ internal class Invoice
         set { }
     }
 
+    [JsonPropertyName("statusName")]
+    [FormColumn]
+    public string? StatusName
+    {
+        get
+        {
+            return Status?.Name;
+        }
+        set { }
+    }
+
     [JsonPropertyName("status")]
     public InvoiceStatus Status { get; set; } = null!;
 
@@ -45,7 +57,7 @@ internal class Invoice
 
     [JsonPropertyName("simplicate_url")]
     [LinkColumn]
-    public string? SimplicateUrl { get; set; } = null!;
+    public string? Simplicate { get; set; } = null!;
 
     [JsonPropertyName("myOrganizationName")]
     [FormColumn]
@@ -75,6 +87,10 @@ internal class Invoice
     [FormColumn]
     public string? Comments { get; set; }
 
+    [JsonPropertyName("total_excluding_vat")]
+    [FormColumn]
+    public double? TotalExcludingVat { get; set; }
+
 
 }
 
@@ -92,7 +108,7 @@ internal class MyOrganizationInvoice
 
 internal class InvoiceStatus
 {
-
+    [ListColumn]
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 
@@ -118,6 +134,7 @@ internal class PersonInvoice
 
 internal class PaymentTerm
 {
+    [ListColumn]
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 

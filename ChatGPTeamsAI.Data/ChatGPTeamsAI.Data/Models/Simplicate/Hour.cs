@@ -25,6 +25,17 @@ internal class Hour
         set { }
     }
 
+    [FormColumn]
+    [JsonPropertyName("employeeName")]
+    public string? EmployeeName
+    {
+        get
+        {
+            return Employee?.Name;
+        }
+        set { }
+    }
+
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
@@ -95,12 +106,14 @@ internal class HoursType
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
+    [ListColumn]
     [JsonPropertyName("label")]
     public string? Label { get; set; }
 
     [JsonPropertyName("tariff")]
     public string? Tariff { get; set; }
 
+    [ListColumn]
     [JsonPropertyName("color")]
     public string? Color { get; set; }
 

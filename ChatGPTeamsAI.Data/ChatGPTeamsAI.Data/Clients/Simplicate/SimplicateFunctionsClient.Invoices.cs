@@ -1,5 +1,4 @@
-﻿using System.Web;
-using ChatGPTeamsAI.Data.Attributes;
+﻿using ChatGPTeamsAI.Data.Attributes;
 using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Simplicate;
@@ -77,7 +76,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             dateBefore?.EnsureValidDateFormat();
             createdAfter?.EnsureValidDateFormat();
         }
-
+/*
         [MethodDescription("Invoices", "Gets expired invoices using multiple filters")]
         public async Task<ChatGPTeamsAIClientResponse?> GetExpiredInvoices(
             [ParameterDescription("The invoice number.")] string? invoiceNumber = null,
@@ -108,7 +107,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             };
 
             return ToChatGPTeamsAIResponse(result);
-        }
+        }*/
 
         [MethodDescription("Invoices", "Search for invoice propositions")]
         public async Task<ChatGPTeamsAIClientResponse?> GetPropositions(

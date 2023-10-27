@@ -47,7 +47,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                    ActionDescription action,
                    string pageNumberPropertyName = "pageNumber")
         {
-            if (action.ExportAction == null)
+            if (string.IsNullOrEmpty(action.ExportAction))
             {
                 return null;
             }

@@ -61,7 +61,6 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         }
 
 
-        // New function for creating employee filters
         private Dictionary<string, string> CreateEmployeeFilters(
             string? employeeName,
             string? function,
@@ -73,7 +72,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(function)) filters["[function]"] = $"*{function}*";
             if (!string.IsNullOrEmpty(employmentStatus)) filters["[employment_status]"] = $"*{employmentStatus}*";
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
-            
+
             return filters;
         }
 
@@ -132,7 +131,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("Export", "Exports a list of employee absences")]
         public async Task<ChatGPTeamsAIClientResponse?> ExportAbsences(
-                 [ParameterDescription("Employee name")] string? employeeName = null,
+                [ParameterDescription("Employee name")] string? employeeName = null,
                 [ParameterDescription("Year")] int? year = null,
                 [ParameterDescription("Absence type name")] string? absenceTypeName = null)
         {
@@ -151,6 +150,53 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             return ToChatGPTeamsAIResponse(result);
         }
+
+        private Dictionary<string, string> CreateTimeTableFilters(
+            string? employeeName = null,
+            string? startDateAfter = null,
+            string? endDateBefore = null)
+        {
+            var filters = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(employeeName)) filters["[employee.name]"] = $"*{employeeName}*";
+            if (!string.IsNullOrEmpty(startDateAfter)) filters["[start_date][ge]"] = startDateAfter;
+            if (!string.IsNullOrEmpty(endDateBefore)) filters["[end_date][le]"] = endDateBefore;
+            return filters;
+        }
+
+
+        [MethodDescription("HRM", "Search for timetables", "ExportTimeTables")]
+        public async Task<ChatGPTeamsAIClientResponse?> SearchTimetables(
+            [ParameterDescription("Employee name")] string? employeeName = null,
+            [ParameterDescription("Start date at or after (format: yyyy-MM-dd HH:mm:ss)")] string? startDateAfter = null,
+            [ParameterDescription("End date at or before (format: yyyy-MM-dd HH:mm:ss)")] string? endDateBefore = null,
+            [ParameterDescription("The page number")] long pageNumber = 1)
+        {
+            startDateAfter?.EnsureValidDateFormat();
+            endDateBefore?.EnsureValidDateFormat();
+
+            var filters = CreateTimeTableFilters(employeeName, startDateAfter, endDateBefore);
+
+            var result = await FetchSimplicateDataCollection<Timetable>(filters, "hrm/timetable", pageNumber);
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+        [MethodDescription("Export", "Exports a list of timetables")]
+        public async Task<ChatGPTeamsAIClientResponse?> ExportTimetables(
+            [ParameterDescription("Employee name")] string? employeeName = null,
+            [ParameterDescription("Start date at or after (format: yyyy-MM-dd HH:mm:ss)")] string? startDateAfter = null,
+            [ParameterDescription("End date at or before (format: yyyy-MM-dd HH:mm:ss)")] string? startDateBefore = null,
+            [ParameterDescription("The page number")] long pageNumber = 1)
+        {
+            startDateAfter?.EnsureValidDateFormat();
+            startDateBefore?.EnsureValidDateFormat();
+
+            var filters = CreateTimeTableFilters(employeeName, startDateAfter, startDateBefore);
+
+            var result = await FetchSimplicateDataCollection<Timetable>(filters, "hrm/timetable", pageNumber);
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
 
     }
 }

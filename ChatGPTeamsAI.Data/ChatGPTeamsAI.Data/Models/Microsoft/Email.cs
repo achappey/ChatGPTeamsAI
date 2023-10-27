@@ -25,7 +25,7 @@ internal class Email
         }
         set { }
     }
-/*
+
     [FormColumn]
     public string? Content
     {
@@ -34,13 +34,13 @@ internal class Email
             return Body?.Content;
         }
         set { }
-    }*/
+    }
 
     public Recipient? From { get; set; }
 
     public DateTimeOffset? ReceivedDateTime { get; set; }
 
-   // public ItemBody? Body { get; set; }
+    public ItemBody? Body { get; set; }
 
 }
 

@@ -16,6 +16,7 @@ internal class Quote
     public string? QuoteDate { get; set; }
 
     [ListColumn]
+    [FormColumn]
     [JsonPropertyName("quote_subject")]
     public string? QuoteSubject { get; set; }
 

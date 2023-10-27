@@ -33,6 +33,17 @@ internal class Sales
         set { }
     }
 
+    [JsonPropertyName("statusLabel")]
+    [ListColumn]
+    public string? StatusLabel
+    {
+        get
+        {
+            return Status?.Label;
+        }
+        set { }
+    }
+
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
@@ -42,7 +53,7 @@ internal class Sales
 
     [JsonPropertyName("chance_to_score")]
     [FormColumn]
-    public string? ChanceToScore { get; set; }
+    public double? ChanceToScore { get; set; }
 
     [JsonPropertyName("responsible_employee")]
     public SalesEmployee? ResponsibleEmployee { get; set; }
@@ -64,6 +75,14 @@ internal class Sales
     [FormColumn]
     public string? EndDate { get; set; }
 
+    [JsonPropertyName("expected_closing_date")]
+    [FormColumn]
+    public string? ExpectedClosingDate { get; set; }
+
+    [JsonPropertyName("status_updated_at")]
+    [FormColumn]
+    public string? StatusUpdatedAt { get; set; }
+
     [JsonPropertyName("created_at")]
     [FormColumn]
     public string? CreatedAt { get; set; }
@@ -78,7 +97,7 @@ internal class Sales
 
     [JsonPropertyName("simplicate_url")]
     [LinkColumn]
-    public string? SimplicateUrl { get; set; }
+    public string? Simplicate { get; set; }
 
 }
 
@@ -124,6 +143,7 @@ internal class RevenueGroup
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
+    [ListColumn]
     [JsonPropertyName("label")]
     public string? Label { get; set; }
 }

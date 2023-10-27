@@ -79,7 +79,7 @@ internal class Organization
 
     [JsonPropertyName("simplicate_url")]
     [LinkColumn]
-    public string? SimplicateUrl { get; set; }
+    public string? Simplicate { get; set; }
 
 }
 
@@ -98,6 +98,7 @@ internal class Industry
     public string? Id { get; set; }
 
     [JsonPropertyName("name")]
+    [ListColumn]
     public string? Name { get; set; }
 }
 
@@ -129,12 +130,15 @@ internal class RelationType
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
+    [ListColumn]
     [JsonPropertyName("label")]
     public string? Label { get; set; }
 
     [JsonPropertyName("color")]
+    [ListColumn]
     public string? Color { get; set; }
 
     [JsonPropertyName("type")]
+    [ListColumn]
     public string? Type { get; set; }
 }
