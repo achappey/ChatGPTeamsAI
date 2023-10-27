@@ -115,7 +115,8 @@ internal static class ReflectionExtensions
 
                     var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                     {
-                        ShouldQuote = (args) => true
+                        ShouldQuote = (args) => true,
+                        Quote = '\"'
                     };
 
                     using var writer = new StringWriter();
