@@ -57,6 +57,26 @@ internal class Organization
         set { }
     }
 
+    [LinkColumn]
+    public string? SendMail
+    {
+        get
+        {
+            return !string.IsNullOrEmpty(Email) ? $"mailto:{Email}" : null;
+        }
+        set { }
+    }
+
+    [LinkColumn]
+    public string? Call
+    {
+        get
+        {
+            return !string.IsNullOrEmpty(Phone) ? $"tel:{Phone}" : null;
+        }
+        set { }
+    }
+
     [JsonPropertyName("simplicate_url")]
     [LinkColumn]
     public string? SimplicateUrl { get; set; }

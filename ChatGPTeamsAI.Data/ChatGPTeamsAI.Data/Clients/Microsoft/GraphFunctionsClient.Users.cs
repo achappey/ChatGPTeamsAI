@@ -7,8 +7,8 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 {
     internal partial class GraphFunctionsClient
     {
-        [MethodDescription("Users", "Searches for members based on department, display name or mail")]
-        public async Task<ChatGPTeamsAIClientResponse?> SearchMembers([ParameterDescription("The department to filter on")] string? department = null,
+        [MethodDescription("Users", "Searches for users based on department, display name or mail")]
+        public async Task<ChatGPTeamsAIClientResponse?> SearchUsers([ParameterDescription("The department to filter on")] string? department = null,
                                                                         [ParameterDescription("The display name to filter on")] string? displayName = null,
                                                                         [ParameterDescription("The mail to filter on")] string? mail = null,
                                                                         [ParameterDescription("The next page skip token")] string? skipToken = null)

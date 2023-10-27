@@ -166,7 +166,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(items.Select(_mapper.Map<Models.Microsoft.TeamsChat>));
         }
 
-        [MethodDescription("Me", "Changes the password of the current user")]
+        [MethodDescription("Security", "Changes the password of the current user")]
         public async Task<ChatGPTeamsAIClientResponse?> ChangeMyPassword(
             [ParameterDescription("The new password")] string newPassword,
             [ParameterDescription("The current password")] string currentPassword)
@@ -184,7 +184,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             };
         }
 
-        [MethodDescription("Me", "Retrieves the profile of the current user")]
+        [MethodDescription("Users", "Retrieves the profile of the current user")]
         public async Task<ChatGPTeamsAIClientResponse?> MyProfile()
         {
 
@@ -193,7 +193,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.User>(me));
         }
 
-        [MethodDescription("Me", "Retrieves information about the current user's manager")]
+        [MethodDescription("Users", "Retrieves information about the current user's manager")]
         public async Task<ChatGPTeamsAIClientResponse?> MyManager()
         {
 

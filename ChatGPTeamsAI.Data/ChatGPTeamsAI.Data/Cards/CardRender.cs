@@ -1,6 +1,7 @@
 using System.Reflection;
 using AdaptiveCards;
 using ChatGPTeamsAI.Data.Attributes;
+using Microsoft.Graph;
 
 namespace ChatGPTeamsAI.Cards;
 
@@ -225,10 +226,35 @@ internal class CardRenderer : ICardRenderer
         columnSetItem.Columns.Add(new AdaptiveColumn
         {
             Width = "auto",
-            Items = { new AdaptiveImage { Id = $"chevronDown{toggleId}", Url = new Uri("https://adaptivecards.io/content/down.png"), PixelWidth = 20 } },
-            SelectAction = new AdaptiveToggleVisibilityAction { TargetElements = new List<AdaptiveTargetElement> { new AdaptiveTargetElement($"cardContent{toggleId}") } }
+            Items =
+        {
+            new AdaptiveImage
+            {
+                Id = $"chevronDown{toggleId}",
+                Url = new Uri("https://adaptivecards.io/content/down.png"),
+                PixelWidth = 20,
+                IsVisible = true // Initially set to true
+            },
+            new AdaptiveImage
+            {
+                Id = $"chevronUp{toggleId}",
+                Url = new Uri("https://adaptivecards.io/content/up.png"),
+                PixelWidth = 20,
+                IsVisible = false // Initially set to false
+            }
+        },
+            SelectAction = new AdaptiveToggleVisibilityAction
+            {
+                TargetElements = new List<AdaptiveTargetElement>
+            {
+                new AdaptiveTargetElement($"cardContent{toggleId}"),
+                new AdaptiveTargetElement($"chevronDown{toggleId}"),
+                new AdaptiveTargetElement($"chevronUp{toggleId}")
+            }
+            }
         });
     }
+
 
     private AdaptiveContainer CreateToggleContainer(PropertyInfo[] typeProperties, object item, int toggleId)
     {
@@ -248,6 +274,40 @@ internal class CardRenderer : ICardRenderer
         }
 
         toggleContainer.Items.Add(factSet);
+
+        var linkColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null).ToList();
+        var columnSet = new AdaptiveColumnSet();
+
+        foreach (var linkColumns in linkColumnProperties)
+        {
+            var value = linkColumns.GetValue(item)?.ToString() ?? null;
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                if (!value.StartsWith("http") && !value.StartsWith("mailto:") && !value.StartsWith("tel:"))
+                {
+                    value = $"https://{value}";
+                }
+
+                columnSet.Columns.Add(new AdaptiveColumn()
+                {
+                    Items = new List<AdaptiveElement>() {
+                            new AdaptiveTextBlock
+                                {
+                                    Text = linkColumns.Name,
+                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right
+                                }
+                        },
+                    SelectAction = new AdaptiveOpenUrlAction
+                    {
+                        Url = new Uri(value),
+                    }
+                });
+            }
+        }
+
+        toggleContainer.Items.Add(columnSet);
+
         return toggleContainer;
     }
 

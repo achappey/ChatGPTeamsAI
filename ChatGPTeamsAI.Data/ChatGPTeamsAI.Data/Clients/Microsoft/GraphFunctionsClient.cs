@@ -17,7 +17,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         private const int PAGESIZE = 5;
 
-        public const string MICROSOFT = "Microsoft";
+        public const string MICROSOFT = "Microsoft 365";
 
         public GraphFunctionsClient(string token)
         {
@@ -169,7 +169,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
             return new ChatGPTeamsAIClientResponse()
             {
-                Data = dataCard == null ? response?.RenderData() : null,
+                Data = response?.RenderData(),
                 DataCard = dataCard,
                 Type = typeof(T).ToString(),
                 Properties = properties

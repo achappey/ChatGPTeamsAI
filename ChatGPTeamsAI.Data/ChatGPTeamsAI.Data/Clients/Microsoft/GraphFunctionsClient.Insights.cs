@@ -8,7 +8,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
     internal partial class GraphFunctionsClient
     {
 
-        [MethodDescription("Me", "Gets trending documents for the current user.")]
+        [MethodDescription("Documents", "Gets trending documents for the current user.")]
         public async Task<ChatGPTeamsAIClientResponse?> GetMyTrendingDocuments(
             [ParameterDescription("The type of the resource.")] ResourceType? resourceType = null)
         {
@@ -27,7 +27,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(items);
         }
 
-        [MethodDescription("Me", "Gets used documents for the current user.")]
+        [MethodDescription("Documents", "Gets used documents for the current user.")]
         public async Task<ChatGPTeamsAIClientResponse?> GetMyUsedDocuments(
             [ParameterDescription("The type of the resource.")] ResourceType? resourceType = null)
         {
@@ -44,7 +44,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(items);
         }
 
-        [MethodDescription("Me", "Gets documents shared with the current user.")]
+        [MethodDescription("Documents", "Gets documents shared with the current user.")]
         public async Task<ChatGPTeamsAIClientResponse?> GetDocumentsSharedWithMe(
             [ParameterDescription("The type of the resource.")] ResourceType? resourceType = null)
         {

@@ -51,9 +51,7 @@ internal class Person
     [FormColumn]
     public string? RelationNumber { get; set; }
 
-    [JsonPropertyName("simplicate_url")]
-    [LinkColumn]
-    public string? Simplicate { get; set; }
+
 
     [JsonPropertyName("relationManagerName")]
     [FormColumn]
@@ -65,6 +63,30 @@ internal class Person
         }
         set { }
     }
+
+    [LinkColumn]
+    public string? SendMail
+    {
+        get
+        {
+            return !string.IsNullOrEmpty(Email) ? $"mailto:{Email}" : null;
+        }
+        set { }
+    }
+
+    [LinkColumn]
+    public string? Call
+    {
+        get
+        {
+            return !string.IsNullOrEmpty(Phone) ? $"tel:{Phone}" : null;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("simplicate_url")]
+    [LinkColumn]
+    public string? Simplicate { get; set; }
 
     [JsonPropertyName("relation_manager")]
     public RelationManager? RelationManager { get; set; }

@@ -26,7 +26,8 @@ internal class MicrosoftProfile : Profile
         CreateMap<Microsoft.Graph.Site, Models.Microsoft.Site>();
         CreateMap<Microsoft.Graph.ChatMessage, Models.Microsoft.ChatMessage>();
         CreateMap<Microsoft.Graph.ItemBody, Models.Microsoft.ItemBody>();
-        CreateMap<Microsoft.Graph.ChatMessageFromIdentitySet, Models.Microsoft.ChatMessageFromIdentitySet>();
+        CreateMap<Microsoft.Graph.ChatMessageFromIdentitySet, Models.Microsoft.IdentitySet>();
+        CreateMap<Microsoft.Graph.IdentitySet, Models.Microsoft.IdentitySet>();
         CreateMap<Microsoft.Graph.Identity, Models.Microsoft.Identity>();
         CreateMap<Microsoft.Graph.SearchHit, Models.Microsoft.SearchHit>();
         CreateMap<Microsoft.Graph.DriveItem, Models.Microsoft.Resource>();

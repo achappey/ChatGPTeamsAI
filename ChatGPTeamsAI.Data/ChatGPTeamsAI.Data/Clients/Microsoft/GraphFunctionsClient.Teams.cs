@@ -113,7 +113,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(SuccessResponse());
         }
 
-        [MethodDescription("Team", "Gets details about a specific team, like channel names, team members, etc")]
+        [MethodDescription("Teams", "Gets details about a specific team, like channel names, team members, etc")]
         public async Task<ChatGPTeamsAIClientResponse?> GetTeam(
             [ParameterDescription("The ID of the team.")] string teamId)
         {
