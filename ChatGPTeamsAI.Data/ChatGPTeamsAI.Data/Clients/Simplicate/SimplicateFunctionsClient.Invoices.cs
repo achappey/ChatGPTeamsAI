@@ -8,7 +8,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 {
     internal partial class SimplicateFunctionsClient
     {
-        [MethodDescription("Invoices", "Search for invoices")]
+        [MethodDescription("Invoices", "Search for invoices", "ExportInvoices")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchInvoices(
             [ParameterDescription("Invoice number")] string? invoiceNumber = null,
             [ParameterDescription("Name of the invoice company")] string? organizationName = null,
@@ -18,10 +18,46 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateBefore = null,
             [ParameterDescription("Page number")] long pageNumber = 1)
         {
-            dateAfter?.EnsureValidDateFormat();
-            dateBefore?.EnsureValidDateFormat();
-            createdAfter?.EnsureValidDateFormat();
+            ValidateInvoiceFilters(createdAfter, dateAfter, dateBefore);
 
+            var filters = CreateInvoiceFilters(invoiceNumber, organizationName, myOrganizationProfileName, createdAfter, dateAfter, dateBefore);
+            var result = await FetchSimplicateDataCollection<Invoice>(filters, "invoices/invoice", pageNumber);
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+
+        [MethodDescription("Export", "Exports a list of invoices")]
+        public async Task<ChatGPTeamsAIClientResponse?> ExportInvoices(
+            [ParameterDescription("Invoice number")] string? invoiceNumber = null,
+            [ParameterDescription("Name of the invoice company")] string? organizationName = null,
+            [ParameterDescription("Name of the invoicer company")] string? myOrganizationProfileName = null,
+            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
+            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateAfter = null,
+            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateBefore = null)
+        {
+            ValidateInvoiceFilters(createdAfter, dateAfter, dateBefore);
+
+            var filters = CreateInvoiceFilters(invoiceNumber, organizationName, myOrganizationProfileName, createdAfter, dateAfter, dateBefore);
+            var queryString = BuildQueryString(filters);
+            var response = await _httpClient.PagedRequest<Invoice>($"invoices/invoice?{queryString}");
+
+            var result = new SimplicateDataCollectionResponse<Invoice>()
+            {
+                Data = response
+            };
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+        private Dictionary<string, string> CreateInvoiceFilters(
+            string? invoiceNumber,
+            string? organizationName,
+            string? myOrganizationProfileName,
+            string? createdAfter,
+            string? dateAfter,
+            string? dateBefore)
+        {
             var filters = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(invoiceNumber)) filters["[invoice_number]"] = $"*{invoiceNumber}*";
             if (!string.IsNullOrEmpty(organizationName)) filters["[organization.name]"] = $"*{organizationName}*";
@@ -29,10 +65,17 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
             if (!string.IsNullOrEmpty(dateAfter)) filters["[date][ge]"] = dateAfter;
             if (!string.IsNullOrEmpty(dateBefore)) filters["[date][le]"] = dateBefore;
+            return filters;
+        }
 
-            var result = await FetchSimplicateDataCollection<Invoice>(filters, "invoices/invoice", pageNumber);
-
-            return ToChatGPTeamsAIResponse(result);
+        private void ValidateInvoiceFilters(
+          string? createdAfter,
+          string? dateAfter,
+          string? dateBefore)
+        {
+            dateAfter?.EnsureValidDateFormat();
+            dateBefore?.EnsureValidDateFormat();
+            createdAfter?.EnsureValidDateFormat();
         }
 
         [MethodDescription("Invoices", "Gets expired invoices using multiple filters")]

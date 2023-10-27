@@ -54,7 +54,7 @@ foreach (var action in availableActions)
     }
     else if (response.Data != null)
     {
-        summary = $"Length: {response.Data.Length} chars, Datacard: {response.DataCard != null}, Pagingcard: {response.PagingCard != null}";
+        summary = $"Length: {response.Data.Length} chars, Datacard: {response.DataCard != null}";
     }
     else
     {

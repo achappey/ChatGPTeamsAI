@@ -33,12 +33,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = new Dictionary<string, string>();
-            if (!string.IsNullOrEmpty(employeeName)) filters["[name]"] = $"*{employeeName}*";
-            if (!string.IsNullOrEmpty(function)) filters["[function]"] = $"*{function}*";
-            if (!string.IsNullOrEmpty(employmentStatus)) filters["[employment_status]"] = $"*{employmentStatus}*";
-            if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
-
+            var filters = CreateEmployeeFilters(employeeName, function, employmentStatus, createdAfter);
             var result = await FetchSimplicateDataCollection<Employee>(filters, "hrm/employee", pageNumber);
 
             return ToChatGPTeamsAIResponse(result);
@@ -53,19 +48,8 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = new Dictionary<string, string>();
-            if (!string.IsNullOrEmpty(employeeName)) filters["[name]"] = $"*{employeeName}*";
-            if (!string.IsNullOrEmpty(function)) filters["[function]"] = $"*{function}*";
-            if (!string.IsNullOrEmpty(employmentStatus)) filters["[employment_status]"] = $"*{employmentStatus}*";
-            if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
-
-            var queryString = HttpUtility.ParseQueryString(string.Empty);
-
-            if (!string.IsNullOrEmpty(employeeName)) queryString["q[name]"] = $"*{employeeName}*";
-            if (!string.IsNullOrEmpty(function)) queryString["q[function]"] = $"*{function}*";
-            if (!string.IsNullOrEmpty(employmentStatus)) queryString["q[employment_status]"] = $"{employmentStatus}";
-            if (!string.IsNullOrEmpty(createdAfter)) queryString["q[created_at][ge]"] = createdAfter;
-
+            var filters = CreateEmployeeFilters(employeeName, function, employmentStatus, createdAfter);
+            var queryString = BuildQueryString(filters);
             var response = await _httpClient.PagedRequest<Employee>($"hrm/employee?{queryString}");
 
             var result = new SimplicateDataCollectionResponse<Employee>()
@@ -76,7 +60,25 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("HRM", "Search for employee leave balances")]
+
+        // New function for creating employee filters
+        private Dictionary<string, string> CreateEmployeeFilters(
+            string? employeeName,
+            string? function,
+            string? employmentStatus,
+            string? createdAfter)
+        {
+            var filters = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(employeeName)) filters["[name]"] = $"*{employeeName}*";
+            if (!string.IsNullOrEmpty(function)) filters["[function]"] = $"*{function}*";
+            if (!string.IsNullOrEmpty(employmentStatus)) filters["[employment_status]"] = $"*{employmentStatus}*";
+            if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
+            
+            return filters;
+        }
+
+
+        [MethodDescription("HRM", "Search for employee leave balances", "ExportLeaveBalances")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchLeaveBalances(
             [ParameterDescription("Employee name")] string? employeeName = null,
             [ParameterDescription("Year")] int? year = null,
@@ -91,7 +93,27 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("HRM", "Search for employee absences")]
+        [MethodDescription("Export", "Exports a list of employee leave balances")]
+        public async Task<ChatGPTeamsAIClientResponse?> ExportLeaveBalances(
+          [ParameterDescription("Employee name")] string? employeeName = null,
+          [ParameterDescription("Year")] int? year = null)
+        {
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+
+            if (!string.IsNullOrEmpty(employeeName)) queryString["q[name]"] = $"*{employeeName}*";
+            if (year.HasValue) queryString["q[year]"] = year.Value.ToString();
+
+            var response = await _httpClient.PagedRequest<LeaveBalance>($"hrm/leavebalance?{queryString}");
+
+            var result = new SimplicateDataCollectionResponse<LeaveBalance>()
+            {
+                Data = response
+            };
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+        [MethodDescription("HRM", "Search for employee absences", "ExportAbsences")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchAbsences(
             [ParameterDescription("Employee name")] string? employeeName = null,
             [ParameterDescription("Year")] int? year = null,
@@ -108,7 +130,27 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
+        [MethodDescription("Export", "Exports a list of employee absences")]
+        public async Task<ChatGPTeamsAIClientResponse?> ExportAbsences(
+                 [ParameterDescription("Employee name")] string? employeeName = null,
+                [ParameterDescription("Year")] int? year = null,
+                [ParameterDescription("Absence type name")] string? absenceTypeName = null)
+        {
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
 
+            if (!string.IsNullOrEmpty(employeeName)) queryString["q[employee.name]"] = $"*{employeeName}*";
+            if (year.HasValue) queryString["q[year]"] = year.Value.ToString();
+            if (!string.IsNullOrEmpty(absenceTypeName)) queryString["q[absencetype.label]"] = absenceTypeName;
+
+            var response = await _httpClient.PagedRequest<Absence>($"hrm/absence?{queryString}");
+
+            var result = new SimplicateDataCollectionResponse<Absence>()
+            {
+                Data = response
+            };
+
+            return ToChatGPTeamsAIResponse(result);
+        }
 
     }
 }

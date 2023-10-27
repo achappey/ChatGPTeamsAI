@@ -101,32 +101,158 @@ internal class CardRenderer : ICardRenderer
         return card;
     }
 
-    public static AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url)
+    public static AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url, string name, IDictionary<string, object>? entities = null)
     {
-        // Initialize Adaptive Card
         AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
 
-        // Create FactSet
-        AdaptiveFactSet factSet = new AdaptiveFactSet();
-        factSet.Facts.Add(new AdaptiveFact("Items", numberOfItems.ToString()));
+        card.Body.Add(new AdaptiveTextBlock
+        {
+            Text = name,
+            Weight = AdaptiveTextWeight.Bolder,
+            Size = AdaptiveTextSize.Large
+        });
 
-        // Add FactSet to Card
+        if (entities != null)
+        {
+            AdaptiveFactSet entityFactSet = new AdaptiveFactSet();
+
+            foreach (var entity in entities)
+            {
+                if (entity.Value != null && !string.IsNullOrEmpty(entity.Value.ToString()))
+                {
+                    entityFactSet.Facts.Add(new AdaptiveFact(entity.Key, entity.Value.ToString()));
+                }
+
+            }
+
+            card.Body.Add(entityFactSet);
+
+        }
+
+        AdaptiveFactSet factSet = new AdaptiveFactSet() { Separator = true };
+        factSet.Facts.Add(new AdaptiveFact("Items", numberOfItems.ToString()));
+        factSet.Facts.Add(new AdaptiveFact("Filename", fileName));
         card.Body.Add(factSet);
 
-        // Create URL Action Button
         AdaptiveOpenUrlAction urlAction = new AdaptiveOpenUrlAction
         {
-            Title = fileName,
+            Title = "Open",
             Url = new Uri(url)
         };
 
-        // Add Action to Card
         card.Actions.Add(urlAction);
 
         return card;
     }
 
+
     public AdaptiveCard DefaultListRender(IEnumerable<object> items)
+    {
+        var card = InitializeAdaptiveCard();
+        var typeProperties = GetTypeProperties(items.First());
+        var columnProperties = GetColumnProperties(typeProperties);
+
+        AddHeader(card, columnProperties);
+
+        int toggleId = 1;
+
+        foreach (var item in items)
+        {
+            var columnSetItem = new AdaptiveColumnSet();
+            AddColumnItem(columnSetItem, columnProperties, item, toggleId == 1);
+            AddToggleAction(columnSetItem, toggleId);
+            card.Body.Add(columnSetItem);
+
+            var toggleContainer = CreateToggleContainer(typeProperties, item, toggleId);
+            card.Body.Add(toggleContainer);
+
+            toggleId++;
+        }
+
+        return card;
+    }
+
+    private AdaptiveCard InitializeAdaptiveCard()
+    {
+        return new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
+    }
+
+    private PropertyInfo[] GetTypeProperties(object item)
+    {
+        return item.GetType().GetProperties();
+    }
+
+    private List<PropertyInfo> GetColumnProperties(PropertyInfo[] typeProperties)
+    {
+        return typeProperties.Where(p => p.GetCustomAttribute<ListColumnAttribute>() != null).ToList();
+    }
+
+    private void AddHeader(AdaptiveCard card, List<PropertyInfo> columnProperties)
+    {
+        var columnSetHeader = new AdaptiveColumnSet();
+        foreach (var property in columnProperties)
+        {
+            columnSetHeader.Columns.Add(CreateColumn(property.Name));
+        }
+        columnSetHeader.Columns.Add(new AdaptiveColumn { Width = "auto" });
+        card.Body.Add(columnSetHeader);
+    }
+
+    private AdaptiveColumn CreateColumn(string text)
+    {
+        return new AdaptiveColumn
+        {
+            Items = { new AdaptiveTextBlock { Text = text, IsSubtle = true, Weight = AdaptiveTextWeight.Bolder } }
+        };
+    }
+
+    private void AddColumnItem(AdaptiveColumnSet columnSetItem, List<PropertyInfo> columnProperties, object item, bool isFirstItem)
+    {
+        for (int i = 0; i < columnProperties.Count; i++)
+        {
+            var propertyValue = columnProperties[i].GetValue(item)?.ToString();
+            var text = !string.IsNullOrEmpty(propertyValue) ? propertyValue : " ";
+
+            columnSetItem.Columns.Add(new AdaptiveColumn
+            {
+                Items = { new AdaptiveTextBlock { Text = text, IsSubtle = true, Separator = isFirstItem } }
+            });
+        }
+    }
+
+    private void AddToggleAction(AdaptiveColumnSet columnSetItem, int toggleId)
+    {
+        columnSetItem.Columns.Add(new AdaptiveColumn
+        {
+            Width = "auto",
+            Items = { new AdaptiveImage { Id = $"chevronDown{toggleId}", Url = new Uri("https://adaptivecards.io/content/down.png"), PixelWidth = 20 } },
+            SelectAction = new AdaptiveToggleVisibilityAction { TargetElements = new List<AdaptiveTargetElement> { new AdaptiveTargetElement($"cardContent{toggleId}") } }
+        });
+    }
+
+    private AdaptiveContainer CreateToggleContainer(PropertyInfo[] typeProperties, object item, int toggleId)
+    {
+        var toggleContainer = new AdaptiveContainer { Id = $"cardContent{toggleId}", IsVisible = false };
+        var factSet = new AdaptiveFactSet();
+
+        var formColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
+        if (!formColumnProperties.Any())
+        {
+            formColumnProperties = typeProperties.Take(5).ToList();
+        }
+
+        foreach (var property in formColumnProperties)
+        {
+            var value = property.GetValue(item)?.ToString() ?? " ";
+            factSet.Facts.Add(new AdaptiveFact { Title = property.Name, Value = value });
+        }
+
+        toggleContainer.Items.Add(factSet);
+        return toggleContainer;
+    }
+
+
+    public AdaptiveCard DefaultListRender2(IEnumerable<object> items)
     {
         var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
 
@@ -250,7 +376,8 @@ internal class CardRenderer : ICardRenderer
                         Items = new List<AdaptiveElement>() {
                             new AdaptiveTextBlock
                                 {
-                                    Text = linkColumns.Name
+                                    Text = linkColumns.Name,
+                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right
                                 }
                         },
                         SelectAction = new AdaptiveOpenUrlAction

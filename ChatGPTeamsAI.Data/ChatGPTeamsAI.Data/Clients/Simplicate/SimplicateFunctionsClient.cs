@@ -5,6 +5,7 @@ using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Cards.Simplicate;
 using ChatGPTeamsAI.Data.Models.Output;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace ChatGPTeamsAI.Data.Clients.Simplicate
 {
@@ -120,10 +121,10 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             {
                 Data = response?.Data?.RenderData(),
                 DataCard = dataCard,
-                TotalItems = response?.Metadata?.Count,
-                TotalPages = response?.Metadata?.PageCount,
-                CurrentPage = response?.Metadata?.PageNumber,
-                ItemsPerPage = response?.Metadata?.Limit,
+                TotalItems = response?.Metadata != null ? response?.Metadata?.Count : response?.Data?.Count(),
+                TotalPages = response?.Metadata != null ? response?.Metadata?.PageCount : 1,
+                CurrentPage = response?.Metadata != null ? response?.Metadata?.PageNumber : 1,
+                ItemsPerPage = response?.Metadata != null ? response?.Metadata?.Limit : response?.Data?.Count(),
                 Type = typeof(T).ToString(),
                 Properties = response?.Metadata != null ? new Dictionary<string, object> { { "metadata", response.Metadata } } : null
             };
@@ -155,22 +156,10 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             };
         }
 
-
-        private async Task<SimplicateDataCollectionResponse<T>?> FetchSimplicateDataCollection<T>(
-                  Dictionary<string, string>? filters,
-                  string endpointUrl,
-                  long page = 1)
+        private NameValueCollection BuildQueryString(Dictionary<string, string>? filters)
         {
-            if (page <= 0) page = 1;
-
             var queryString = HttpUtility.ParseQueryString(string.Empty);
-            long offset = (page - 1) * PAGESIZE;
 
-            queryString["limit"] = PAGESIZE.ToString();
-            queryString["offset"] = offset.ToString();
-            queryString.Add("metadata", "offset,count,limit");
-
-            // Add the filters to the query string
             if (filters != null)
             {
                 foreach (var filter in filters)
@@ -180,6 +169,42 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                         queryString[$"q{filter.Key}"] = $"{filter.Value}";
                     }
                 }
+            }
+
+            return queryString;
+        }
+
+
+
+        private async Task<SimplicateDataCollectionResponse<T>?> FetchSimplicateDataCollection<T>(
+                  Dictionary<string, string>? filters,
+                  string endpointUrl,
+                  long page = 1)
+        {
+            if (page <= 0) page = 1;
+
+            var queryString = BuildQueryString(filters);
+            long offset = (page - 1) * PAGESIZE;
+
+            queryString["limit"] = PAGESIZE.ToString();
+            queryString["offset"] = offset.ToString();
+            queryString.Add("metadata", "offset,count,limit");
+
+            if (filters != null)
+            {
+             /*   var filterQueryString = BuildQueryString(filters);
+if (!string.IsNullOrEmpty(filterQueryString))
+{
+    queryString.Add(filterQueryString);
+}
+
+                foreach (var filter in filters)
+                {
+                    if (!string.IsNullOrEmpty(filter.Value))
+                    {
+                        queryString[$"q{filter.Key}"] = $"{filter.Value}";
+                    }
+                }*/
             }
 
             // Make the request

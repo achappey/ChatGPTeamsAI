@@ -6,8 +6,8 @@ namespace ChatGPTeamsAI.Data.Extensions;
 internal static class AdaptiveCardExtensions
 {
 
-    public static AdaptiveCard? WithPagingButtons(this AdaptiveCard? card,
-      Models.Input.Action? nextPage = null, Models.Input.Action? prevPage = null)
+    public static AdaptiveCard? WithButtons(this AdaptiveCard? card,
+      Models.Input.Action? nextPage = null, Models.Input.Action? prevPage = null, Models.Input.Action? exportButton = null)
     {
         if (card == null)
         {
@@ -34,6 +34,15 @@ internal static class AdaptiveCardExtensions
             {
                 Title = "Next",
                 Data = nextPage
+            });
+        }
+
+          if (exportButton != null)
+        {
+            card.Actions.Add(new AdaptiveSubmitAction
+            {
+                Title = "Export",
+                Data = exportButton
             });
         }
 

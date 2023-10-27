@@ -6,12 +6,23 @@ using ChatGPTeamsAI.Data.Attributes;
 internal class LeaveBalance
 {
     [JsonPropertyName("employeeName")]
-    [ListColumn]
+    [FormColumn]
     public string? EmployeeName
     {
         get
         {
             return Employee?.Name;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("leaveTypeLabel")]
+    [ListColumn]
+    public string? LeaveTypeLabel
+    {
+        get
+        {
+            return LeaveType?.Label;
         }
         set { }
     }
@@ -23,17 +34,6 @@ internal class LeaveBalance
     [JsonPropertyName("year")]
     [ListColumn]
     public int Year { get; set; }
-
-    [JsonPropertyName("leaveTypeLabel")]
-    [FormColumn]
-    public string? LeaveTypeLabel
-    {
-        get
-        {
-            return LeaveType?.Label;
-        }
-        set { }
-    }
 
     [JsonPropertyName("leavetype")]
     public LeaveType? LeaveType { get; set; }

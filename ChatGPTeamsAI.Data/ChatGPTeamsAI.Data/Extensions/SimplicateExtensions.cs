@@ -58,19 +58,16 @@ internal static class SimplicateExtensions
 
     private static async Task<T?> SimplicateRequest<T>(this HttpClient client, Uri uri, HttpMethod method, object? bodyContent = null)
     {
-        using (var httpRequestMessage = new HttpRequestMessage
+        using var httpRequestMessage = new HttpRequestMessage
         {
             Method = method,
             RequestUri = uri,
             Content = bodyContent != null ? new StringContent(JsonSerializer.Serialize(bodyContent), Encoding.UTF8, "application/json") : null
-        })
-        {
+        };
 
-            using (var result = await client.SendAsync(httpRequestMessage))
-            {
-                return await result.HandleSimplicateResponse<T>();
-            }
-        }
+        using var result = await client.SendAsync(httpRequestMessage);
+
+        return await result.HandleSimplicateResponse<T>();
     }
 
     /// <summary>

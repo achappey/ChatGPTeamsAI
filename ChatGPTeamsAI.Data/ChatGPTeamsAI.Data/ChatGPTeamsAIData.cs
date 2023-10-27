@@ -76,14 +76,15 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
     private async Task<ActionResponse> CreateExport(ChatGPTeamsAIClientResponse clientResponse)
     {
         var microsoftClient = new GraphFunctionsClient(_config.GraphApiToken);
-        var filename = $"{clientResponse.ExecutedAction?.Name}{DateTime.Now.Ticks}";
+        var sanitizedDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
+        var filename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.csv";
         var webUrl = await microsoftClient.UploadFile(filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data));
 
         return new ActionResponse()
         {
             ExecutedAction = clientResponse.ExecutedAction,
             Data = clientResponse.Data,
-            DataCard = CardRenderer.CreateExportCard(clientResponse.TotalItems.Value, filename, webUrl)?.ToJson()
+            DataCard = CardRenderer.CreateExportCard(clientResponse.TotalItems.Value, filename, webUrl, clientResponse.ExecutedAction.Name, clientResponse.ExecutedAction.Entities)?.ToJson()
         };
     }
 
@@ -93,7 +94,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         {
             ExecutedAction = clientResponse.ExecutedAction,
             Data = clientResponse.Data,
-            DataCard = clientResponse.DataCard?.WithPagingButtons(clientResponse.NextPageAction, clientResponse.PreviousPageAction)?.ToJson()
+            DataCard = clientResponse.DataCard?.WithButtons(clientResponse.NextPageAction, clientResponse.PreviousPageAction, clientResponse.ExportPageAction)?.ToJson()
         };
     }
 

@@ -5,13 +5,24 @@ using ChatGPTeamsAI.Data.Attributes;
 
 internal class Absence
 {
+    [FormColumn]
     [JsonPropertyName("employeeName")]
-    [ListColumn]
     public string? EmployeeName
     {
         get
         {
             return Employee?.Name;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("absenceTypeLabel")]
+    [ListColumn]
+    public string? AbsenceTypeLabel
+    {
+        get
+        {
+            return AbsenceType?.Label;
         }
         set { }
     }
@@ -23,17 +34,6 @@ internal class Absence
     [JsonPropertyName("hours")]
     [ListColumn]
     public double Hours { get; set; }
-
-    [JsonPropertyName("absenceTypeLabel")]
-    [FormColumn]
-    public string? AbsenceTypeLabel
-    {
-        get
-        {
-            return AbsenceType?.Label;
-        }
-        set { }
-    }
 
     [JsonPropertyName("absencetype")]
     public AbsenceType? AbsenceType { get; set; }
