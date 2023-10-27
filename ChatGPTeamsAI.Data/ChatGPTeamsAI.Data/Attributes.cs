@@ -44,5 +44,12 @@ internal class FormColumnAttribute : Attribute
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 internal class LinkColumnAttribute : Attribute
 {
+    public bool DocumentChat { get; } = false;
+
     public LinkColumnAttribute() { }
+
+    public LinkColumnAttribute(bool documentChat = false)
+    {
+        DocumentChat = documentChat;
+    }
 }

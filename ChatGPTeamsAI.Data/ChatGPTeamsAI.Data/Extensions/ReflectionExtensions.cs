@@ -110,18 +110,18 @@ internal static class ReflectionExtensions
             {
                 if (listResult.Cast<object>().Any())
                 {
-                    var type = listResult.Cast<object>().First().GetType();
-                    var classMap = GetDynamicClassMap(type);
+               //     var type = listResult.Cast<object>().First().GetType();
+                //    var classMap = GetDynamicClassMap(type);
 
                     var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                     {
-                        // Andere configuratieopties
+                        Delimiter = ";"
                     };
 
                     using (var writer = new StringWriter())
                     using (var csv = new CsvWriter(writer, config))
                     {
-                        csv.Context.RegisterClassMap(classMap);
+                      //  csv.Context.RegisterClassMap(classMap);
                         csv.WriteRecords(listResult);
                         return writer.ToString();
                     }

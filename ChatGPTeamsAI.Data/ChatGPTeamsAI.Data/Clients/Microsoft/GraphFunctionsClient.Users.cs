@@ -7,11 +7,12 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 {
     internal partial class GraphFunctionsClient
     {
-        [MethodDescription("Users", "Searches for users based on department, display name or mail")]
-        public async Task<ChatGPTeamsAIClientResponse?> SearchUsers([ParameterDescription("The department to filter on")] string? department = null,
-                                                                        [ParameterDescription("The display name to filter on")] string? displayName = null,
-                                                                        [ParameterDescription("The mail to filter on")] string? mail = null,
-                                                                        [ParameterDescription("The next page skip token")] string? skipToken = null)
+        [MethodDescription("Users", "Search for users with member type")]
+        public async Task<ChatGPTeamsAIClientResponse?> SearchUsers([ParameterDescription("Department")] string? department = null,
+                                                                        [ParameterDescription("Display name")] string? displayName = null,
+                                                                        [ParameterDescription("Jobtitle")] string? jobTitle = null,
+                                                                        [ParameterDescription("Email")] string? mail = null,
+                                                                        [ParameterDescription("Next page skip token")] string? skipToken = null)
         {
             
             string? searchQuery = null;
@@ -22,9 +23,15 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             }
 
             string filterQuery = "userType eq 'Member'";
+
             if (!string.IsNullOrEmpty(department))
             {
                 filterQuery += $" and department eq '{department}'";
+            }
+
+            if (!string.IsNullOrEmpty(jobTitle))
+            {
+                filterQuery += $" and jobTitle eq '{jobTitle}'";
             }
 
             var filterOptions = new List<QueryOption>()
@@ -51,7 +58,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         }
 
-        [MethodDescription("Users", "Searches for guest users based on company name, display name or mail")]
+        [MethodDescription("Users", "Search for users with guest type")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchGuests([ParameterDescription("The company name to filter on.")] string? companyName = null,
                                                                        [ParameterDescription("The display name to filter on")] string? displayName = null,
                                                                        [ParameterDescription("The mail to filter on")] string? mail = null,

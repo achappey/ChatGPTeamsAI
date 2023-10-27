@@ -14,6 +14,7 @@ internal class MicrosoftProfile : Profile
         CreateMap<Microsoft.Graph.PlannerTask, Models.Microsoft.PlannerTask>();
         CreateMap<Microsoft.Graph.PlannerPlan, Models.Microsoft.PlannerPlan>();
         CreateMap<Microsoft.Graph.PlannerBucket, Models.Microsoft.PlannerBucket>();
+        CreateMap<Microsoft.Graph.PlannerPlanContainer, Models.Microsoft.PlannerPlanContainer>();
         CreateMap<Microsoft.Graph.PlannerTaskDetails, Models.Microsoft.PlannerTaskDetails>();
         CreateMap<Microsoft.Graph.Channel, Models.Microsoft.Channel>();
         CreateMap<Microsoft.Graph.Trending, Models.Microsoft.Trending>();
@@ -24,6 +25,7 @@ internal class MicrosoftProfile : Profile
         CreateMap<Microsoft.Graph.ResourceReference, Models.Microsoft.ResourceReference>();
         CreateMap<Microsoft.Graph.EmailAddress, Models.Microsoft.EmailAddress>();
         CreateMap<Microsoft.Graph.Site, Models.Microsoft.Site>();
+        CreateMap<Microsoft.Graph.AssignedLicense, Models.Microsoft.AssignedLicense>();
         CreateMap<Microsoft.Graph.ChatMessage, Models.Microsoft.ChatMessage>();
         CreateMap<Microsoft.Graph.ItemBody, Models.Microsoft.ItemBody>();
         CreateMap<Microsoft.Graph.ChatMessageFromIdentitySet, Models.Microsoft.IdentitySet>();

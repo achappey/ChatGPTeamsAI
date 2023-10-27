@@ -13,8 +13,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The task title to filter on.")] string? title = null,
             [ParameterDescription("The description to filter on.")] string? description = null)
         {
-            
-
             var tasks = await _graphClient.Me.Planner.Tasks
                                 .Request()
                                 .GetAsync();
@@ -57,11 +55,9 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         [MethodDescription("Planner", "Retrieves all user Planners, optionally filtered by a search term.")]
         public async Task<ChatGPTeamsAIClientResponse?> GetAllPlanners(
-      [ParameterDescription("The search term to filter planners by title (optional).")] string? searchTerm = null,
-      [ParameterDescription("The next page skip token.")] string? skipToken = null)
+            [ParameterDescription("The search term to filter planners by title (optional).")] string? searchTerm = null,
+            [ParameterDescription("The next page skip token.")] string? skipToken = null)
         {
-            
-
             var filterOptions = new List<QueryOption>();
 
             if (!string.IsNullOrEmpty(searchTerm))

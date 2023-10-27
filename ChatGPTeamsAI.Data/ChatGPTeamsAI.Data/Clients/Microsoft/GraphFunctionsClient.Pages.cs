@@ -14,9 +14,8 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The name to filter on.")] string? name = null,
             [ParameterDescription("The next page skip token.")] string? skipToken = null)
         {
-            
-
             var filterOptions = new List<QueryOption>();
+            
             if (!string.IsNullOrEmpty(name))
             {
                 filterOptions.Add(new QueryOption("$filter", $"contains(name, '{name}')"));

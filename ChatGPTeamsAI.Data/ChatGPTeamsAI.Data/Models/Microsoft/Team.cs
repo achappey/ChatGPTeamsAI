@@ -22,7 +22,7 @@ internal class Team
     {
         get
         {
-            return string.Join(",", Channels?.Select(a => a.DisplayName));
+            return Channels != null ? string.Join(",", Channels.Select(a => a.DisplayName)) : string.Empty;
         }
         set { }
     }

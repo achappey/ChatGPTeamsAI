@@ -1,7 +1,6 @@
 using System.Reflection;
 using AdaptiveCards;
 using ChatGPTeamsAI.Data.Attributes;
-using Microsoft.Graph;
 
 namespace ChatGPTeamsAI.Cards;
 
@@ -141,7 +140,18 @@ internal class CardRenderer : ICardRenderer
             Url = new Uri(url)
         };
 
+        AdaptiveSubmitAction chatAction = new AdaptiveSubmitAction
+        {
+            Title = "Chat",
+            Data = new Data.Models.Input.Action()
+            {
+                Name = "DocumentChat",
+                Entities = new Dictionary<string, object?>() { { url, "" } }
+            },
+        };
+
         card.Actions.Add(urlAction);
+        card.Actions.Add(chatAction);
 
         return card;
     }
@@ -190,13 +200,15 @@ internal class CardRenderer : ICardRenderer
 
     private void AddHeader(AdaptiveCard card, List<PropertyInfo> columnProperties)
     {
+        var container = new AdaptiveContainer() { Style = AdaptiveContainerStyle.Emphasis };
         var columnSetHeader = new AdaptiveColumnSet();
         foreach (var property in columnProperties)
         {
             columnSetHeader.Columns.Add(CreateColumn(property.Name));
         }
         columnSetHeader.Columns.Add(new AdaptiveColumn { Width = "auto" });
-        card.Body.Add(columnSetHeader);
+        container.Items.Add(columnSetHeader);
+        card.Body.Add(container);
     }
 
     private AdaptiveColumn CreateColumn(string text)
@@ -255,7 +267,6 @@ internal class CardRenderer : ICardRenderer
         });
     }
 
-
     private AdaptiveContainer CreateToggleContainer(PropertyInfo[] typeProperties, object item, int toggleId)
     {
         var toggleContainer = new AdaptiveContainer { Id = $"cardContent{toggleId}", IsVisible = false };
@@ -276,6 +287,9 @@ internal class CardRenderer : ICardRenderer
         toggleContainer.Items.Add(factSet);
 
         var linkColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null).ToList();
+        var chatColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null
+                && p.GetCustomAttribute<LinkColumnAttribute>().DocumentChat).ToList();
+
         var columnSet = new AdaptiveColumnSet();
 
         foreach (var linkColumns in linkColumnProperties)
@@ -295,7 +309,8 @@ internal class CardRenderer : ICardRenderer
                             new AdaptiveTextBlock
                                 {
                                     Text = linkColumns.Name,
-                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right
+                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                     Color = AdaptiveTextColor.Accent
                                 }
                         },
                     SelectAction = new AdaptiveOpenUrlAction
@@ -303,6 +318,29 @@ internal class CardRenderer : ICardRenderer
                         Url = new Uri(value),
                     }
                 });
+
+                if (chatColumnProperties.Contains(linkColumns))
+                {
+                    columnSet.Columns.Add(new AdaptiveColumn()
+                    {
+                        Items = new List<AdaptiveElement>() {
+                            new AdaptiveTextBlock
+                                {
+                                    Text = "Chat with " + linkColumns.Name,
+                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                    Color = AdaptiveTextColor.Accent,
+                                }
+                        },
+                        SelectAction = new AdaptiveSubmitAction
+                        {
+                            Data = new Data.Models.Input.Action()
+                            {
+                                Name = "DocumentChat",
+                                Entities = new Dictionary<string, object?>() { { value, "" } }
+                            },
+                        }
+                    });
+                }
             }
         }
 
@@ -311,150 +349,4 @@ internal class CardRenderer : ICardRenderer
         return toggleContainer;
     }
 
-
-    public AdaptiveCard DefaultListRender2(IEnumerable<object> items)
-    {
-        var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
-
-        var typeProperties = items.First().GetType().GetProperties();
-        var columnProperties = typeProperties.Where(p => p.GetCustomAttribute<ListColumnAttribute>() != null).ToList();
-
-        if (!columnProperties.Any())
-        {
-            columnProperties = typeProperties.Take(3).ToList();
-        }
-
-        var columnSetHeader = new AdaptiveColumnSet();
-
-        foreach (var property in columnProperties)
-        {
-            columnSetHeader.Columns.Add(new AdaptiveColumn
-            {
-                Items =
-        {
-            new AdaptiveTextBlock
-            {
-                Text = property.Name,
-                IsSubtle = true,
-                Weight = AdaptiveTextWeight.Bolder
-            }
-        }
-            });
-        }
-
-        columnSetHeader.Columns.Add(new AdaptiveColumn { Width = "auto" });
-        card.Body.Add(columnSetHeader);
-
-        bool isFirstItem = true;
-        int toggleId = 1;
-
-        var formColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
-        var linkColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null).ToList();
-
-        if (!formColumnProperties.Any())
-        {
-            formColumnProperties = typeProperties.Take(5).ToList();
-        }
-
-        foreach (var item in items)
-        {
-            var columnSetItem = new AdaptiveColumnSet();
-
-            for (int i = 0; i < columnProperties.Count; i++)
-            {
-                columnSetItem.Columns.Add(new AdaptiveColumn());
-            }
-
-            for (int i = 0; i < columnProperties.Count; i++)
-            {
-                var propertyValue = columnProperties[i].GetValue(item)?.ToString();
-                var text = !string.IsNullOrEmpty(propertyValue) ? propertyValue : " ";
-
-                columnSetItem.Columns[i].Items.Add(new AdaptiveTextBlock
-                {
-                    Text = text,
-                    IsSubtle = true,
-                    Separator = isFirstItem
-                });
-            }
-
-            isFirstItem = false;
-
-            columnSetItem.Columns.Add(new AdaptiveColumn
-            {
-                Width = "auto",
-                Items = new List<AdaptiveElement>() {
-                         new  AdaptiveImage
-                        {
-                            Id = $"chevronDown{toggleId}",
-                            Url = new Uri("https://adaptivecards.io/content/down.png"),
-                            PixelWidth = 20
-                        }
-                        },
-                SelectAction = new AdaptiveToggleVisibilityAction
-                {
-                    TargetElements = new List<AdaptiveTargetElement> { new AdaptiveTargetElement($"cardContent{toggleId}") }
-                }
-            });
-
-            var toggleContainer = new AdaptiveContainer
-            {
-                Id = $"cardContent{toggleId}",
-                IsVisible = false,
-            };
-
-            var factSet = new AdaptiveFactSet();
-
-            foreach (var property in formColumnProperties)
-            {
-                var value = property.GetValue(item)?.ToString() ?? " ";
-
-                factSet.Facts.Add(new AdaptiveFact
-                {
-                    Title = property.Name,
-                    Value = value
-                });
-            }
-
-            toggleContainer.Items.Add(factSet);
-
-            var columnSet = new AdaptiveColumnSet();
-
-            foreach (var linkColumns in linkColumnProperties)
-            {
-                var value = linkColumns.GetValue(item)?.ToString() ?? null;
-
-                if (!string.IsNullOrEmpty(value))
-                {
-                    if (!value.StartsWith("http"))
-                    {
-                        value = $"https://{value}";
-                    }
-
-                    columnSet.Columns.Add(new AdaptiveColumn()
-                    {
-                        Items = new List<AdaptiveElement>() {
-                            new AdaptiveTextBlock
-                                {
-                                    Text = linkColumns.Name,
-                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right
-                                }
-                        },
-                        SelectAction = new AdaptiveOpenUrlAction
-                        {
-                            Url = new Uri(value),
-                        }
-                    });
-                }
-            }
-
-            toggleContainer.Items.Add(columnSet);
-            card.Body.Add(columnSetItem);
-            card.Body.Add(toggleContainer);
-
-            toggleId++;
-        }
-
-        return card;
-    }
 }

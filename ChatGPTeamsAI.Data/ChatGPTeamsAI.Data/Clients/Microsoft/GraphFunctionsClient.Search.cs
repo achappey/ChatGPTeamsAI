@@ -10,30 +10,30 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         [MethodDescription("SharePoint", "Searches content across SharePoint and OneDrive resources.")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchDriveContent(
             [ParameterDescription("The search query.")] string query,
-            [ParameterDescription("The next page skip token.")] string? skipToken = null)
+            [ParameterDescription("The number of items to skip")] string? skip = null)
         {
-            return await SearchContent(query, EntityType.DriveItem, skipToken);
+            return await SearchContent(query, EntityType.DriveItem, skip);
         }
 
         [MethodDescription("Mail", "Searches Outlook messages.")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchOutlookContent(
                     [ParameterDescription("The search query.")] string query,
-                    [ParameterDescription("The next page skip token.")] string? skipToken = null)
+                    [ParameterDescription("The number of items to skip")] string? skip = null)
         {
-            return await SearchContent(query, EntityType.Message, skipToken);
+            return await SearchContent(query, EntityType.Message, skip);
         }
 
         [MethodDescription("Teams", "Searches chat messages.")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchChatContent(
                               [ParameterDescription("The search query.")] string query,
-                              [ParameterDescription("The next page skip token.")] string? skipToken = null)
+                              [ParameterDescription("The number of items to skip")] string? skip = null)
         {
-            return await SearchContent(query, EntityType.ChatMessage, skipToken);
+            return await SearchContent(query, EntityType.ChatMessage, skip);
         }
 
         private async Task<ChatGPTeamsAIClientResponse?> SearchContent(
                               string query, EntityType type,
-                              string? skipToken = null)
+                              string? skip = null)
         {
             
 
@@ -43,10 +43,10 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             }
 
             var filterOptions = new List<QueryOption>();
-            if (!string.IsNullOrEmpty(skipToken))
+          /*  if (!string.IsNullOrEmpty(skipToken))
             {
                 filterOptions.Add(new QueryOption("$skiptoken", skipToken));
-            }
+            }*/
 
             var searchRequest = new SearchRequestObject()
             {
@@ -55,7 +55,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                     QueryString = query,
                 },
                 EntityTypes = new List<EntityType> { type },
-                From = string.IsNullOrEmpty(skipToken) ? 0 : int.Parse(skipToken),
+                From = string.IsNullOrEmpty(skip) ? 0 : int.Parse(skip),
                 Size = PAGESIZE
             };
 
@@ -67,8 +67,8 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 .PostAsync();
 
             var items = searchResponse?.FirstOrDefault()?.HitsContainers?.FirstOrDefault()?.Hits.Select(a => _mapper.Map<Models.Microsoft.SearchHit>(a));
-
-            return ToChatGPTeamsAIResponse(items, searchResponse?.NextPageRequest?.QueryOptions.GetSkipToken());
+            var nextSkip = string.IsNullOrEmpty(skip) ? PAGESIZE.ToString() : (int.Parse(skip) + PAGESIZE).ToString();
+            return ToChatGPTeamsAIResponse(items, null, nextSkip);
         }
 
     }

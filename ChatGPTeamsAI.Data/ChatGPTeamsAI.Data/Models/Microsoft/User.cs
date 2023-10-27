@@ -7,6 +7,7 @@ internal class User
     [ListColumn]
     public string? DisplayName { get; set; }
 
+    [FormColumn]
     public string? EmployeeId { get; set; }
 
     public string? Id { get; set; }
@@ -25,6 +26,12 @@ internal class User
 
     [FormColumn]
     public string? AboutMe { get; set; }
+
+    [FormColumn]
+    public string? PreferredLanguage { get; set; }
+
+    [FormColumn]
+    public bool AccountEnabled { get; set; }
 
     [FormColumn]
     public string? SkillNames
@@ -61,6 +68,33 @@ internal class User
     [FormColumn]
     public DateTimeOffset? EmployeeHireDate { get; set; }
 
+    [FormColumn]
+    public DateTimeOffset? CreatedDateTime { get; set; }
+
+    [FormColumn]
+    public string? AlternativeMail
+    {
+        get
+        {
+            return OtherMails?.FirstOrDefault();
+        }
+        set { }
+    }
+
+    [FormColumn]
+    public int? AssignedLicenseCount
+    {
+        get
+        {
+            return AssignedLicenses?.Count();
+        }
+        set { }
+    }
+
+    public IEnumerable<string>? OtherMails { get; set; }
+
+    public IEnumerable<AssignedLicense>? AssignedLicenses { get; set; }
+
     [LinkColumn]
     public string? Profile
     {
@@ -70,4 +104,9 @@ internal class User
         }
         set { }
     }
+}
+
+
+internal class AssignedLicense
+{
 }

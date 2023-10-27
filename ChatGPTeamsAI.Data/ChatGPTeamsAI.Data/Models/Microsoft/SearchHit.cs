@@ -18,8 +18,8 @@ internal class SearchHit
         set { }
     }
 
-    [LinkColumn]
-    public string? ResourceWebUrl
+    [LinkColumn(true)]
+    public string? Url
     {
         get
         {

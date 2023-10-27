@@ -16,6 +16,16 @@ public class ActionDescription
     public required string Publisher { get; set; }
     public string? ExportAction { get; set; }
     public Parameters? Parameters { get; set; }
+
+    public string CategoryIdentifier
+    {
+        get
+        {
+            return $"{Publisher} {Category}";
+        }
+        set { }
+
+    }
 }
 
 public class Parameters

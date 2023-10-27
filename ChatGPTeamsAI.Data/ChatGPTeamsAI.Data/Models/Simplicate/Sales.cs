@@ -38,7 +38,7 @@ internal class Sales
 
     [JsonPropertyName("expected_revenue")]
     [FormColumn]
-    public string? ExpectedRevenue { get; set; }
+    public double? ExpectedRevenue { get; set; }
 
     [JsonPropertyName("chance_to_score")]
     [FormColumn]
