@@ -4,6 +4,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 internal class Project
 {
@@ -11,12 +12,15 @@ internal class Project
     public string? Id { get; set; }
 
     [JsonPropertyName("project_manager")]
+    [Ignore]
     public Manager? ProjectManager { get; set; }
 
     [JsonPropertyName("project_status")]
+    [Ignore]
     public Status? ProjectStatus { get; set; }
 
     [JsonPropertyName("organization")]
+    [Ignore]
     public OrganizationProject? OrganizationDetails { get; set; }
 
     [JsonPropertyName("project_number")]

@@ -2,6 +2,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 internal class Proposition
 {
@@ -61,6 +62,7 @@ internal class Proposition
     public string? Simplicate { get; set; }
 
     [JsonPropertyName("project")]
+    [Ignore]
     public PropositionProject? Project { get; set; }
 
     [JsonPropertyName("id")]

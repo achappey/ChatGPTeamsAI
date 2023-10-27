@@ -4,6 +4,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 internal class Quote
 {
@@ -24,6 +25,7 @@ internal class Quote
     public string? Id { get; set; }
 
     [JsonPropertyName("quotestatus")]
+    [Ignore]
     public QuoteStatus? QuoteStatus { get; set; }
 
     [JsonPropertyName("customer_reference")]

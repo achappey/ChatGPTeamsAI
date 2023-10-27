@@ -2,6 +2,7 @@
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
@@ -88,6 +89,7 @@ internal class Person
     [LinkColumn]
     public string? Simplicate { get; set; }
 
+    [Ignore]
     [JsonPropertyName("relation_manager")]
     public RelationManager? RelationManager { get; set; }
 
@@ -102,6 +104,7 @@ internal class Person
         set { }
     }
 
+    [Ignore]
     [JsonPropertyName("linked_as_contact_to_organization")]
     public IEnumerable<LinkedContactPerson>? LinkedAsContactToOrganization { get; set; }
 }

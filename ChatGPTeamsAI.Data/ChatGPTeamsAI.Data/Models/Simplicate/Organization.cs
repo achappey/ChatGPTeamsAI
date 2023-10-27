@@ -1,6 +1,7 @@
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
@@ -30,6 +31,7 @@ internal class Organization
     public bool IsActive { get; set; }
 
     [JsonPropertyName("relation_manager")]
+    [Ignore]
     public RelationManager? RelationManager { get; set; }
 
     [JsonPropertyName("relationManagerName")]
@@ -44,6 +46,7 @@ internal class Organization
     }
 
     [JsonPropertyName("industry")]
+    [Ignore]
     public Industry? Industry { get; set; }
 
     [JsonPropertyName("industryName")]

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 internal class TimelineMessage
 {
@@ -25,7 +26,7 @@ internal class TimelineMessage
     }
 
     [JsonPropertyName("content")]
-    [ListColumn]
+    [FormColumn]
     public string? Content
     {
         get => _content?.Substring(0, Math.Min(_content?.Length ?? 0, 200));
@@ -35,16 +36,27 @@ internal class TimelineMessage
         }
     }
 
+    [JsonPropertyName("messageTypeLabel")]
+    [ListColumn]
+    public string? MessageTypeLabel
+    {
+        get
+        {
+            return MessageType?.Label;
+        }
+        set { }
+    }
+
+    [Ignore]
     [JsonPropertyName("message_type")]
     public MessageType? MessageType { get; set; }
 
 
+    [Ignore]
     [JsonPropertyName("linked_to")]
     public List<LinkedTo>? LinkedTo { get; set; }
 
     private string? _content { get; set; }
-
-
 }
 
 

@@ -2,6 +2,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 internal class Employee
 {
@@ -25,6 +26,18 @@ internal class Employee
     [FormColumn]
     public string? EmploymentStatus { get; set; }
 
+    [JsonPropertyName("CivilStatusLabel")]
+    [FormColumn]
+    public string? CivilStatusLabel
+    {
+        get
+        {
+            return CivilStatus?.Label;
+        }
+        set { }
+    }
+
+    [Ignore]
     [JsonPropertyName("civil_status")]
     public CivilStatus? CivilStatus { get; set; }
 

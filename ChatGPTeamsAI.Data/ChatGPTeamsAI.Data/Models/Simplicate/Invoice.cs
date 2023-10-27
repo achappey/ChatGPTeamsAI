@@ -3,6 +3,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 internal class Invoice
 {
@@ -50,8 +51,10 @@ internal class Invoice
     }
 
     [JsonPropertyName("status")]
+    [Ignore]
     public InvoiceStatus Status { get; set; } = null!;
 
+    [Ignore]
     [JsonPropertyName("payment_term")]
     public PaymentTerm PaymentTerm { get; set; } = null!;
 
@@ -74,12 +77,15 @@ internal class Invoice
     [JsonPropertyName("subject")]
     public string? Subject { get; set; }
 
+    [Ignore]
     [JsonPropertyName("project")]
     public ProjectInvoice? Project { get; set; } = null;
 
+    [Ignore]
     [JsonPropertyName("organization")]
     public OrganizationInvoice? Organization { get; set; } = null!;
 
+    [Ignore]
     [JsonPropertyName("my_organization_profile")]
     public MyOrganizationInvoice? MyOrganization { get; set; } = null!;
 

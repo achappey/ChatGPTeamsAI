@@ -4,6 +4,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 internal class Sales
 {
@@ -56,15 +57,19 @@ internal class Sales
     public double? ChanceToScore { get; set; }
 
     [JsonPropertyName("responsible_employee")]
+    [Ignore]
     public SalesEmployee? ResponsibleEmployee { get; set; }
 
     [JsonPropertyName("organization")]
+    [Ignore]
     public OrganizationSales? Organization { get; set; }
 
+    [Ignore]
     [JsonPropertyName("person")]
     public PersonSales? Person { get; set; }
 
     [JsonPropertyName("status")]
+    [Ignore]
     public Status? Status { get; set; }
 
     [JsonPropertyName("start_date")]
