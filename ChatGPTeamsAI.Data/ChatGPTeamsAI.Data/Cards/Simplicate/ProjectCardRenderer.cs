@@ -59,9 +59,9 @@ internal class ProjectCardRenderer
         var factSet = new AdaptiveFactSet();
         card.Body.Add(factSet);
 
-        if (project?.OrganizationDetails?.Name != null)
+        if (project?.Organization?.Name != null)
         {
-            factSet.Facts.Add(new AdaptiveFact { Title = "Organization:", Value = project.OrganizationDetails.Name });
+            factSet.Facts.Add(new AdaptiveFact { Title = "Organization:", Value = project.Organization.Name });
         }
 
         if (project?.ProjectManager?.Name != null)

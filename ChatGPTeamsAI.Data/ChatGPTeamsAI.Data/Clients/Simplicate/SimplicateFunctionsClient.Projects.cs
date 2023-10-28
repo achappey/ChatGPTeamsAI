@@ -1,5 +1,4 @@
-﻿using System.Web;
-using ChatGPTeamsAI.Data.Attributes;
+﻿using ChatGPTeamsAI.Data.Attributes;
 using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Simplicate;
@@ -22,7 +21,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             createdAfter?.EnsureValidDateFormat();
 
             var filters = CreateProjectFilters(projectName, projectManager, projectStatusLabel, organizationName, createdAfter, projectNumber);
-            var result = await FetchSimplicateDataCollection<Project>(filters, "projects/project", pageNumber);
+            var result = await FetchSimplicateDataCollection<Project>(filters, "projects/project", pageNumber, "-project_number");
 
             return ToChatGPTeamsAIResponse(result);
 
@@ -30,17 +29,17 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("Export", "Exports a list of projects")]
         public async Task<ChatGPTeamsAIClientResponse?> ExportProjects(
-               [ParameterDescription("The project name.")] string? projectName = null,
-            [ParameterDescription("The project manager's name.")] string? projectManager = null,
-            [ParameterDescription("Project status label.")] string? projectStatusLabel = null,
-            [ParameterDescription("Organization name.")] string? organizationName = null,
-            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
+            [ParameterDescription("The project name")] string? projectName = null,
+            [ParameterDescription("The project manager's name")] string? projectManager = null,
+            [ParameterDescription("Project status label")] string? projectStatusLabel = null,
+            [ParameterDescription("Organization name")] string? organizationName = null,
+            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
             [ParameterDescription("Project number.")] string? projectNumber = null)
         {
             createdAfter?.EnsureValidDateFormat();
 
             var filters = CreateProjectFilters(projectName, projectManager, projectStatusLabel, organizationName, createdAfter, projectNumber);
-            var queryString = BuildQueryString(filters);
+            var queryString = BuildQueryString(filters, "-project_number");
 
             var response = await _httpClient.PagedRequest<Project>($"projects/project?{queryString}");
 
@@ -52,7 +51,6 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        // New function for creating project filters
         private Dictionary<string, string> CreateProjectFilters(
             string? projectName,
             string? projectManager,

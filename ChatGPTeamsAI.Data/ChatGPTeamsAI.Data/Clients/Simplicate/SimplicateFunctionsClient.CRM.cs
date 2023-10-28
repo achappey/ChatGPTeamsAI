@@ -9,7 +9,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     {
 
         [MethodDescription("CRM", "Adds a new organization to Simplicate.")]
-        public async Task<NoOutputResponse> AddNewOrganization(
+        public async Task<ChatGPTeamsAIClientResponse?> AddNewOrganization(
             [ParameterDescription("The name of the organization.")] string name,
             [ParameterDescription("The email of the organization.")] string? email = null,
             [ParameterDescription("The linkedin url of the organization.")] string? linkedin = null,
@@ -44,14 +44,19 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             if (response.IsSuccessStatusCode)
             {
-                return SuccessResponse();
+                var result = new SimplicateResponseBase<NoOutputResponse>()
+                {
+                    Data = SuccessResponse()
+                };
+
+                return ToChatGPTeamsAIResponse(result);
             }
 
             throw new Exception(response.ReasonPhrase);
         }
 
         [MethodDescription("CRM", "Adds a new person to Simplicate.")]
-        public async Task<SimplicateResponseBase<NoOutputResponse>> AddNewPerson(
+        public async Task<ChatGPTeamsAIClientResponse?> AddNewPerson(
             [ParameterDescription("The family name of the person.")] string? familyName,
             [ParameterDescription("The full name of the person.")] string? fullName,
             [ParameterDescription("The first name of the person.")] string? firstName = null,
@@ -91,10 +96,12 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             if (response.IsSuccessStatusCode)
             {
-                return new SimplicateResponseBase<NoOutputResponse>()
+                var result = new SimplicateResponseBase<NoOutputResponse>()
                 {
                     Data = SuccessResponse()
                 };
+
+                return ToChatGPTeamsAIResponse(result);
             }
 
             throw new Exception(response.ReasonPhrase);
@@ -113,7 +120,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             createdAfter?.EnsureValidDateFormat();
 
             var filters = CreatePersonFilters(firstName, familyName, email, relationManager, createdAfter, phone);
-            var result = await FetchSimplicateDataCollection<Person>(filters, "crm/person", pageNumber);
+            var result = await FetchSimplicateDataCollection<Person>(filters, "crm/person", pageNumber, "family_name");
 
             return ToChatGPTeamsAIResponse(result);
         }
@@ -149,7 +156,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             createdAfter?.EnsureValidDateFormat();
 
             var filters = CreatePersonFilters(firstName, familyName, email, relationManager, createdAfter, phone);
-            var queryString = BuildQueryString(filters);
+            var queryString = BuildQueryString(filters, "family_name");
             var response = await _httpClient.PagedRequest<Person>($"crm/person?{queryString}");
 
             var result = new SimplicateDataCollectionResponse<Person>()
@@ -173,7 +180,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             createdAfter?.EnsureValidDateFormat();
 
             var filters = CreateOrganizationFilters(name, email, phone, industry, relationType, createdAfter, relationManager);
-            var queryString = BuildQueryString(filters);
+            var queryString = BuildQueryString(filters, "name");
             var response = await _httpClient.PagedRequest<Organization>($"crm/organization?{queryString}");
 
             var result = new SimplicateDataCollectionResponse<Organization>()
@@ -199,7 +206,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             createdAfter?.EnsureValidDateFormat();
 
             var filters = CreateOrganizationFilters(name, email, phone, industry, relationType, createdAfter, relationManager);
-            var result = await FetchSimplicateDataCollection<Organization>(filters, "crm/organization", pageNumber);
+            var result = await FetchSimplicateDataCollection<Organization>(filters, "crm/organization", pageNumber, "name");
 
             return ToChatGPTeamsAIResponse(result);
         }

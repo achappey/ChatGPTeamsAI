@@ -7,6 +7,57 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 {
     internal partial class SimplicateFunctionsClient
     {
+        [MethodDescription("Invoices", "Search for invoice payments", "ExportPayments")]
+        public async Task<ChatGPTeamsAIClientResponse?> SearchPayments(
+                   [ParameterDescription("Description")] string? description = null,
+                   [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateAfter = null,
+                   [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateBefore = null,
+                   [ParameterDescription("Page number")] long pageNumber = 1)
+        {
+            dateAfter?.EnsureValidDateFormat();
+            dateBefore?.EnsureValidDateFormat();
+
+            var filters = CreatePaymentFilters(description, dateAfter, dateBefore);
+
+            var result = await FetchSimplicateDataCollection<Payment>(filters, "invoices/payment", pageNumber, "-date");
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+        [MethodDescription("Export", "Exports a list of invoice payments")]
+        public async Task<ChatGPTeamsAIClientResponse?> ExportPayments(
+            [ParameterDescription("Description")] string? description = null,
+                   [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateAfter = null,
+                   [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateBefore = null)
+        {
+            dateAfter?.EnsureValidDateFormat();
+            dateBefore?.EnsureValidDateFormat();
+
+            var filters = CreatePaymentFilters(description, dateAfter, dateBefore);
+            var queryString = BuildQueryString(filters, "-date");
+            var response = await _httpClient.PagedRequest<Payment>($"invoices/payment?{queryString}");
+
+            var result = new SimplicateDataCollectionResponse<Payment>()
+            {
+                Data = response
+            };
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+        private Dictionary<string, string> CreatePaymentFilters(
+            string? description,
+            string? dateAfter,
+            string? dateBefore)
+        {
+            var filters = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(description)) filters["[description]"] = $"*{description}*";
+            if (!string.IsNullOrEmpty(dateAfter)) filters["[date][ge]"] = dateAfter;
+            if (!string.IsNullOrEmpty(dateBefore)) filters["[date][le]"] = dateBefore;
+            return filters;
+        }
+
+
         [MethodDescription("Invoices", "Search for invoices", "ExportInvoices")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchInvoices(
             [ParameterDescription("Invoice number")] string? invoiceNumber = null,
@@ -20,7 +71,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             ValidateInvoiceFilters(createdAfter, dateAfter, dateBefore);
 
             var filters = CreateInvoiceFilters(invoiceNumber, organizationName, myOrganizationProfileName, createdAfter, dateAfter, dateBefore);
-            var result = await FetchSimplicateDataCollection<Invoice>(filters, "invoices/invoice", pageNumber);
+            var result = await FetchSimplicateDataCollection<Invoice>(filters, "invoices/invoice", pageNumber, "-date");
 
             return ToChatGPTeamsAIResponse(result);
         }
@@ -38,7 +89,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             ValidateInvoiceFilters(createdAfter, dateAfter, dateBefore);
 
             var filters = CreateInvoiceFilters(invoiceNumber, organizationName, myOrganizationProfileName, createdAfter, dateAfter, dateBefore);
-            var queryString = BuildQueryString(filters);
+            var queryString = BuildQueryString(filters, "-date");
             var response = await _httpClient.PagedRequest<Invoice>($"invoices/invoice?{queryString}");
 
             var result = new SimplicateDataCollectionResponse<Invoice>()
@@ -76,38 +127,38 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             dateBefore?.EnsureValidDateFormat();
             createdAfter?.EnsureValidDateFormat();
         }
-/*
-        [MethodDescription("Invoices", "Gets expired invoices using multiple filters")]
-        public async Task<ChatGPTeamsAIClientResponse?> GetExpiredInvoices(
-            [ParameterDescription("The invoice number.")] string? invoiceNumber = null,
-            [ParameterDescription("Organization name.")] string? organizationName = null,
-            [ParameterDescription("My Organization profile id.")] string? myOrganizationProfileId = null,
-            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? dateAfter = null,
-            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? dateBefore = null)
-        {
-            dateAfter?.EnsureValidDateFormat();
-            dateBefore?.EnsureValidDateFormat();
+        /*
+                [MethodDescription("Invoices", "Gets expired invoices using multiple filters")]
+                public async Task<ChatGPTeamsAIClientResponse?> GetExpiredInvoices(
+                    [ParameterDescription("The invoice number.")] string? invoiceNumber = null,
+                    [ParameterDescription("Organization name.")] string? organizationName = null,
+                    [ParameterDescription("My Organization profile id.")] string? myOrganizationProfileId = null,
+                    [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? dateAfter = null,
+                    [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? dateBefore = null)
+                {
+                    dateAfter?.EnsureValidDateFormat();
+                    dateBefore?.EnsureValidDateFormat();
 
-            var queryString = HttpUtility.ParseQueryString(string.Empty);
+                    var queryString = HttpUtility.ParseQueryString(string.Empty);
 
-            if (!string.IsNullOrEmpty(invoiceNumber)) queryString["q[invoice_number]"] = $"*{invoiceNumber}*";
-            if (!string.IsNullOrEmpty(organizationName)) queryString["q[organization.name]"] = $"*{organizationName}*";
-            if (!string.IsNullOrEmpty(myOrganizationProfileId)) queryString["q[my_organization_profile_id]"] = $"{myOrganizationProfileId}";
-            if (!string.IsNullOrEmpty(dateAfter)) queryString["q[date][ge]"] = dateAfter;
-            if (!string.IsNullOrEmpty(dateBefore)) queryString["q[date][le]"] = dateBefore;
+                    if (!string.IsNullOrEmpty(invoiceNumber)) queryString["q[invoice_number]"] = $"*{invoiceNumber}*";
+                    if (!string.IsNullOrEmpty(organizationName)) queryString["q[organization.name]"] = $"*{organizationName}*";
+                    if (!string.IsNullOrEmpty(myOrganizationProfileId)) queryString["q[my_organization_profile_id]"] = $"{myOrganizationProfileId}";
+                    if (!string.IsNullOrEmpty(dateAfter)) queryString["q[date][ge]"] = dateAfter;
+                    if (!string.IsNullOrEmpty(dateBefore)) queryString["q[date][le]"] = dateBefore;
 
-            var response = await _httpClient.PagedRequest<Invoice>($"invoices/invoice?{queryString}");
+                    var response = await _httpClient.PagedRequest<Invoice>($"invoices/invoice?{queryString}");
 
-            var groupedHours = response
-                .Where(a => a.Status.Name == "label_Expired");
+                    var groupedHours = response
+                        .Where(a => a.Status.Name == "label_Expired");
 
-            var result = new SimplicateDataCollectionResponse<Invoice>()
-            {
-                Data = groupedHours
-            };
+                    var result = new SimplicateDataCollectionResponse<Invoice>()
+                    {
+                        Data = groupedHours
+                    };
 
-            return ToChatGPTeamsAIResponse(result);
-        }*/
+                    return ToChatGPTeamsAIResponse(result);
+                }*/
 
         [MethodDescription("Invoices", "Search for invoice propositions")]
         public async Task<ChatGPTeamsAIClientResponse?> GetPropositions(

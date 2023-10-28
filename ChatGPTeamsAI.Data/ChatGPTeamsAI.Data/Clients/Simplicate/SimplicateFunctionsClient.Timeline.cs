@@ -21,7 +21,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
             if (!string.IsNullOrEmpty(createdBefore)) filters["[created_at][le]"] = createdBefore;
 
-            var result = await FetchSimplicateDataCollection<TimelineMessage>(filters, "timeline/message", pageNumber);
+            var result = await FetchSimplicateDataCollection<TimelineMessage>(filters, "timeline/message", pageNumber, "-created_at");
             
             return ToChatGPTeamsAIResponse(result);
         }
@@ -34,6 +34,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             var queryString = HttpUtility.ParseQueryString(string.Empty);
             if (!string.IsNullOrEmpty(createdAfter)) queryString["q[created_at][ge]"] = createdAfter;
             if (!string.IsNullOrEmpty(createdBefore)) queryString["q[created_at][le]"] = createdBefore;
+            queryString["sort"] = "-created_at";
 
             var response = await _httpClient.PagedRequest<TimelineMessage>($"timeline/message?{queryString}");
 
@@ -44,7 +45,5 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             return ToChatGPTeamsAIResponse(result);
         }
-
     }
-
 }

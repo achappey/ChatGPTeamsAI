@@ -156,7 +156,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             };
         }
 
-        private NameValueCollection BuildQueryString(Dictionary<string, string>? filters)
+        private NameValueCollection BuildQueryString(Dictionary<string, string>? filters, string? sort = null)
         {
             var queryString = HttpUtility.ParseQueryString(string.Empty);
 
@@ -171,19 +171,24 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 }
             }
 
+            if (sort != null)
+            {
+                queryString[$"sort"] = $"{sort}";
+            }
+
             return queryString;
         }
-
 
 
         private async Task<SimplicateDataCollectionResponse<T>?> FetchSimplicateDataCollection<T>(
                   Dictionary<string, string>? filters,
                   string endpointUrl,
-                  long page = 1)
+                  long page = 1,
+                  string? sort = null)
         {
             if (page <= 0) page = 1;
 
-            var queryString = BuildQueryString(filters);
+            var queryString = BuildQueryString(filters, sort);
             long offset = (page - 1) * PAGESIZE;
 
             queryString["limit"] = PAGESIZE.ToString();
@@ -192,19 +197,19 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             if (filters != null)
             {
-             /*   var filterQueryString = BuildQueryString(filters);
-if (!string.IsNullOrEmpty(filterQueryString))
-{
-    queryString.Add(filterQueryString);
-}
+                /*   var filterQueryString = BuildQueryString(filters);
+   if (!string.IsNullOrEmpty(filterQueryString))
+   {
+       queryString.Add(filterQueryString);
+   }
 
-                foreach (var filter in filters)
-                {
-                    if (!string.IsNullOrEmpty(filter.Value))
-                    {
-                        queryString[$"q{filter.Key}"] = $"{filter.Value}";
-                    }
-                }*/
+                   foreach (var filter in filters)
+                   {
+                       if (!string.IsNullOrEmpty(filter.Value))
+                       {
+                           queryString[$"q{filter.Key}"] = $"{filter.Value}";
+                       }
+                   }*/
             }
 
             // Make the request
