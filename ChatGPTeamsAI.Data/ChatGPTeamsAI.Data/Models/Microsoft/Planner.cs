@@ -25,6 +25,7 @@ internal class PlannerBucket
 internal class PlannerPlan
 {
     [ListColumn]
+    [FormColumn]
     public string? Title { get; set; }
 
     [LinkColumn]
@@ -39,9 +40,11 @@ internal class PlannerPlan
 
     public PlannerPlanContainer? Container { get; set; }
 
+    [FormColumn]
     [ListColumn]
     public DateTimeOffset? CreatedDateTime { get; set; }
 
+    [FormColumn]
     public string? Id { get; set; }
 }
 

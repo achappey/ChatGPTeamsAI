@@ -13,6 +13,7 @@ internal class Insights
     public ResourceReference? ResourceReference { get; set; }
 
     [ListColumn]
+    [FormColumn]
     public string? Title
     {
         get
@@ -28,6 +29,16 @@ internal class Insights
         get
         {
             return ResourceVisualization?.Type;
+        }
+        set { }
+    }
+
+    [FormColumn]
+    public string? PreviewText
+    {
+        get
+        {
+            return ResourceVisualization?.PreviewText;
         }
         set { }
     }
@@ -59,6 +70,11 @@ internal class SharedInsight : Insights
 internal class ResourceVisualization
 {
     public string? Title { get; set; }
+    
+    public string? PreviewText { get; set; }
+    
+    public string? PreviewImageUrl { get; set; }
+
     public string? Type { get; set; }
 
 }

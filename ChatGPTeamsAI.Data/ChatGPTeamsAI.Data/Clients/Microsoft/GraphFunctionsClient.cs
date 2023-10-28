@@ -49,6 +49,35 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return driveItem.WebUrl;
         }
 
+        private Models.Input.Action? GetExportAction(Models.Input.Action currentPageAction,
+                   ActionDescription action)
+        {
+            if (string.IsNullOrEmpty(action.ExportAction))
+            {
+                return null;
+            }
+
+            var pageActionEntities = new Dictionary<string, object?>(
+                         currentPageAction.Entities ?? new Dictionary<string, object?>());
+
+            if (pageActionEntities.ContainsKey("skipToken"))
+            {
+                pageActionEntities = pageActionEntities.Where(a => a.Key != "skipToken").ToDictionary(a => a.Key, a => a.Value);
+            }
+
+            if (pageActionEntities.ContainsKey("skip"))
+            {
+                pageActionEntities = pageActionEntities.Where(a => a.Key != "skip").ToDictionary(a => a.Key, a => a.Value);
+            }
+
+            return new Models.Input.Action
+            {
+                Name = action.ExportAction,
+                Entities = pageActionEntities
+            };
+        }
+
+
         public override async Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Models.Input.Action action)
         {
             var result = await this.ExecuteMethodAsync(action) as ChatGPTeamsAIClientResponse ?? throw new ArgumentException("Something went wrong");
@@ -65,7 +94,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             }
 
             result.NextPageAction = GetNextPageAction(action, functionDefinition, skipToken, skip);
-
+            result.ExportPageAction = GetExportAction(action, functionDefinition);
             result.ExecutedAction = action;
             return result;
         }
