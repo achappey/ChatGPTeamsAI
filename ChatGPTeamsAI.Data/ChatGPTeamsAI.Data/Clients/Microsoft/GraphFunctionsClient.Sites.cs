@@ -7,8 +7,8 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 {
     internal partial class GraphFunctionsClient
     {
-        [MethodDescription("SharePoint", "Searches for sites based on keywords.")]
-        public async Task<ChatGPTeamsAIClientResponse?> SearchSites([ParameterDescription("The query to search on.")] string? query = null,
+        [MethodDescription("SharePoint", "Searches for SharePoint sites based on keywords.")]
+        public async Task<ChatGPTeamsAIClientResponse?> SearchSharePointSites([ParameterDescription("The query to search on.")] string? query = null,
                                       [ParameterDescription("The next page skip token.")] string? skipToken = null)
         {
             

@@ -1,10 +1,46 @@
 
+using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
+
 namespace ChatGPTeamsAI.Data.Models.Microsoft;
 
 internal class Insights
 {
+    [Ignore]
     public ResourceVisualization? ResourceVisualization { get; set; }
+    
+    [Ignore]
     public ResourceReference? ResourceReference { get; set; }
+
+    [ListColumn]
+    public string? Title
+    {
+        get
+        {
+            return ResourceVisualization?.Title;
+        }
+        set { }
+    }
+
+    [ListColumn]
+    public string? Type
+    {
+        get
+        {
+            return ResourceVisualization?.Type;
+        }
+        set { }
+    }
+
+    [LinkColumn(true)]
+    public string? Url
+    {
+        get
+        {
+            return ResourceReference?.WebUrl;
+        }
+        set { }
+    }
 
 }
 

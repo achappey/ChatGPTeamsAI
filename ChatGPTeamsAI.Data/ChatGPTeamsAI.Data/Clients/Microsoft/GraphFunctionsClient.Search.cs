@@ -8,7 +8,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
     internal partial class GraphFunctionsClient
     {
         [MethodDescription("SharePoint", "Searches content across SharePoint and OneDrive resources.")]
-        public async Task<ChatGPTeamsAIClientResponse?> SearchDriveContent(
+        public async Task<ChatGPTeamsAIClientResponse?> SearchSharePointContent(
             [ParameterDescription("The search query.")] string query,
             [ParameterDescription("The number of items to skip")] string? skip = null)
         {

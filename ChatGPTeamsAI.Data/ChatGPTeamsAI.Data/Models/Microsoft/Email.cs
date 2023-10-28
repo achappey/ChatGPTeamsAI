@@ -1,5 +1,6 @@
 
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 namespace ChatGPTeamsAI.Data.Models.Microsoft;
 
@@ -36,10 +37,12 @@ internal class Email
         set { }
     }
 
+    [Ignore]
     public Recipient? From { get; set; }
 
     public DateTimeOffset? ReceivedDateTime { get; set; }
 
+    [Ignore]
     public ItemBody? Body { get; set; }
 
 }
