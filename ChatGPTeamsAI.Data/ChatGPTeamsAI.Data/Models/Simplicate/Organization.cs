@@ -30,6 +30,14 @@ internal class Organization
     [FormColumn]
     public bool IsActive { get; set; }
 
+    [JsonPropertyName("url")]
+    [LinkColumn]
+    public string? Url { get; set; }
+
+    [JsonPropertyName("linkedin_url")]
+    [LinkColumn]
+    public string? LinkedIn { get; set; }
+
     [JsonPropertyName("relation_manager")]
     [Ignore]
     public RelationManager? RelationManager { get; set; }
@@ -45,9 +53,24 @@ internal class Organization
         set { }
     }
 
+    [JsonPropertyName("relationManagerLabel")]
+    [FormColumn]
+    public string? RelationTypeLabel
+    {
+        get
+        {
+            return RelationType?.Label;
+        }
+        set { }
+    }
+
     [JsonPropertyName("industry")]
     [Ignore]
     public Industry? Industry { get; set; }
+
+    [JsonPropertyName("relation_type")]
+    [Ignore]
+    public RelationType? RelationType { get; set; }
 
     [JsonPropertyName("industryName")]
     [FormColumn]
@@ -79,6 +102,10 @@ internal class Organization
         }
         set { }
     }
+
+    [JsonPropertyName("note")]
+    [LinkColumn]
+    public string? Note { get; set; }
 
     [JsonPropertyName("simplicate_url")]
     [LinkColumn]
