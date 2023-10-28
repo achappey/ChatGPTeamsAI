@@ -52,7 +52,6 @@ internal class Quote
     [JsonPropertyName("total_excl")]
     [FormColumn]
     public double TotalExcl { get; set; }
-
 }
 
 internal class QuoteStatus

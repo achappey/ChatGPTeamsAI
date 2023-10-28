@@ -2,6 +2,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 internal class Absence
 {
@@ -36,9 +37,11 @@ internal class Absence
     public double Hours { get; set; }
 
     [JsonPropertyName("absencetype")]
+    [Ignore]
     public AbsenceType? AbsenceType { get; set; }
 
     [JsonPropertyName("employee")]
+    [Ignore]
     public Employee? Employee { get; set; }
 
     [FormColumn]

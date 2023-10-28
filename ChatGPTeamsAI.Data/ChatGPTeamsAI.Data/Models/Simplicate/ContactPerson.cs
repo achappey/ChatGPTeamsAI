@@ -1,6 +1,7 @@
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
@@ -32,10 +33,12 @@ internal class ContactPerson
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
+    [Ignore]
     [JsonPropertyName("organization")]
     public OrganizationContactPerson? Organization { get; set; }
 
     [JsonPropertyName("person")]
+    [Ignore]
     public PersonContactPerson? Person { get; set; }
 
     [JsonPropertyName("is_active")]
@@ -59,10 +62,12 @@ internal class ContactPerson
     public string? WorkMobile { get; set; }
 
     [JsonPropertyName("created_at")]
+    [Ignore]
     [FormColumn]
     public string? CreatedAt { get; set; }
 
     [JsonPropertyName("updated_at")]
+    [Ignore]
     [FormColumn]
     public string? UpdatedAt { get; set; }
 }

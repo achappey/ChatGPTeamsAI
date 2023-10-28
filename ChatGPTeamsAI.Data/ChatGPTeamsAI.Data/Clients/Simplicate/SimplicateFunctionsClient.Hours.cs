@@ -62,76 +62,105 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return filters;
         }
 
+        [MethodDescription("Hours", "Get total hours with to_forward status per employee", "ExportTotalHoursToForwardPerEmployee")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetTotalHoursToForwardPerEmployee(
+            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateAfter,
+            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateBefore,
+            [ParameterDescription("The page number.")] long pageNumber = 1)
+        {
+            return await ProcessHours(startDateAfter, startDateBefore,
+            hours => hours.Where(a => a.Status == "to_forward").OrderBy(r => r.EmployeeName),
+                CreateSummary,
+                false,
+                pageNumber);
+        }
 
-        /*
-                [MethodDescription("Hours", "Gets total hours per employee using multiple filters.")]
-                public async Task<ChatGPTeamsAIClientResponse?> GetTotalHoursPerEmployee(
-                      [ParameterDescription("Employee name.")] string? employeeName = null,
-                      [ParameterDescription("Project name.")] string? projectName = null,
-                      [ParameterDescription("Status.")] HourStatus? status = null,
-                      [ParameterDescription("Startdate at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? startDateAfter = null,
-                      [ParameterDescription("Startdate at or before this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? startDateBefore = null)
+        [MethodDescription("Export", "Exports total hours with status forwarded per project")]
+        public async Task<ChatGPTeamsAIClientResponse?> ExportTotalHoursForwardedPerProject(
+            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateAfter,
+            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateBefore)
+        {
+            return await ProcessHours(startDateAfter, startDateBefore, hours => hours.Where(a => a.Status == "forwarded").OrderBy(r => r.ProjectName),
+        CreateProjectManagerSummary, true);
+        }
+
+        [MethodDescription("Hours", "Get total hours with status forwarded per project", "ExportTotalHoursForwardedPerProject")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetTotalHoursForwardedPerProject(
+          [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateAfter,
+          [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateBefore,
+          [ParameterDescription("The page number.")] long pageNumber = 1)
+        {
+            return await ProcessHours(startDateAfter, startDateBefore,
+            hours => hours.Where(a => a.Status == "forwarded").OrderBy(r => r.ProjectName),
+                CreateProjectManagerSummary,
+                false,
+                pageNumber);
+        }
+
+        public async Task<ChatGPTeamsAIClientResponse?> ProcessHours(string startDateAfter, string startDateBefore, Func<IEnumerable<Hour>, IEnumerable<Hour>> filterFunc,
+    Func<IEnumerable<Hour>, IEnumerable<Summary>> summaryFunc, bool isExport, long pageNumber = 1)
+        {
+            startDateAfter?.EnsureValidDateFormat();
+            startDateBefore?.EnsureValidDateFormat();
+
+            var filters = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(startDateAfter)) filters["[start_date][ge]"] = startDateAfter;
+            if (!string.IsNullOrEmpty(startDateBefore)) filters["[start_date][le]"] = startDateBefore;
+
+            var queryString = BuildQueryString(filters);
+            var response = await _httpClient.PagedRequest<Hour>($"hours/hours?{queryString}");
+
+            var filteredHours = filterFunc(response);
+            var summarizedItems = summaryFunc(filteredHours);
+
+            if (isExport)
+            {
+                return ToChatGPTeamsAIResponse(new SimplicateDataCollectionResponse<Summary>() { Data = summarizedItems });
+            }
+            else
+            {
+                if (pageNumber == 0) pageNumber = 1;
+                return ToChatGPTeamsAIResponse(new SimplicateDataCollectionResponse<Summary>()
                 {
-                    startDateAfter?.EnsureValidDateFormat();
-                    startDateBefore?.EnsureValidDateFormat();
+                    Data = summarizedItems.Skip(((int)pageNumber - 1) * PAGESIZE).Take(PAGESIZE),
+                    Metadata = new Metadata()
+                    {
+                        Count = summarizedItems.Count(),
+                        Limit = PAGESIZE,
+                        Offset = ((int)pageNumber - 1) * PAGESIZE
+                    }
+                });
+            }
+        }
 
-                    var queryString = HttpUtility.ParseQueryString(string.Empty);
+        private IEnumerable<Summary> CreateSummary(IEnumerable<Hour> hours)
+        {
+            return hours.GroupBy(t => t.EmployeeName).Select(a => new Summary()
+            {
+                Description = a.Key,
+                Total = a.Sum(s => s.Hours)
+            });
+        }
 
-                    if (!string.IsNullOrEmpty(employeeName)) queryString["q[employee.name]"] = $"*{employeeName}*";
-                    if (!string.IsNullOrEmpty(projectName)) queryString["q[project.name]"] = $"*{projectName}*";
-                    if (!string.IsNullOrEmpty(startDateAfter)) queryString["q[start_date][ge]"] = startDateAfter;
-                    if (!string.IsNullOrEmpty(startDateBefore)) queryString["q[start_date][le]"] = startDateBefore;
+        private IEnumerable<Summary> CreateProjectManagerSummary(IEnumerable<Hour> hours)
+        {
+            return hours.GroupBy(t => t.ProjectName).Select(a => new Summary()
+            {
+                Description = a.Key,
+                Total = a.Sum(s => s.Hours)
+            });
+        }
 
-                    var response = await _httpClient.PagedRequest<Hour>($"hours/hours?{queryString}");
+        [MethodDescription("Export", "Exports total hours with to_forward status per employee")]
+        public async Task<ChatGPTeamsAIClientResponse?> ExportTotalHoursToForwardPerEmployee(
+            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateAfter,
+            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateBefore)
+        {
+            return await ProcessHours(startDateAfter, startDateBefore, hours => hours.Where(a => a.Status == "to_forward").OrderBy(r => r.EmployeeName),
+        CreateSummary, true);
+        }
 
-                    var groupedHours = response
-                        .Where(a => !status.HasValue || (status.HasValue && a.Status == status.Value.GetEnumMemberAttributeValue()))
-                        .GroupBy(h => new { h.Employee?.Id, h.Employee?.Name, h.Status })
-                        .Select(g => new
-                        {
-                            EmployeeName = g.Key.Name,
-                            Status = status.HasValue ? StringExtensions.GetEnumMemberAttributeValue(status.Value) : g.Key.Status,
-                            TotalHours = g.Sum(h => h.Hours)
-                        })
-                        .Where(y => y.TotalHours > 0);
 
-                    return ToChatGPTeamsAIResponse(new SimplicateDataCollectionResponse<dynamic>() { Data = groupedHours });
-                }
-
-                [MethodDescription("Hours", "Gets hours per project using multiple filters.")]
-                public async Task<ChatGPTeamsAIClientResponse?> GetHoursPerProject(
-                      [ParameterDescription("Employee name.")] string? employeeName = null,
-                      [ParameterDescription("Project name.")] string? projectName = null,
-                      [ParameterDescription("Status.")] HourStatus? status = null,
-                      [ParameterDescription("Startdate at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? startDateAfter = null,
-                      [ParameterDescription("Startdate at or before this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? startDateBefore = null)
-                {
-                    startDateAfter?.EnsureValidDateFormat();
-                    startDateBefore?.EnsureValidDateFormat();
-
-                    var queryString = HttpUtility.ParseQueryString(string.Empty);
-
-                    if (!string.IsNullOrEmpty(employeeName)) queryString["q[employee.name]"] = $"*{employeeName}*";
-                    if (!string.IsNullOrEmpty(projectName)) queryString["q[project.name]"] = $"*{projectName}*";
-                    if (!string.IsNullOrEmpty(startDateAfter)) queryString["q[start_date][ge]"] = startDateAfter;
-                    if (!string.IsNullOrEmpty(startDateBefore)) queryString["q[start_date][le]"] = startDateBefore;
-
-                    var response = await _httpClient.PagedRequest<Hour>($"hours/hours?{queryString}");
-
-                    var groupedHours = response
-                        .Where(a => !status.HasValue || (status.HasValue && a.Status == status.Value.GetEnumMemberAttributeValue()))
-                        .GroupBy(h => new { h.Project?.Id, h.Project?.Name, h.Status })
-                        .Select(g => new
-                        {
-                            ProjectName = g.Key.Name,
-                            Status = status.HasValue ? StringExtensions.GetEnumMemberAttributeValue(status.Value) : g.First().Status,
-                            TotalHours = g.Sum(h => h.Hours)
-                        })
-                        .Where(y => y.TotalHours > 0);
-
-                       return ToChatGPTeamsAIResponse(new SimplicateDataCollectionResponse<dynamic>() { Data = groupedHours });
-                }
-        */
         [MethodDescription("Hours", "Add a new hours registration.")]
         public async Task<ChatGPTeamsAIClientResponse?> AddNewHour(
             [ParameterDescription("Employee ID.")] string employeeId,

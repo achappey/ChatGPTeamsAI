@@ -118,6 +118,34 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return filters;
         }
 
+        [MethodDescription("Invoices", "Get total invoices per my organization/invoicer")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetTotalExcludingVatPerMyOrganization(
+            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string dateAfter,
+            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string dateBefore)
+        {
+            dateAfter?.EnsureValidDateFormat();
+            dateBefore?.EnsureValidDateFormat();
+
+            var filters = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(dateAfter)) filters["[date][ge]"] = dateAfter;
+            if (!string.IsNullOrEmpty(dateBefore)) filters["[date][le]"] = dateBefore;
+
+            var queryString = BuildQueryString(filters);
+            var response = await _httpClient.PagedRequest<Invoice>($"invoices/invoice?{queryString}");
+
+            var items = response.GroupBy(t => t.MyOrganizationName).Select(a => new Summary() {
+                Description = a.Key,
+                Total = Math.Round(a.Where(t => t.TotalExcludingVat.HasValue).Sum(s => s.TotalExcludingVat.Value))
+            });
+
+            var result = new SimplicateDataCollectionResponse<Summary>()
+            {
+                Data = items
+            };
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
         private void ValidateInvoiceFilters(
           string? createdAfter,
           string? dateAfter,

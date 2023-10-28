@@ -89,6 +89,11 @@ internal class HourProject
 
     [JsonPropertyName("name")]
     public string? Name { get; set; }
+
+    [JsonPropertyName("project_manager")]
+    public HourEmployee? ProjectManager { get; set; }
+
+
 }
 
 

@@ -2,6 +2,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 internal class LeaveBalance
 {
@@ -35,10 +36,12 @@ internal class LeaveBalance
     [ListColumn]
     public int Year { get; set; }
 
+    [Ignore]
     [JsonPropertyName("leavetype")]
     public LeaveType? LeaveType { get; set; }
 
     [JsonPropertyName("employee")]
+    [Ignore]
     public LeaveBalanceEmployee? Employee { get; set; }
 
 

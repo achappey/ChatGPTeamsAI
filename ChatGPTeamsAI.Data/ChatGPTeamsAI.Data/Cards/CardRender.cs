@@ -148,17 +148,28 @@ internal class CardRenderer : ICardRenderer
 
         AddHeader(card, columnProperties);
 
+        var formColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
+
         int toggleId = 1;
 
         foreach (var item in items)
         {
             var columnSetItem = new AdaptiveColumnSet();
             AddColumnItem(columnSetItem, columnProperties, item, toggleId == 1);
-            AddToggleAction(columnSetItem, toggleId);
+
+            if (formColumnProperties.Count() > 0)
+            {
+                AddToggleAction(columnSetItem, toggleId);
+
+            }
             card.Body.Add(columnSetItem);
 
-            var toggleContainer = CreateToggleContainer(typeProperties, item, toggleId);
-            card.Body.Add(toggleContainer);
+            if (formColumnProperties.Count() > 0)
+            {
+
+                var toggleContainer = CreateToggleContainer(typeProperties, item, toggleId);
+                card.Body.Add(toggleContainer);
+            }
 
             toggleId++;
         }
@@ -228,14 +239,14 @@ internal class CardRenderer : ICardRenderer
                 Id = $"chevronDown{toggleId}",
                 Url = new Uri("https://adaptivecards.io/content/down.png"),
                 PixelWidth = 20,
-                IsVisible = true // Initially set to true
+                IsVisible = true 
             },
             new AdaptiveImage
             {
                 Id = $"chevronUp{toggleId}",
                 Url = new Uri("https://adaptivecards.io/content/up.png"),
                 PixelWidth = 20,
-                IsVisible = false // Initially set to false
+                IsVisible = false
             }
         },
             SelectAction = new AdaptiveToggleVisibilityAction
@@ -256,11 +267,6 @@ internal class CardRenderer : ICardRenderer
         var factSet = new AdaptiveFactSet();
 
         var formColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
-
-        if (!formColumnProperties.Any())
-        {
-            formColumnProperties = typeProperties.Take(5).ToList();
-        }
 
         foreach (var property in formColumnProperties)
         {
