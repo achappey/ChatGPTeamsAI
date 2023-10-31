@@ -155,10 +155,10 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             var queryString = BuildQueryString(filters);
             var response = await _httpClient.PagedRequest<Invoice>($"invoices/invoice?{queryString}");
 
-            var items = response.GroupBy(t => t.MyOrganizationName).Select(a => new Summary()
+            var items = response.Where(t => t.TotalExcludingVat.HasValue).GroupBy(t => t.MyOrganizationName).Select(a => new Summary()
             {
                 Description = a.Key,
-                Total = Math.Round(a.Where(t => t.TotalExcludingVat.HasValue).Sum(s => s.TotalExcludingVat.Value))
+                Total = Math.Round(a.Sum(s => s.TotalExcludingVat!.Value))
             });
 
             var result = new SimplicateDataCollectionResponse<Summary>()

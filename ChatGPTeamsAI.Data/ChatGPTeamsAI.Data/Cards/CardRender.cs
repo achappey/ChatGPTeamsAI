@@ -278,7 +278,7 @@ internal class CardRenderer : ICardRenderer
 
         var linkColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null).ToList();
         var chatColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null
-                && p.GetCustomAttribute<LinkColumnAttribute>().DocumentChat).ToList();
+                && p.GetCustomAttribute<LinkColumnAttribute>()!.DocumentChat).ToList();
 
         var columnSet = new AdaptiveColumnSet();
 

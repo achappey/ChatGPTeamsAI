@@ -112,6 +112,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             [ParameterDescription("The first name of the person.")] string? firstName = null,
             [ParameterDescription("The family name of the person.")] string? familyName = null,
             [ParameterDescription("The email of the person.")] string? email = null,
+            [ParameterDescription("The address locality of the person")] string? locality = null,
             [ParameterDescription("The name of the relation manager of the person.")] string? relationManager = null,
             [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
             [ParameterDescription("The phone number of the person.")] string? phone = null,
@@ -119,7 +120,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = CreatePersonFilters(firstName, familyName, email, relationManager, createdAfter, phone);
+            var filters = CreatePersonFilters(firstName, familyName, email, locality, relationManager, createdAfter, phone);
             var result = await FetchSimplicateDataCollection<Person>(filters, "crm/person", pageNumber, "family_name");
 
             return ToChatGPTeamsAIResponse(result);
@@ -129,6 +130,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             string? firstName,
             string? familyName,
             string? email,
+            string? locality,
             string? relationManager,
             string? createdAfter,
             string? phone)
@@ -137,6 +139,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(firstName)) filters["[first_name]"] = $"*{firstName}*";
             if (!string.IsNullOrEmpty(familyName)) filters["[family_name]"] = $"*{familyName}*";
             if (!string.IsNullOrEmpty(email)) filters["[email]"] = $"*{email}*";
+            if (!string.IsNullOrEmpty(locality)) filters["[address.locality]"] = $"*{locality}*";
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
             if (!string.IsNullOrEmpty(phone)) filters["[phone]"] = $"*{phone}*";
             if (!string.IsNullOrEmpty(relationManager)) filters["[relation_manager.name]"] = $"*{relationManager}*";
@@ -146,16 +149,17 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("Export", "Exports a list of persons")]
         public async Task<ChatGPTeamsAIClientResponse?> ExportPersons(
-            [ParameterDescription("The first name of the person.")] string? firstName = null,
-            [ParameterDescription("The family name of the person.")] string? familyName = null,
-            [ParameterDescription("The email of the person.")] string? email = null,
+            [ParameterDescription("The first name of the person")] string? firstName = null,
+            [ParameterDescription("The family name of the person")] string? familyName = null,
+            [ParameterDescription("The email of the person")] string? email = null,
+            [ParameterDescription("The address locality of the person")] string? locality = null,
             [ParameterDescription("The name of the relation manager of the person.")] string? relationManager = null,
             [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
             [ParameterDescription("The phone number of the person.")] string? phone = null)
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = CreatePersonFilters(firstName, familyName, email, relationManager, createdAfter, phone);
+            var filters = CreatePersonFilters(firstName, familyName, email, locality, relationManager, createdAfter, phone);
             var queryString = BuildQueryString(filters, "family_name");
             var response = await _httpClient.PagedRequest<Person>($"crm/person?{queryString}");
 
@@ -172,6 +176,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             [ParameterDescription("The name of the organization.")] string? name = null,
             [ParameterDescription("The email of the organization.")] string? email = null,
             [ParameterDescription("The phone number of the organization.")] string? phone = null,
+            [ParameterDescription("The visiting address locality of the organization.")] string? locality = null,
             [ParameterDescription("The industry of the organization.")] string? industry = null,
             [ParameterDescription("The relation type of the organization.")] string? relationType = null,
             [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
@@ -179,7 +184,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = CreateOrganizationFilters(name, email, phone, industry, relationType, createdAfter, relationManager);
+            var filters = CreateOrganizationFilters(name, email, phone, locality, industry, relationType, createdAfter, relationManager);
             var queryString = BuildQueryString(filters, "name");
             var response = await _httpClient.PagedRequest<Organization>($"crm/organization?{queryString}");
 
@@ -197,6 +202,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             [ParameterDescription("The name of the organization.")] string? name = null,
             [ParameterDescription("The email of the organization.")] string? email = null,
             [ParameterDescription("The phone number of the organization.")] string? phone = null,
+            [ParameterDescription("The visiting address locality of the organization.")] string? locality = null,
             [ParameterDescription("The industry of the organization.")] string? industry = null,
             [ParameterDescription("The relation type of the organization.")] string? relationType = null,
             [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
@@ -205,7 +211,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = CreateOrganizationFilters(name, email, phone, industry, relationType, createdAfter, relationManager);
+            var filters = CreateOrganizationFilters(name, email, phone, locality, industry, relationType, createdAfter, relationManager);
             var result = await FetchSimplicateDataCollection<Organization>(filters, "crm/organization", pageNumber, "name");
 
             return ToChatGPTeamsAIResponse(result);
@@ -215,6 +221,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 string? name,
                 string? email,
                 string? phone,
+                string? locality,
                 string? industry,
                 string? relationType,
                 string? createdAfter,
@@ -224,6 +231,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(name)) filters["[name]"] = $"*{name}*";
             if (!string.IsNullOrEmpty(email)) filters["[email]"] = $"*{email}*";
             if (!string.IsNullOrEmpty(phone)) filters["[phone]"] = $"*{phone}*";
+            if (!string.IsNullOrEmpty(locality)) filters["[visiting_address.locality]"] = $"*{locality}*";
             if (!string.IsNullOrEmpty(industry)) filters["[industry.name]"] = $"*{industry}*";
             if (!string.IsNullOrEmpty(relationType)) filters["[relation_type.label]"] = $"*{relationType}*";
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;

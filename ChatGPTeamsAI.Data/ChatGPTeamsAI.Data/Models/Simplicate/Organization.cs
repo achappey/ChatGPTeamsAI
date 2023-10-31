@@ -12,11 +12,11 @@ internal class Organization
     public string? Name { get; set; }
 
     [JsonPropertyName("email")]
-    [ListColumn]
+    [FormColumn]
     public string? Email { get; set; }
 
     [JsonPropertyName("phone")]
-    [ListColumn]
+    [FormColumn]
     public string? Phone { get; set; }
 
     [JsonPropertyName("id")]
@@ -26,13 +26,17 @@ internal class Organization
     [FormColumn]
     public string? CocCode { get; set; }
 
+    [JsonPropertyName("vat_number")]
+    [FormColumn]
+    public string? VatNumber { get; set; }
+
     [JsonPropertyName("is_active")]
     [FormColumn]
     public bool IsActive { get; set; }
 
     [JsonPropertyName("url")]
     [LinkColumn]
-    public string? Url { get; set; }
+    public string? Website { get; set; }
 
     [JsonPropertyName("linkedin_url")]
     [LinkColumn]
@@ -53,7 +57,7 @@ internal class Organization
         set { }
     }
 
-    [JsonPropertyName("relationManagerLabel")]
+    [JsonPropertyName("relationTypeLabel")]
     [FormColumn]
     public string? RelationTypeLabel
     {
@@ -71,6 +75,36 @@ internal class Organization
     [JsonPropertyName("relation_type")]
     [Ignore]
     public RelationType? RelationType { get; set; }
+
+    [JsonPropertyName("debtor")]
+    [Ignore]
+    public Debtor? Debtor { get; set; }
+
+    [JsonPropertyName("visiting_address")]
+    [Ignore]
+    public Address? VisitingAddress { get; set; }
+
+    [JsonPropertyName("visitingAddressLocality")]
+    [ListColumn]
+    public string? VisitingAddressLocality
+    {
+        get
+        {
+            return VisitingAddress?.Locality;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("debtorEmail")]
+    [FormColumn]
+    public string? DebtorMail
+    {
+        get
+        {
+            return Debtor?.SendEmailEmail;
+        }
+        set { }
+    }
 
     [JsonPropertyName("industryName")]
     [FormColumn]
@@ -103,8 +137,31 @@ internal class Organization
         set { }
     }
 
+    [JsonPropertyName("interests")]
+    [Ignore]
+    public IEnumerable<Interest>? Interests { get; set; }
+
+    [JsonPropertyName("InteresNames")]
+    [FormColumn]
+    public string? InterestsNames
+    {
+        get
+        {
+            return Interests != null ? string.Join(", ", Interests.Select(a => a.Name)) : string.Empty;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("created_at")]
+    [FormColumn]
+    public string? CreatedAt { get; set; }
+
+    [JsonPropertyName("updated_at")]
+    [FormColumn]
+    public string? UpdatedAt { get; set; }
+
     [JsonPropertyName("note")]
-    [LinkColumn]
+    [FormColumn]
     public string? Note { get; set; }
 
     [JsonPropertyName("simplicate_url")]
@@ -112,6 +169,13 @@ internal class Organization
     public string? Simplicate { get; set; }
 
 }
+
+internal class Address
+{
+    [JsonPropertyName("locality")]
+    public string? Locality { get; set; }
+}
+
 
 internal class RelationManager
 {
@@ -132,23 +196,44 @@ internal class Industry
     public string? Name { get; set; }
 }
 
+internal class Interest
+{
+    [JsonPropertyName("name")]
+    [ListColumn]
+    public string? Name { get; set; }
+}
+
+
+internal class Debtor
+{
+    [JsonPropertyName("send_email_email")]
+    [ListColumn]
+    public string? SendEmailEmail { get; set; }
+}
+
 internal class MyOrganizationProfile
 {
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
     [JsonPropertyName("name")]
+    [FormColumn]
+    [ListColumn]
     public string? Name { get; set; }
 
     [JsonPropertyName("organization_id")]
     public string? OrganizationId { get; set; }
 
     [JsonPropertyName("vat_number")]
+    [FormColumn]
     public string? VatNumber { get; set; }
 
     [JsonPropertyName("coc_code")]
+    [FormColumn]
+    [ListColumn]
     public string? CocCode { get; set; }
 
+    [FormColumn]
     [JsonPropertyName("bank_account")]
     public string? BankAccount { get; set; }
 

@@ -13,14 +13,6 @@ internal class Person
     [ListColumn]
     public string? FullName { get; set; }
 
-    [ListColumn]
-    [JsonPropertyName("email")]
-    public string? Email { get; set; }
-
-    [ListColumn]
-    [JsonPropertyName("phone")]
-    public string? Phone { get; set; }
-
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
@@ -32,13 +24,21 @@ internal class Person
     [FormColumn]
     public string? FirstName { get; set; }
 
+    [JsonPropertyName("family_name")]
+    [FormColumn]
+    public string? FamilyName { get; set; }
+
     [JsonPropertyName("gender")]
     [FormColumn]
     public string? Gender { get; set; }
 
-    [JsonPropertyName("family_name")]
     [FormColumn]
-    public string? FamilyName { get; set; }
+    [JsonPropertyName("email")]
+    public string? Email { get; set; }
+
+    [FormColumn]
+    [JsonPropertyName("phone")]
+    public string? Phone { get; set; }
 
     [JsonPropertyName("linkedin_url")]
     [LinkColumn]
@@ -52,7 +52,35 @@ internal class Person
     [FormColumn]
     public string? RelationNumber { get; set; }
 
+    [JsonPropertyName("relation_type")]
+    [Ignore]
+    public RelationType? RelationType { get; set; }
 
+    [JsonPropertyName("relationTypeLabel")]
+    [FormColumn]
+    public string? RelationTypeLabel
+    {
+        get
+        {
+            return RelationType?.Label;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("address")]
+    [Ignore]
+    public Address? Address { get; set; }
+
+    [JsonPropertyName("addressLocality")]
+    [FormColumn]
+    public string? AddressLocality
+    {
+        get
+        {
+            return Address?.Locality;
+        }
+        set { }
+    }
 
     [JsonPropertyName("relationManagerName")]
     [FormColumn]
@@ -94,12 +122,14 @@ internal class Person
     public RelationManager? RelationManager { get; set; }
 
     [JsonPropertyName("organizations")]
-    [FormColumn]
+    [ListColumn]
     public string? Organizations
     {
         get
         {
-            return LinkedAsContactToOrganization != null ? string.Join(", ", LinkedAsContactToOrganization.Select(a => a.Name)) : string.Empty;
+            return LinkedAsContactToOrganization != null
+           ? string.Join(", ", LinkedAsContactToOrganization.Select(a => a.ToString()))
+           : string.Empty;
         }
         set { }
     }
@@ -119,4 +149,9 @@ internal class LinkedContactPerson
 
     [JsonPropertyName("work_function")]
     public string? WorkFunction { get; set; }
+
+    public override string ToString()
+    {
+        return $"{Name}{(string.IsNullOrEmpty(WorkFunction) ? string.Empty : $" ({WorkFunction})")}";
+    }
 }
