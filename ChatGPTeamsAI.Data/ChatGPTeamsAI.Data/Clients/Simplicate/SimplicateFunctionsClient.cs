@@ -194,27 +194,9 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             queryString["limit"] = PAGESIZE.ToString();
             queryString["offset"] = offset.ToString();
             queryString.Add("metadata", "offset,count,limit");
-
-            if (filters != null)
-            {
-                /*   var filterQueryString = BuildQueryString(filters);
-   if (!string.IsNullOrEmpty(filterQueryString))
-   {
-       queryString.Add(filterQueryString);
-   }
-
-                   foreach (var filter in filters)
-                   {
-                       if (!string.IsNullOrEmpty(filter.Value))
-                       {
-                           queryString[$"q{filter.Key}"] = $"{filter.Value}";
-                       }
-                   }*/
-            }
-
-            // Make the request
+          
             var response = await _httpClient.GetAsync($"{endpointUrl}?{queryString}");
-            var dsadsa = await response.Content.ReadAsStringAsync();
+
             if (response.IsSuccessStatusCode)
             {
                 return await response.FromJson<SimplicateDataCollectionResponse<T>?>();

@@ -99,7 +99,7 @@ internal class Person
     {
         get
         {
-            return string.Join(", ", LinkedAsContactToOrganization?.Select(a => a.Name));
+            return LinkedAsContactToOrganization != null ? string.Join(", ", LinkedAsContactToOrganization.Select(a => a.Name)) : string.Empty;
         }
         set { }
     }

@@ -42,13 +42,11 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             }
 
             var filterQuery = string.Join(" and ", filterQueries);
-            var selectQuery = "id,subject,start,end";
 
             var events = await _graphClient.Users[userId].Events
                 .Request(filterOptions)
                 .Filter(filterQuery)
                 .Top(PAGESIZE)
-                .Select(selectQuery)
                 .GetAsync();
 
             var items = events.CurrentPage.Select(_mapper.Map<Models.Microsoft.Event>);

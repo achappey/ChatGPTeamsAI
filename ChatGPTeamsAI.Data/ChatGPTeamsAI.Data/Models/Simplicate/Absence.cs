@@ -6,6 +6,7 @@ using CsvHelper.Configuration.Attributes;
 
 internal class Absence
 {
+    [ListColumn]
     [FormColumn]
     [JsonPropertyName("employeeName")]
     public string? EmployeeName
@@ -17,17 +18,6 @@ internal class Absence
         set { }
     }
 
-    [JsonPropertyName("absenceTypeLabel")]
-    [ListColumn]
-    public string? AbsenceTypeLabel
-    {
-        get
-        {
-            return AbsenceType?.Label;
-        }
-        set { }
-    }
-
     [JsonPropertyName("year")]
     [ListColumn]
     public string? Year { get; set; }
@@ -35,10 +25,6 @@ internal class Absence
     [JsonPropertyName("hours")]
     [ListColumn]
     public double Hours { get; set; }
-
-    [JsonPropertyName("absencetype")]
-    [Ignore]
-    public AbsenceType? AbsenceType { get; set; }
 
     [JsonPropertyName("employee")]
     [Ignore]
@@ -55,6 +41,14 @@ internal class Absence
     [FormColumn]
     [JsonPropertyName("description")]
     public string? Description { get; set; }
+
+    [JsonPropertyName("created_at")]
+    [FormColumn]
+    public string? CreatedAt { get; set; }
+
+    [JsonPropertyName("updated_at")]
+    [FormColumn]
+    public string? UpdatedAt { get; set; }
 }
 
 internal class AbsenceEmployee
@@ -62,10 +56,3 @@ internal class AbsenceEmployee
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 }
-
-internal class AbsenceType
-{
-    [JsonPropertyName("label")]
-    public string? Label { get; set; }
-}
-

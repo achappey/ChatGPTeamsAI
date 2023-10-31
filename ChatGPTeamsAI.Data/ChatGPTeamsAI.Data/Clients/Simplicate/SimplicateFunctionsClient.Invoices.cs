@@ -57,6 +57,28 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return filters;
         }
 
+        [MethodDescription("Invoices", "Search for invoice documents")]
+        public async Task<ChatGPTeamsAIClientResponse?> SearchInvoiceDocuments(
+                  [ParameterDescription("Name of employee who created the document")] string? createdBy = null,
+                  [ParameterDescription("Title of the document")] string? title = null,
+                  [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
+                  [ParameterDescription("Created at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdBefore = null,
+                  [ParameterDescription("Page number")] long pageNumber = 1)
+        {
+            createdAfter?.EnsureValidDateFormat();
+            createdBefore?.EnsureValidDateFormat();
+
+            var filters = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(createdBy)) filters["[title]"] = $"*{title}*";
+            if (!string.IsNullOrEmpty(createdBy)) filters["[created_by.name]"] = $"*{createdBy}*";
+            if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
+            if (!string.IsNullOrEmpty(createdBefore)) filters["[created_at][le]"] = createdBefore;
+
+            var result = await FetchSimplicateDataCollection<InvoiceDocument>(filters, "invoices/document", pageNumber, "created_at");
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
 
         [MethodDescription("Invoices", "Search for invoices", "ExportInvoices")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchInvoices(
@@ -133,7 +155,8 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             var queryString = BuildQueryString(filters);
             var response = await _httpClient.PagedRequest<Invoice>($"invoices/invoice?{queryString}");
 
-            var items = response.GroupBy(t => t.MyOrganizationName).Select(a => new Summary() {
+            var items = response.GroupBy(t => t.MyOrganizationName).Select(a => new Summary()
+            {
                 Description = a.Key,
                 Total = Math.Round(a.Where(t => t.TotalExcludingVat.HasValue).Sum(s => s.TotalExcludingVat.Value))
             });

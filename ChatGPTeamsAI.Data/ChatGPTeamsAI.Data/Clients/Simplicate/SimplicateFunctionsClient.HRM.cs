@@ -80,7 +80,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         [MethodDescription("HRM", "Search for employee leave balances", "ExportLeaveBalances")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchLeaveBalances(
             [ParameterDescription("Employee name")] string? employeeName = null,
-            [ParameterDescription("Year")] int? year = null,
+            [ParameterDescription("Year")] long? year = null,
             [ParameterDescription("Pagenumber")] long pageNumber = 1)
         {
             var filters = new Dictionary<string, string>();
@@ -95,7 +95,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         [MethodDescription("Export", "Exports a list of employee leave balances")]
         public async Task<ChatGPTeamsAIClientResponse?> ExportLeaveBalances(
           [ParameterDescription("Employee name")] string? employeeName = null,
-          [ParameterDescription("Year")] int? year = null)
+          [ParameterDescription("Year")] long? year = null)
         {
             var queryString = HttpUtility.ParseQueryString(string.Empty);
 
@@ -115,7 +115,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         [MethodDescription("HRM", "Search for employee absences", "ExportAbsences")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchAbsences(
             [ParameterDescription("Employee name")] string? employeeName = null,
-            [ParameterDescription("Year")] int? year = null,
+            [ParameterDescription("Year")] long? year = null,
             [ParameterDescription("Absence type name")] string? absenceTypeName = null,
             [ParameterDescription("Pagenumber")] long pageNumber = 1)
         {
@@ -132,7 +132,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         [MethodDescription("Export", "Exports a list of employee absences")]
         public async Task<ChatGPTeamsAIClientResponse?> ExportAbsences(
                 [ParameterDescription("Employee name")] string? employeeName = null,
-                [ParameterDescription("Year")] int? year = null,
+                [ParameterDescription("Year")] long? year = null,
                 [ParameterDescription("Absence type name")] string? absenceTypeName = null)
         {
             var queryString = HttpUtility.ParseQueryString(string.Empty);

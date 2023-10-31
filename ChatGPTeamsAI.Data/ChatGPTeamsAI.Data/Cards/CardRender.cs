@@ -125,7 +125,7 @@ internal class CardRenderer : ICardRenderer
 
         AdaptiveSubmitAction chatAction = new AdaptiveSubmitAction
         {
-            Title = "Chat",
+            Title = "Add to chat",
             Data = new Data.Models.Input.Action()
             {
                 Name = "DocumentChat",
@@ -316,7 +316,7 @@ internal class CardRenderer : ICardRenderer
                         Items = new List<AdaptiveElement>() {
                             new AdaptiveTextBlock
                                 {
-                                    Text = "Chat with " + linkColumns.Name,
+                                    Text = "Add to chat",
                                     HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
                                     Color = AdaptiveTextColor.Accent,
                                 }

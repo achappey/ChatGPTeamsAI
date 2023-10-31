@@ -145,3 +145,96 @@ internal class PaymentTerm
     public string? Name { get; set; }
 
 }
+
+internal class InvoiceDocument
+{
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [JsonPropertyName("download_url")]
+    [LinkColumn]
+    public string? Download { get; set; }
+
+    [JsonPropertyName("document_type")]
+    [Ignore]
+    public DocumentType? DocumentType { get; set; }
+
+    [JsonPropertyName("linked_to")]
+    [Ignore]
+    public List<LinkedTo>? LinkedTo { get; set; }
+
+    [JsonPropertyName("created_by")]
+    [Ignore]
+    public CreatedBy? CreatedBy { get; set; }
+
+    [FormColumn]
+    [JsonPropertyName("createdByName")]
+    public string? CreatedByName
+    {
+        get
+        {
+            return CreatedBy?.Name;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("created_at")]
+    [ListColumn]
+    [FormColumn]
+    public string? CreatedAt { get; set; }
+
+    [JsonPropertyName("title")]
+    [FormColumn]
+    [ListColumn]
+    public string? Title { get; set; }
+
+
+    [JsonPropertyName("linkedToLabels")]
+    [FormColumn]
+    public string? LinkedToLabels
+    {
+        get
+        {
+            return LinkedTo != null ? string.Join(", ", LinkedTo.Select(a => a.Label)) : string.Empty;
+        }
+        set { }
+    }
+
+    private string? _description;
+
+    [JsonPropertyName("description")]
+    [FormColumn]
+    public string? Description
+    {
+        get
+        {
+            if (_description != null)
+            {
+                var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                htmlDoc.LoadHtml(_description);
+                return htmlDoc.DocumentNode.InnerText;
+            }
+            return null;
+        }
+        set
+        {
+            _description = value;
+        }
+    }
+
+}
+
+internal class DocumentType
+{
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [JsonPropertyName("label")]
+    public string? Label { get; set; }
+}
+
+internal class CreatedBy
+{
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+}

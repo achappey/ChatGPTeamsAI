@@ -40,7 +40,8 @@ internal class MicrosoftProfile : Profile
         CreateMap<Microsoft.Graph.Device, Models.Microsoft.Device>();
         CreateMap<Microsoft.Graph.ManagedDevice, Models.Microsoft.ManagedDevice>();
         CreateMap<Microsoft.Graph.SitePage, Models.Microsoft.Page>();
-        CreateMap<Microsoft.Graph.DateTimeTimeZone, Models.Microsoft.DateTimeTimeZone>();
+        CreateMap<Microsoft.Graph.OnlineMeetingInfo, Models.Microsoft.OnlineMeetingInfo>();
+        CreateMap<Microsoft.Graph.Location, Models.Microsoft.Location>();
 
         CreateMap<Microsoft.Graph.User, Models.Microsoft.User>();
 
