@@ -62,6 +62,19 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return filters;
         }
 
+        [MethodDescription("Hours", "Get total hours per employee", "ExportTotalHoursPerEmployee")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetTotalHoursPerEmployee(
+            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateAfter,
+            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateBefore,
+            [ParameterDescription("The page number.")] long pageNumber = 1)
+        {
+            return await ProcessHours(startDateAfter, startDateBefore,
+            hours => hours.OrderBy(r => r.EmployeeName),
+                CreateSummary,
+                false,
+                pageNumber);
+        }
+
         [MethodDescription("Hours", "Get total hours with to_forward status per employee", "ExportTotalHoursToForwardPerEmployee")]
         public async Task<ChatGPTeamsAIClientResponse?> GetTotalHoursToForwardPerEmployee(
             [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateAfter,
@@ -83,6 +96,8 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return await ProcessHours(startDateAfter, startDateBefore, hours => hours.Where(a => a.Status == "forwarded").OrderBy(r => r.ProjectName),
         CreateProjectManagerSummary, true);
         }
+
+        
 
         [MethodDescription("Hours", "Get total hours with status forwarded per project", "ExportTotalHoursForwardedPerProject")]
         public async Task<ChatGPTeamsAIClientResponse?> GetTotalHoursForwardedPerProject(
@@ -149,6 +164,15 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 Description = a.Key,
                 Total = a.Sum(s => s.Hours)
             });
+        }
+
+        [MethodDescription("Export", "Exports total hours per employee")]
+        public async Task<ChatGPTeamsAIClientResponse?> ExportTotalHoursPerEmployee(
+            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateAfter,
+            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string startDateBefore)
+        {
+            return await ProcessHours(startDateAfter, startDateBefore, hours => hours.OrderBy(r => r.EmployeeName),
+                 CreateSummary, true);
         }
 
         [MethodDescription("Export", "Exports total hours with to_forward status per employee")]

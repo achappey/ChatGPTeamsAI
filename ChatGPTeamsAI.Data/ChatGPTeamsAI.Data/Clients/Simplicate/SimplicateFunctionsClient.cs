@@ -4,7 +4,6 @@ using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Cards.Simplicate;
 using ChatGPTeamsAI.Data.Models.Output;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 
 namespace ChatGPTeamsAI.Data.Clients.Simplicate
