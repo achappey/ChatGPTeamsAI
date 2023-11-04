@@ -6,6 +6,8 @@ using Microsoft.Graph;
 using ChatGPTeamsAI.Data.Profiles;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Output;
+using AdaptiveCards;
+using ChatGPTeamsAI.Data.Translations;
 
 namespace ChatGPTeamsAI.Data.Clients.Microsoft
 {
@@ -19,7 +21,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         public const string MICROSOFT = "Microsoft 365";
 
-        public GraphFunctionsClient(string token)
+        public GraphFunctionsClient(string token, ITranslationService? translationService = null) : base(translationService)
         {
             if (string.IsNullOrWhiteSpace(token))
             {
@@ -97,6 +99,45 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             result.ExportPageAction = GetExportAction(action, functionDefinition);
             result.ExecutedAction = action;
             return result;
+        }
+
+
+        public AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url, string name, string? locale = null)
+        {
+            AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
+
+            card.Body.Add(new AdaptiveTextBlock
+            {
+                Text = name,
+                Weight = AdaptiveTextWeight.Bolder,
+                Size = AdaptiveTextSize.Large
+            });
+
+            AdaptiveFactSet factSet = new AdaptiveFactSet();
+            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Items", locale), numberOfItems.ToString()));
+            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Filename", locale), fileName));
+            card.Body.Add(factSet);
+
+            AdaptiveOpenUrlAction urlAction = new AdaptiveOpenUrlAction
+            {
+                Title = "Open",
+                Url = new Uri(url)
+            };
+
+            AdaptiveSubmitAction chatAction = new AdaptiveSubmitAction
+            {
+                Title = "Add to chat",
+                Data = new Data.Models.Input.Action()
+                {
+                    Name = "DocumentChat",
+                    Entities = new Dictionary<string, object?>() { { url, "" } }
+                },
+            };
+
+            card.Actions.Add(urlAction);
+            card.Actions.Add(chatAction);
+
+            return card;
         }
 
         private Models.Input.Action? GetNextPageAction(Models.Input.Action currentPageAction,

@@ -2,9 +2,9 @@
 using ChatGPTeamsAI.Data.Models.Simplicate;
 using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
-using ChatGPTeamsAI.Cards.Simplicate;
 using ChatGPTeamsAI.Data.Models.Output;
 using System.Collections.Specialized;
+using ChatGPTeamsAI.Data.Translations;
 
 namespace ChatGPTeamsAI.Data.Clients.Simplicate
 {
@@ -13,19 +13,19 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         public const string SIMPLICATE = "Simplicate";
 
         private readonly HttpClient _httpClient;
+       
 
         private const int PAGESIZE = 5;
 
-        internal SimplicateFunctionsClient(SimplicateToken token, HttpClient? client = null)
+        internal SimplicateFunctionsClient(SimplicateToken token, HttpClient? client = null, ITranslationService? translationService = null) : base(translationService)
         {
+           // _locale = locale ?? "en-US";
+
             _httpClient = client ?? new HttpClient();
             _httpClient.BaseAddress = new Uri($"https://{token.Environment}.simplicate.nl/api/v2/");
 
             _httpClient.DefaultRequestHeaders.Add("Authentication-Key", token.ApiKey);
             _httpClient.DefaultRequestHeaders.Add("Authentication-Secret", token.ApiSecret);
-
-            _cardRenderers.Add(typeof(Project), new ProjectCardRenderer());
-            _cardRenderers.Add(typeof(List<Project>), new ProjectsCardRenderer());
         }
 
         public override async Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Models.Input.Action action)
@@ -114,7 +114,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 };
             }
 
-            var dataCard = RenderCard(response.Data);
+            var dataCard = RenderCard(response.Data, _locale);
 
             return new ChatGPTeamsAIClientResponse()
             {
@@ -140,7 +140,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 };
             }
 
-            var dataCard = RenderCard(response.Data);
+            var dataCard = RenderCard(response.Data, _locale);
 
             return new ChatGPTeamsAIClientResponse()
             {
@@ -220,4 +220,5 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     }
 
 }
+
 

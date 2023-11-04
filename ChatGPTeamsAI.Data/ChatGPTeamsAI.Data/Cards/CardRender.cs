@@ -1,20 +1,24 @@
 using System.Reflection;
 using AdaptiveCards;
 using ChatGPTeamsAI.Data.Attributes;
+using ChatGPTeamsAI.Data.Translations;
 
 namespace ChatGPTeamsAI.Cards;
 
 internal interface ICardRenderer
 {
-    // abstract AdaptiveCard Render(object data);
-    AdaptiveCard DefaultRender(object item);
+    AdaptiveCard DefaultRender(object item, string? locale = null);
 }
 
 
 internal class CardRenderer : ICardRenderer
 {
-    //AdaptiveCard Render(object data);
+    private readonly ITranslationService _translatorService;
 
+    public CardRenderer(ITranslationService translatorService)
+    {
+        _translatorService = translatorService;
+    }
 
     public static AdaptiveTableCell CreateCell(string? value)
     {
@@ -40,19 +44,17 @@ internal class CardRenderer : ICardRenderer
         return cell;
     }
 
-    // public abstract AdaptiveCard Render(object data);
-
-    public AdaptiveCard DefaultRender(object item)
+    public AdaptiveCard DefaultRender(object item, string? locale = null)
     {
         if (item is IEnumerable<object> itemsList)
         {
 
             if (!itemsList.Any())
             {
-                return RenderEmptyListCard();
+                return RenderEmptyListCard(locale);
             }
 
-            return DefaultListRender(itemsList);
+            return DefaultListRender(itemsList, locale);
         }
         else
         {
@@ -60,13 +62,13 @@ internal class CardRenderer : ICardRenderer
         }
     }
 
-    public AdaptiveCard RenderEmptyListCard()
+    public AdaptiveCard RenderEmptyListCard(string? locale = null)
     {
         var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
 
         card.Body.Add(new AdaptiveTextBlock
         {
-            Text = "No items",
+            Text = _translatorService.Translate(TranslationKeys.NoItems, locale),
             Weight = AdaptiveTextWeight.Bolder
         });
 
@@ -101,52 +103,14 @@ internal class CardRenderer : ICardRenderer
         return card;
     }
 
-    public static AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url, string name)
-    {
-        AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
 
-        card.Body.Add(new AdaptiveTextBlock
-        {
-            Text = name,
-            Weight = AdaptiveTextWeight.Bolder,
-            Size = AdaptiveTextSize.Large
-        });
-
-        AdaptiveFactSet factSet = new AdaptiveFactSet();
-        factSet.Facts.Add(new AdaptiveFact("Items", numberOfItems.ToString()));
-        factSet.Facts.Add(new AdaptiveFact("Filename", fileName));
-        card.Body.Add(factSet);
-
-        AdaptiveOpenUrlAction urlAction = new AdaptiveOpenUrlAction
-        {
-            Title = "Open",
-            Url = new Uri(url)
-        };
-
-        AdaptiveSubmitAction chatAction = new AdaptiveSubmitAction
-        {
-            Title = "Add to chat",
-            Data = new Data.Models.Input.Action()
-            {
-                Name = "DocumentChat",
-                Entities = new Dictionary<string, object?>() { { url, "" } }
-            },
-        };
-
-        card.Actions.Add(urlAction);
-        card.Actions.Add(chatAction);
-
-        return card;
-    }
-
-
-    public AdaptiveCard DefaultListRender(IEnumerable<object> items)
+    public AdaptiveCard DefaultListRender(IEnumerable<object> items, string? locale = null)
     {
         var card = InitializeAdaptiveCard();
         var typeProperties = GetTypeProperties(items.First());
         var columnProperties = GetColumnProperties(typeProperties);
 
-        AddHeader(card, columnProperties);
+        AddHeader(card, columnProperties, locale);
 
         var formColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
 
@@ -167,7 +131,7 @@ internal class CardRenderer : ICardRenderer
             if (formColumnProperties.Count() > 0)
             {
 
-                var toggleContainer = CreateToggleContainer(typeProperties, item, toggleId);
+                var toggleContainer = CreateToggleContainer(typeProperties, item, toggleId, locale);
                 card.Body.Add(toggleContainer);
             }
 
@@ -192,13 +156,13 @@ internal class CardRenderer : ICardRenderer
         return typeProperties.Where(p => p.GetCustomAttribute<ListColumnAttribute>() != null).ToList();
     }
 
-    private void AddHeader(AdaptiveCard card, List<PropertyInfo> columnProperties)
+    private void AddHeader(AdaptiveCard card, List<PropertyInfo> columnProperties, string? locale = null)
     {
         var container = new AdaptiveContainer() { Style = AdaptiveContainerStyle.Emphasis };
         var columnSetHeader = new AdaptiveColumnSet();
         foreach (var property in columnProperties)
         {
-            columnSetHeader.Columns.Add(CreateColumn(property.Name));
+            columnSetHeader.Columns.Add(CreateColumn(_translatorService.Translate(property.Name, locale)));
         }
         columnSetHeader.Columns.Add(new AdaptiveColumn { Width = "auto" });
         container.Items.Add(columnSetHeader);
@@ -239,7 +203,7 @@ internal class CardRenderer : ICardRenderer
                 Id = $"chevronDown{toggleId}",
                 Url = new Uri("https://adaptivecards.io/content/down.png"),
                 PixelWidth = 20,
-                IsVisible = true 
+                IsVisible = true
             },
             new AdaptiveImage
             {
@@ -261,7 +225,7 @@ internal class CardRenderer : ICardRenderer
         });
     }
 
-    private AdaptiveContainer CreateToggleContainer(PropertyInfo[] typeProperties, object item, int toggleId)
+    private AdaptiveContainer CreateToggleContainer(PropertyInfo[] typeProperties, object item, int toggleId, string? locale = null)
     {
         var toggleContainer = new AdaptiveContainer { Id = $"cardContent{toggleId}", IsVisible = false };
         var factSet = new AdaptiveFactSet();
@@ -270,8 +234,13 @@ internal class CardRenderer : ICardRenderer
 
         foreach (var property in formColumnProperties)
         {
-            var value = property.GetValue(item)?.ToString() ?? " ";
-            factSet.Facts.Add(new AdaptiveFact { Title = property.Name, Value = value });
+            var value = property.GetValue(item)?.ToString() ?? string.Empty;
+            
+            if (!string.IsNullOrEmpty(value))
+            {
+                factSet.Facts.Add(new AdaptiveFact { Title = _translatorService.Translate(property.Name, locale), Value = value });
+            }
+
         }
 
         toggleContainer.Items.Add(factSet);

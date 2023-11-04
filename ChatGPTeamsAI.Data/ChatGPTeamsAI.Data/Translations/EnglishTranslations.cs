@@ -1,0 +1,45 @@
+namespace ChatGPTeamsAI.Data.Translations;
+
+public class EnglishTranslations
+{
+    public static Dictionary<string, string> Data = new Dictionary<string, string>
+    {
+        [TranslationKeys.ExecutingAction] = "Executing action...",
+        [TranslationKeys.ProcessingResult] = "Processing result...",
+        [TranslationKeys.Retrying] = "Retrying...",
+        [TranslationKeys.ResultReady] = "Result ready",
+        [TranslationKeys.NoItems] = "No items",
+        [TranslationKeys.ProjectNumber] = "Project Number",
+        [TranslationKeys.Name] = "Name",
+        [TranslationKeys.ProjectManagerName] = "Project manager",
+        [TranslationKeys.StatusLabel] = "Status",
+        [TranslationKeys.Billable] = "Billable",
+        [TranslationKeys.StartDate] = "Start Date",
+        [TranslationKeys.EndDate] = "End Date",
+        [TranslationKeys.OrganizationName] = "Organization",
+        [TranslationKeys.MyOrganizationName] = "My Organization",
+        [TranslationKeys.TotalBudget] = "Budget",
+        [TranslationKeys.TotalSpent] = "Spent",
+        [TranslationKeys.TotalInvoiced] = "Invoiced",
+        [TranslationKeys.Note] = "Note",
+        [TranslationKeys.EmployeeNames] = "Project team",
+        [TranslationKeys.CreatedAt] = "Created At",
+        [TranslationKeys.UpdatedAt] = "Updated At",
+        [TranslationKeys.PersonName] = "Person Name",
+        [TranslationKeys.WorkFunction] = "Work Function",
+        [TranslationKeys.IsActive] = "Is Active",
+        [TranslationKeys.WorkEmail] = "Work Email",
+        [TranslationKeys.WorkPhone] = "Work Phone",
+        [TranslationKeys.WorkMobile] = "Work Mobile",
+        [TranslationKeys.VisitingAddressLocality] = "Visiting Address City",
+        [TranslationKeys.Email] = "Email",
+        [TranslationKeys.Phone] = "Phone",
+        [TranslationKeys.CocCode] = "Chamber of Commerce Number",
+        [TranslationKeys.VatNumber] = "VAT Number",
+        [TranslationKeys.RelationManagerName] = "Relation Manager Name",
+        [TranslationKeys.RelationTypeLabel] = "Relation Type",
+        [TranslationKeys.DebtorMail] = "Debtor Email",
+        [TranslationKeys.IndustryName] = "Industry Name",
+        [TranslationKeys.InterestsNames] = "Interests Names",
+    };
+}
