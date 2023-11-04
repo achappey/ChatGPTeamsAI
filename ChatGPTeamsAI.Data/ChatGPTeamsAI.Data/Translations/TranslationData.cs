@@ -52,4 +52,9 @@ public static class TranslationKeys
     public const string IndustryName = "IndustryName";
     public const string InterestsNames = "InterestsNames";
 
+    public const string EmploymentStatus = "EmploymentStatus";
+    public const string CivilStatusLabel = "CivilStatusLabel";
+    public const string HourlySalesTariff = "HourlySalesTariff";
+    public const string HourlyCostTariff = "HourlyCostTariff";
+
 }

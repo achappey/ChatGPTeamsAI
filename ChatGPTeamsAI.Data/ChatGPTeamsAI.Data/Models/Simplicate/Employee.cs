@@ -8,7 +8,18 @@ internal class Employee
 {
     [JsonPropertyName("name")]
     [ListColumn]
+    [TitleColumn]
     public string? Name { get; set; }
+
+    [JsonPropertyName("image")]
+    [ImageColumn]
+    public string? Image
+    {
+        get
+        {
+            return Avatar?.UrlLarge;
+        }
+    }
 
     [JsonPropertyName("function")]
     public string? Function { get; set; }
@@ -61,9 +72,18 @@ internal class Employee
     [FormColumn]
     public string? CreatedAt { get; set; }
 
+    [JsonPropertyName("updated_at")]
+    [FormColumn]
+    [UpdatedColumn]
+    public string? UpdatedAt { get; set; }
+
     [JsonPropertyName("simplicate_url")]
     [LinkColumn]
     public string? Simplicate { get; set; }
+
+    [JsonPropertyName("avatar")]
+    [Ignore]
+    public Avatar? Avatar { get; set; }
 }
 
 internal class Avatar

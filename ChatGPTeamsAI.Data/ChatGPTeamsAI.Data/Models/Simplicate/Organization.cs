@@ -8,12 +8,30 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 internal class Organization
 {
     [JsonPropertyName("name")]
+    [TitleColumn]
     [ListColumn]
     public string? Name { get; set; }
 
     [JsonPropertyName("email")]
     [FormColumn]
     public string? Email { get; set; }
+
+    [JsonPropertyName("logo")]
+    [ImageColumn]
+    public string? Logo
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Email) || !Email.Contains('@'))
+            {
+                return string.Empty;
+            }
+
+            var domain = Email.Split('@')[1];
+            
+            return $"https://logo.clearbit.com/{domain}";
+        }
+    }
 
     [JsonPropertyName("phone")]
     [FormColumn]
@@ -158,6 +176,7 @@ internal class Organization
 
     [JsonPropertyName("updated_at")]
     [FormColumn]
+    [UpdatedColumn]
     public string? UpdatedAt { get; set; }
 
     [JsonPropertyName("note")]

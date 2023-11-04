@@ -42,6 +42,26 @@ internal class FormColumnAttribute : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+internal class ImageColumnAttribute : Attribute
+{
+    public ImageColumnAttribute() { }
+}
+
+
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+internal class TitleColumnAttribute : Attribute
+{
+    public TitleColumnAttribute() { }
+}
+
+
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+internal class UpdatedColumnAttribute : Attribute
+{
+    public UpdatedColumnAttribute() { }
+}
+
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 internal class LinkColumnAttribute : Attribute
 {
     public bool DocumentChat { get; } = false;

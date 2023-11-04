@@ -228,6 +228,65 @@ internal class CardRenderer : ICardRenderer
     private AdaptiveContainer CreateToggleContainer(PropertyInfo[] typeProperties, object item, int toggleId, string? locale = null)
     {
         var toggleContainer = new AdaptiveContainer { Id = $"cardContent{toggleId}", IsVisible = false };
+
+        var headerColumnSet = new AdaptiveColumnSet();
+        var imageProperty = typeProperties.FirstOrDefault(p => p.GetCustomAttribute<ImageColumnAttribute>() != null);
+        var titleProperty = typeProperties.FirstOrDefault(p => p.GetCustomAttribute<TitleColumnAttribute>() != null);
+        var updatedProperty = typeProperties.FirstOrDefault(p => p.GetCustomAttribute<UpdatedColumnAttribute>() != null);
+
+        if (imageProperty != null && titleProperty != null)
+        {
+            var imageColumn = new AdaptiveColumn { Width = "auto" };
+            var titleColumn = new AdaptiveColumn { Width = "stretch" };
+
+            var imageUrl = imageProperty.GetValue(item)?.ToString() ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                imageColumn.Items.Add(new AdaptiveImage
+                {
+                    Url = new Uri(imageUrl),
+                    AltText = titleProperty.GetValue(item)?.ToString() ?? string.Empty,
+                    Size = AdaptiveImageSize.Medium,
+                    Style = AdaptiveImageStyle.Default
+                });
+
+
+                var titleText = titleProperty.GetValue(item)?.ToString() ?? string.Empty;
+                if (!string.IsNullOrEmpty(titleText))
+                {
+                    titleColumn.Items.Add(new AdaptiveTextBlock
+                    {
+                        Text = titleText,
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Size = AdaptiveTextSize.Large,
+                        Wrap = true
+                    });
+                }
+
+                if (updatedProperty != null)
+                {
+                    var updatedText = updatedProperty.GetValue(item)?.ToString() ?? string.Empty;
+                    if (!string.IsNullOrEmpty(updatedText))
+                    {
+                        titleColumn.Items.Add(new AdaptiveTextBlock
+                        {
+                            Text = $"{_translatorService.Translate(TranslationKeys.UpdatedAt, locale)} {updatedText}",
+                            IsSubtle = true,
+                            Size = AdaptiveTextSize.Small,
+                            Wrap = true
+                        });
+                    }
+                }
+
+                headerColumnSet.Columns.Add(imageColumn);
+                headerColumnSet.Columns.Add(titleColumn);
+
+                toggleContainer.Items.Add(headerColumnSet);
+            }
+        }
+
+
         var factSet = new AdaptiveFactSet();
 
         var formColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
@@ -235,7 +294,7 @@ internal class CardRenderer : ICardRenderer
         foreach (var property in formColumnProperties)
         {
             var value = property.GetValue(item)?.ToString() ?? string.Empty;
-            
+
             if (!string.IsNullOrEmpty(value))
             {
                 factSet.Facts.Add(new AdaptiveFact { Title = _translatorService.Translate(property.Name, locale), Value = value });

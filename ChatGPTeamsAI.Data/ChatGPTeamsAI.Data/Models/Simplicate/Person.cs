@@ -11,7 +11,25 @@ internal class Person
 
     [JsonPropertyName("full_name")]
     [ListColumn]
+    [TitleColumn]
     public string? FullName { get; set; }
+
+    [JsonPropertyName("image")]
+    [ImageColumn]
+    public string? Image
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Email) || !Email.Contains('@'))
+            {
+                return string.Empty;
+            }
+
+            var domain = Email.Split('@')[1];
+
+            return $"https://logo.clearbit.com/{domain}";
+        }
+    }
 
     [JsonPropertyName("id")]
     public string? Id { get; set; }
@@ -137,6 +155,15 @@ internal class Person
     [Ignore]
     [JsonPropertyName("linked_as_contact_to_organization")]
     public IEnumerable<LinkedContactPerson>? LinkedAsContactToOrganization { get; set; }
+
+    [JsonPropertyName("created_at")]
+    [FormColumn]
+    public string? CreatedAt { get; set; }
+
+    [JsonPropertyName("updated_at")]
+    [FormColumn]
+    [UpdatedColumn]
+    public string? UpdatedAt { get; set; }
 }
 
 internal class LinkedContactPerson

@@ -42,5 +42,9 @@ public class DutchTranslations
         [TranslationKeys.DebtorMail] = "Factuurverstrekking e-mailadres",
         [TranslationKeys.IndustryName] = "Branche",
         [TranslationKeys.InterestsNames] = "Interesses",
+        [TranslationKeys.EmploymentStatus] = "Status",
+        [TranslationKeys.CivilStatusLabel] = "Burgerlijke staat",
+        [TranslationKeys.HourlySalesTariff] = "Verkooptarief",
+        [TranslationKeys.HourlyCostTariff] = "Kostprijs",
     };
 }

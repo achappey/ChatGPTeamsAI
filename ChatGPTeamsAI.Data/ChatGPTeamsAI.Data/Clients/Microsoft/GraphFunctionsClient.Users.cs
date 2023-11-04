@@ -55,7 +55,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             var items = users.CurrentPage.Select(_mapper.Map<Models.Microsoft.User>);
 
             return ToChatGPTeamsAIResponse(items, users.NextPageRequest?.QueryOptions.GetSkipToken());
-
         }
 
         [MethodDescription("Users", "Search for users with guest type")]
@@ -64,8 +63,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                                                                        [ParameterDescription("The mail to filter on")] string? mail = null,
                                                                        [ParameterDescription("The next page skip token")] string? skipToken = null)
         {
-            
-
             string? searchQuery = null;
 
             if (!string.IsNullOrEmpty(displayName) || !string.IsNullOrEmpty(mail))
@@ -73,7 +70,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 searchQuery = $"\"displayName:{displayName ?? "*"}\" OR \"mail:{mail ?? "*"}\" OR \"userPrincipalName:{mail ?? "*"}\"";
             }
 
-            string filterQuery = "userType eq 'Member'";
+            string filterQuery = "userType eq 'Guest'";
             if (!string.IsNullOrEmpty(companyName))
             {
                 filterQuery += $" and startsWith(companyName, '{companyName}')";
