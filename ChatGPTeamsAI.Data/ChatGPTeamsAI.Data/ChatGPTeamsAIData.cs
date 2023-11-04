@@ -22,7 +22,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
     public ChatGPTeamsAIData(Configuration config)
     {
         _config = config;
-        _translatorService = new TranslationService();
+        _translatorService = new TranslationService(config.Locale);
     }
 
     public IEnumerable<ActionDescription> GetAvailableActions()

@@ -7,7 +7,7 @@ namespace ChatGPTeamsAI.Cards;
 
 internal interface ICardRenderer
 {
-    AdaptiveCard DefaultRender(object item, string? locale = null);
+    AdaptiveCard DefaultRender(object item);
 }
 
 
@@ -44,17 +44,17 @@ internal class CardRenderer : ICardRenderer
         return cell;
     }
 
-    public AdaptiveCard DefaultRender(object item, string? locale = null)
+    public AdaptiveCard DefaultRender(object item)
     {
         if (item is IEnumerable<object> itemsList)
         {
 
             if (!itemsList.Any())
             {
-                return RenderEmptyListCard(locale);
+                return RenderEmptyListCard();
             }
 
-            return DefaultListRender(itemsList, locale);
+            return DefaultListRender(itemsList);
         }
         else
         {
@@ -62,13 +62,13 @@ internal class CardRenderer : ICardRenderer
         }
     }
 
-    public AdaptiveCard RenderEmptyListCard(string? locale = null)
+    public AdaptiveCard RenderEmptyListCard()
     {
         var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
 
         card.Body.Add(new AdaptiveTextBlock
         {
-            Text = _translatorService.Translate(TranslationKeys.NoItems, locale),
+            Text = _translatorService.Translate(TranslationKeys.NoItems),
             Weight = AdaptiveTextWeight.Bolder
         });
 
@@ -104,13 +104,13 @@ internal class CardRenderer : ICardRenderer
     }
 
 
-    public AdaptiveCard DefaultListRender(IEnumerable<object> items, string? locale = null)
+    public AdaptiveCard DefaultListRender(IEnumerable<object> items)
     {
         var card = InitializeAdaptiveCard();
         var typeProperties = GetTypeProperties(items.First());
         var columnProperties = GetColumnProperties(typeProperties);
 
-        AddHeader(card, columnProperties, locale);
+        AddHeader(card, columnProperties);
 
         var formColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
 
@@ -131,7 +131,7 @@ internal class CardRenderer : ICardRenderer
             if (formColumnProperties.Count() > 0)
             {
 
-                var toggleContainer = CreateToggleContainer(typeProperties, item, toggleId, locale);
+                var toggleContainer = CreateToggleContainer(typeProperties, item, toggleId);
                 card.Body.Add(toggleContainer);
             }
 
@@ -156,13 +156,13 @@ internal class CardRenderer : ICardRenderer
         return typeProperties.Where(p => p.GetCustomAttribute<ListColumnAttribute>() != null).ToList();
     }
 
-    private void AddHeader(AdaptiveCard card, List<PropertyInfo> columnProperties, string? locale = null)
+    private void AddHeader(AdaptiveCard card, List<PropertyInfo> columnProperties)
     {
         var container = new AdaptiveContainer() { Style = AdaptiveContainerStyle.Emphasis };
         var columnSetHeader = new AdaptiveColumnSet();
         foreach (var property in columnProperties)
         {
-            columnSetHeader.Columns.Add(CreateColumn(_translatorService.Translate(property.Name, locale)));
+            columnSetHeader.Columns.Add(CreateColumn(_translatorService.Translate(property.Name)));
         }
         columnSetHeader.Columns.Add(new AdaptiveColumn { Width = "auto" });
         container.Items.Add(columnSetHeader);
@@ -225,7 +225,7 @@ internal class CardRenderer : ICardRenderer
         });
     }
 
-    private AdaptiveContainer CreateToggleContainer(PropertyInfo[] typeProperties, object item, int toggleId, string? locale = null)
+    private AdaptiveContainer CreateToggleContainer(PropertyInfo[] typeProperties, object item, int toggleId)
     {
         var toggleContainer = new AdaptiveContainer { Id = $"cardContent{toggleId}", IsVisible = false };
 
@@ -271,7 +271,7 @@ internal class CardRenderer : ICardRenderer
                     {
                         titleColumn.Items.Add(new AdaptiveTextBlock
                         {
-                            Text = $"{_translatorService.Translate(TranslationKeys.UpdatedAt, locale)} {updatedText}",
+                            Text = $"{_translatorService.Translate(TranslationKeys.UpdatedAt)} {updatedText}",
                             IsSubtle = true,
                             Size = AdaptiveTextSize.Small,
                             Wrap = true
@@ -297,7 +297,7 @@ internal class CardRenderer : ICardRenderer
 
             if (!string.IsNullOrEmpty(value))
             {
-                factSet.Facts.Add(new AdaptiveFact { Title = _translatorService.Translate(property.Name, locale), Value = value });
+                factSet.Facts.Add(new AdaptiveFact { Title = _translatorService.Translate(property.Name), Value = value });
             }
 
         }

@@ -102,7 +102,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         }
 
 
-        public AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url, string name, string? locale = null)
+        public AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url, string name)
         {
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
 
@@ -114,8 +114,8 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             });
 
             AdaptiveFactSet factSet = new AdaptiveFactSet();
-            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Items", locale), numberOfItems.ToString()));
-            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Filename", locale), fileName));
+            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Items"), numberOfItems.ToString()));
+            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Filename"), fileName));
             card.Body.Add(factSet);
 
             AdaptiveOpenUrlAction urlAction = new AdaptiveOpenUrlAction

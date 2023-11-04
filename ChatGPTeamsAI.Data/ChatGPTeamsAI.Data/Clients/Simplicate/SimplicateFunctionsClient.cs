@@ -114,7 +114,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 };
             }
 
-            var dataCard = RenderCard(response.Data, _locale);
+            var dataCard = RenderCard(response.Data);
 
             return new ChatGPTeamsAIClientResponse()
             {
@@ -140,7 +140,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 };
             }
 
-            var dataCard = RenderCard(response.Data, _locale);
+            var dataCard = RenderCard(response.Data);
 
             return new ChatGPTeamsAIClientResponse()
             {

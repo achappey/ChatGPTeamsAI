@@ -14,7 +14,7 @@ internal abstract class BaseClient : IBaseClient
 
     public abstract IEnumerable<ActionDescription> GetAvailableActions();
 
-    protected string _locale = "en-US";
+    //protected string _locale = "en-US";
     protected readonly ITranslationService _translatorService;
 
     public abstract Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Models.Input.Action action);
@@ -25,7 +25,7 @@ internal abstract class BaseClient : IBaseClient
         defaultRender = new CardRenderer(_translatorService);
     }
 
-    public AdaptiveCard? RenderCard(object? data, string? locale = null)
+    public AdaptiveCard? RenderCard(object? data)
     {
         if (data == null)
         {
@@ -39,7 +39,7 @@ internal abstract class BaseClient : IBaseClient
         }
         //var defaultRender = new CardRenderer();
 
-        return defaultRender.DefaultRender(data, locale);
+        return defaultRender.DefaultRender(data);
         //  base.RenderData(data)
 
         //   return null;
