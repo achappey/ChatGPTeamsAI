@@ -118,8 +118,8 @@ internal class CardRenderer : ICardRenderer
 
         foreach (var item in items)
         {
-            var columnSetItem = new AdaptiveColumnSet();
-            AddColumnItem(columnSetItem, columnProperties, item, toggleId == 1);
+            var columnSetItem = new AdaptiveColumnSet() {Separator = toggleId != 1} ;
+            AddColumnItem(columnSetItem, columnProperties, item, false);
 
             if (formColumnProperties.Count() > 0)
             {
@@ -328,12 +328,13 @@ internal class CardRenderer : ICardRenderer
                                 {
                                     Text = linkColumns.Name,
                                     HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
-                                     Color = AdaptiveTextColor.Accent
+                                    Color = AdaptiveTextColor.Accent
                                 }
                         },
                     SelectAction = new AdaptiveOpenUrlAction
                     {
                         Url = new Uri(value),
+                        
                     }
                 });
 
@@ -363,7 +364,7 @@ internal class CardRenderer : ICardRenderer
         }
 
         toggleContainer.Items.Add(columnSet);
-
+     
         return toggleContainer;
     }
 

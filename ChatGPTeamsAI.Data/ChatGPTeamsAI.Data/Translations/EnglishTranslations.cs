@@ -45,5 +45,16 @@ public class EnglishTranslations
         [TranslationKeys.CivilStatusLabel] = "Marital status",
         [TranslationKeys.HourlySalesTariff] = "Selling price",
         [TranslationKeys.HourlyCostTariff] = "Cost price",
+        [TranslationKeys.FamilyName] = "Familyname",
+        [TranslationKeys.FirstName] = "Firstname",
+        [TranslationKeys.Initials] = "Initials",
+        [TranslationKeys.Gender] = "Gender",
+        [TranslationKeys.MobilePhone] = "Mobile Phone",
+        [TranslationKeys.Mail] = "E-mail",
+        [TranslationKeys.PreferredLanguage] = "Preferred language",
+        [TranslationKeys.AccountEnabled] = "Account anabled",
+        [TranslationKeys.CreatedDateTime] = "Created at",
+        [TranslationKeys.AlternativeMail] = "Alternative email",
+        [TranslationKeys.AssignedLicenseCount] = "License count",
     };
 }

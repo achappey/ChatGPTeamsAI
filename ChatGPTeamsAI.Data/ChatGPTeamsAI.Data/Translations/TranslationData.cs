@@ -56,5 +56,19 @@ public static class TranslationKeys
     public const string CivilStatusLabel = "CivilStatusLabel";
     public const string HourlySalesTariff = "HourlySalesTariff";
     public const string HourlyCostTariff = "HourlyCostTariff";
+    public const string Initials = "Initials";
+    public const string FirstName = "FirstName";
+    public const string FamilyName = "FamilyName";
+    public const string Gender = "Gender";
+    public const string MobilePhone = "MobilePhone";
+    public const string Mail = "Mail";
+    public const string PreferredLanguage = "PreferredLanguage";
+    public const string AccountEnabled = "AccountEnabled";
+    public const string CreatedDateTime = "CreatedDateTime";
+    public const string AlternativeMail = "AlternativeMail";
+    public const string AssignedLicenseCount = "AssignedLicenseCount";
+     public const string DisplayName = "DisplayName";
+    public const string Department = "Department";
+    public const string JobTitle = "JobTitle";
 
 }
