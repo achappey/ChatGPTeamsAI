@@ -127,7 +127,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             AdaptiveSubmitAction chatAction = new AdaptiveSubmitAction
             {
                 Title = "Add to chat",
-                Data = new Data.Models.Input.Action()
+                Data = new Models.Input.Action()
                 {
                     Name = "DocumentChat",
                     Entities = new Dictionary<string, object?>() { { url, "" } }

@@ -11,6 +11,7 @@ public class TranslationData
 
 public static class TranslationKeys
 {
+    public const string Submit = "Submit";
     public const string ExecutingAction = "ExecutingAction";
     public const string True = "True";
     public const string False = "False";
@@ -86,6 +87,20 @@ public static class TranslationKeys
     public const string AddToChat = "AddToChat";
     public const string SendMail = "SendMail";
     public const string Call = "Call";
-    
-    
+    public const string LinkedToName = "LinkedToName";
+    public const string Description = "Description";
+    public const string LinkedToLabels = "LinkedToLabels";
+    public const string CreatedByName = "CreatedByName";
+    public const string ProductivityTarget = "ProductivityTarget";
+    public const string EmployeeName = "EmployeeName";
+    public const string LeaveTypeLabel = "LeaveTypeLabel";
+    public const string Balance = "Balance";
+    public const string Year = "Year";
+    public const string Hours = "Hours";
+    public const string TeamNames = "TeamNames";
+    public const string FullName = "FullName";
+    public const string AddNewPerson = "AddNewPerson";
+
+
+
 }

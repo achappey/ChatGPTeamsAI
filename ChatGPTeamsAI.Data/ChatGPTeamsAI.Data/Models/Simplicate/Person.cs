@@ -11,6 +11,7 @@ internal class Person
 
     [JsonPropertyName("full_name")]
     [ListColumn]
+    [NewFormColumn]
     [TitleColumn]
     public string? FullName { get; set; }
 
@@ -35,14 +36,17 @@ internal class Person
     public string? Id { get; set; }
 
     [JsonPropertyName("initials")]
+    [NewFormColumn]
     [FormColumn]
     public string? Initials { get; set; }
 
     [JsonPropertyName("first_name")]
+    [NewFormColumn]
     [FormColumn]
     public string? FirstName { get; set; }
 
     [JsonPropertyName("family_name")]
+    [NewFormColumn]
     [FormColumn]
     public string? FamilyName { get; set; }
 
@@ -51,18 +55,22 @@ internal class Person
     public string? Gender { get; set; }
 
     [FormColumn]
+    [NewFormColumn]
     [JsonPropertyName("email")]
     public string? Email { get; set; }
 
+    [NewFormColumn]
     [FormColumn]
     [JsonPropertyName("phone")]
     public string? Phone { get; set; }
 
     [JsonPropertyName("linkedin_url")]
+    [NewFormColumn]
     [LinkColumn]
     public string? LinkedIn { get; set; }
 
     [JsonPropertyName("website_url")]
+    [NewFormColumn]
     [LinkColumn]
     public string? Website { get; set; }
 
@@ -145,16 +153,30 @@ internal class Person
     {
         get
         {
-               if (LinkedAsContactToOrganization != null && LinkedAsContactToOrganization.Any())
-        {
-            // Combineer alle items tot één string, elk voorafgegaan door "- " en gevolgd door "\r", behalve het laatste item.
-            return "- " + string.Join("\r- ", LinkedAsContactToOrganization.Select(a => a.ToString()));
-        }
-        return string.Empty;
+            if (LinkedAsContactToOrganization != null && LinkedAsContactToOrganization.Any())
+            {
+                return "- " + string.Join("\r- ", LinkedAsContactToOrganization.Select(a => a.ToString()));
+            }
+            return string.Empty;
 
-          //  return LinkedAsContactToOrganization != null
-          // ? string.Join("- ", LinkedAsContactToOrganization.Select(a => a.ToString() + "\r"))
-          // : string.Empty;
+            //  return LinkedAsContactToOrganization != null
+            // ? string.Join("- ", LinkedAsContactToOrganization.Select(a => a.ToString() + "\r"))
+            // : string.Empty;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("teamNames")]
+    [FormColumn]
+    public string? TeamNames
+    {
+        get
+        {
+            if (Teams != null && Teams.Any())
+            {
+                return "- " + string.Join("\r- ", Teams.Select(a => a.Name));
+            }
+            return string.Empty;
         }
         set { }
     }
@@ -162,6 +184,15 @@ internal class Person
     [Ignore]
     [JsonPropertyName("linked_as_contact_to_organization")]
     public IEnumerable<LinkedContactPerson>? LinkedAsContactToOrganization { get; set; }
+
+    [Ignore]
+    [JsonPropertyName("teams")]
+    public IEnumerable<Team>? Teams { get; set; }
+
+    [JsonPropertyName("note")]
+    [NewFormColumn]
+    [FormColumn]
+    public string? Note { get; set; }
 
     [JsonPropertyName("created_at")]
     [FormColumn]
@@ -171,6 +202,7 @@ internal class Person
     [FormColumn]
     [UpdatedColumn]
     public string? UpdatedAt { get; set; }
+
 }
 
 internal class LinkedContactPerson
@@ -188,4 +220,15 @@ internal class LinkedContactPerson
     {
         return $"{Name}{(string.IsNullOrEmpty(WorkFunction) ? string.Empty : $" ({WorkFunction})")}";
     }
+}
+
+
+internal class Team
+{
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
 }

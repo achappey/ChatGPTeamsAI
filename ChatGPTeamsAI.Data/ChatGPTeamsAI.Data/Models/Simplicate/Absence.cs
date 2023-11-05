@@ -19,10 +19,12 @@ internal class Absence
     }
 
     [JsonPropertyName("year")]
+    [FormColumn]
     [ListColumn]
     public string? Year { get; set; }
 
     [JsonPropertyName("hours")]
+    [FormColumn]
     [ListColumn]
     public double Hours { get; set; }
 

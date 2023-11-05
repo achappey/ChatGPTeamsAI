@@ -163,8 +163,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return filters;
         }
 
-
-        [MethodDescription("HRM", "Search for timetables", "ExportTimeTables")]
+        [MethodDescription("HRM", "Search for timetables", "ExportTimetables")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchTimetables(
             [ParameterDescription("Employee name")] string? employeeName = null,
             [ParameterDescription("Start date at or after (format: yyyy-MM-dd HH:mm:ss)")] string? startDateAfter = null,

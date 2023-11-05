@@ -47,6 +47,11 @@ internal class ImageColumnAttribute : Attribute
     public ImageColumnAttribute() { }
 }
 
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+internal class NewFormColumnAttribute : Attribute
+{
+    public NewFormColumnAttribute() { }
+}
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 internal class TitleColumnAttribute : Attribute

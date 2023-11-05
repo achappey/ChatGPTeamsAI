@@ -28,7 +28,7 @@ internal class Organization
             }
 
             var domain = Email.Split('@')[1];
-            
+
             return $"https://logo.clearbit.com/{domain}";
         }
     }
@@ -169,6 +169,25 @@ internal class Organization
         }
         set { }
     }
+
+    [JsonPropertyName("teamNames")]
+    [FormColumn]
+    public string? TeamNames
+    {
+        get
+        {
+            if (Teams != null && Teams.Any())
+            {
+                return "- " + string.Join("\r- ", Teams.Select(a => a.Name));
+            }
+            return string.Empty;
+        }
+        set { }
+    }
+
+    [Ignore]
+    [JsonPropertyName("teams")]
+    public IEnumerable<Team>? Teams { get; set; }
 
     [JsonPropertyName("created_at")]
     [FormColumn]

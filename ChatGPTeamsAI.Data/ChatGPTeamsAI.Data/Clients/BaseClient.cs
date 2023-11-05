@@ -21,9 +21,19 @@ internal abstract class BaseClient : IBaseClient
 
     protected BaseClient(ITranslationService? translationService = null)
     {
-        _translatorService = translationService ?? new TranslationService(); 
+        _translatorService = translationService ?? new TranslationService();
         defaultRender = new CardRenderer(_translatorService);
     }
+
+
+    public AdaptiveCard? RenderNewCard(ActionDescription? actionDescription, IDictionary<string, object> values)
+    {
+        return defaultRender.CreateNewFormAdaptiveCard(actionDescription, values);
+    }
+    //   public AdaptiveCard? RenderNewCard(object? data, string actionName)
+    //  {
+    //     return defaultRender.CreateNewFormAdaptiveCard(data, actionName);
+    //}
 
     public AdaptiveCard? RenderCard(object? data)
     {

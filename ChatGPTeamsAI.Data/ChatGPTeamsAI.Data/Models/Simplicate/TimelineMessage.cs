@@ -12,10 +12,12 @@ internal class TimelineMessage
 {
     [JsonPropertyName("created_at")]
     [ListColumn]
+    [FormColumn]
     public string? CreatedAt { get; set; }
 
     [JsonPropertyName("linkedToName")]
     [ListColumn]
+    [FormColumn]
     public string? LinkedToName
     {
         get
@@ -37,7 +39,7 @@ internal class TimelineMessage
     }
 
     [JsonPropertyName("messageTypeLabel")]
-    [ListColumn]
+    [FormColumn]
     public string? MessageTypeLabel
     {
         get

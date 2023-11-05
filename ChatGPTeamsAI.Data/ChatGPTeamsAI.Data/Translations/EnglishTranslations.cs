@@ -71,5 +71,14 @@ public class EnglishTranslations
         [TranslationKeys.RelationNumber] = "Relation number",
         [TranslationKeys.AddToChat] = "Add to chat",
         [TranslationKeys.SendMail] = "E-mail",
+        [TranslationKeys.LinkedToName] = "Linked to",
+        [TranslationKeys.LinkedToLabels] = "Linked to",
+        [TranslationKeys.CreatedByName] = "Created by",
+        [TranslationKeys.ProductivityTarget] = "Productivitytarget %",
+        [TranslationKeys.EmployeeName] = "Name",
+        [TranslationKeys.LeaveTypeLabel] = "Leavetype",
+        [TranslationKeys.TeamNames] = "Team(s)",
+        [TranslationKeys.FullName] = "Name",
+        [TranslationKeys.AddNewPerson] = "New person",
     };
 }

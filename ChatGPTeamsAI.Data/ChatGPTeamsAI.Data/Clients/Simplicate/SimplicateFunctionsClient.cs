@@ -13,13 +13,13 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         public const string SIMPLICATE = "Simplicate";
 
         private readonly HttpClient _httpClient;
-       
+
 
         private const int PAGESIZE = 5;
 
         internal SimplicateFunctionsClient(SimplicateToken token, HttpClient? client = null, ITranslationService? translationService = null) : base(translationService)
         {
-           // _locale = locale ?? "en-US";
+            // _locale = locale ?? "en-US";
 
             _httpClient = client ?? new HttpClient();
             _httpClient.BaseAddress = new Uri($"https://{token.Environment}.simplicate.nl/api/v2/");
@@ -30,8 +30,8 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         public override async Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Models.Input.Action action)
         {
-            var result = await this.ExecuteMethodAsync(action) as ChatGPTeamsAIClientResponse ?? throw new ArgumentException("Something went wrong");
             var functionDefintition = GetAvailableActions().FirstOrDefault(a => a.Name == action.Name) ?? throw new ArgumentException("Action missing");
+            var result = await this.ExecuteMethodAsync(action) as ChatGPTeamsAIClientResponse ?? throw new ArgumentException("Something went wrong");
             var metadata = result.Properties != null && result.Properties.ContainsKey("metadata") ? result.Properties["metadata"] as Metadata : null;
 
             result.NextPageAction = GetPageAction(action, functionDefintition, metadata, true);
@@ -129,6 +129,27 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             };
         }
 
+        private ChatGPTeamsAIClientResponse? ToChatGPTeamsAINewFormResponse<T>(SimplicateResponseBase<T>? response, string actionName)
+        {
+            if (response == null)
+            {
+                return new ChatGPTeamsAIClientResponse()
+                {
+                    Type = typeof(T).ToString(),
+                    Error = "Something went wrong"
+                };
+            }
+            var functionDefintition = GetAvailableActions().FirstOrDefault(a => a.Name == actionName) ?? throw new ArgumentException("Action missing");
+            var dataCard = RenderNewCard(functionDefintition, response.Data as IDictionary<string, object>);
+
+            return new ChatGPTeamsAIClientResponse()
+            {
+                Data = response?.Data.RenderData(),
+                DataCard = dataCard,
+                Type = typeof(T).ToString(),
+            };
+        }
+
         private ChatGPTeamsAIClientResponse? ToChatGPTeamsAIResponse<T>(SimplicateResponseBase<T>? response)
         {
             if (response == null)
@@ -193,7 +214,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             queryString["limit"] = PAGESIZE.ToString();
             queryString["offset"] = offset.ToString();
             queryString.Add("metadata", "offset,count,limit");
-          
+
             var response = await _httpClient.GetAsync($"{endpointUrl}?{queryString}");
 
             if (response.IsSuccessStatusCode)

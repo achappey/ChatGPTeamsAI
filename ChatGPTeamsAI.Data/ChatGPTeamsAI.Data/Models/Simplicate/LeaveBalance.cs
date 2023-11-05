@@ -19,6 +19,7 @@ internal class LeaveBalance
 
     [JsonPropertyName("leaveTypeLabel")]
     [ListColumn]
+    [FormColumn]
     public string? LeaveTypeLabel
     {
         get
@@ -30,10 +31,12 @@ internal class LeaveBalance
 
     [JsonPropertyName("balance")]
     [ListColumn]
+    [FormColumn]
     public double Balance { get; set; }
 
     [JsonPropertyName("year")]
     [ListColumn]
+    [FormColumn]
     public int Year { get; set; }
 
     [Ignore]

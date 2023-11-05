@@ -153,7 +153,7 @@ internal class InvoiceDocument
 
     [JsonPropertyName("download_url")]
     [LinkColumn]
-    public string? Download { get; set; }
+    public string? Open { get; set; }
 
     [JsonPropertyName("document_type")]
     [Ignore]
@@ -186,7 +186,7 @@ internal class InvoiceDocument
     [JsonPropertyName("title")]
     [FormColumn]
     [ListColumn]
-    public string? Title { get; set; }
+    public string? Filename { get; set; }
 
 
     [JsonPropertyName("linkedToLabels")]

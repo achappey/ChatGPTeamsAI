@@ -75,6 +75,39 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
+        [MethodDescription("CRM", "Create a form for a new person in Simplicate.")]
+        public async Task<ChatGPTeamsAIClientResponse?> NewPerson(
+            [ParameterDescription("The family name of the person.")] string? familyName,
+            [ParameterDescription("The full name of the person.")] string? fullName,
+            [ParameterDescription("The first name of the person.")] string? firstName = null,
+            [ParameterDescription("The job title of the person.")] string? jobTitle = null,
+            [ParameterDescription("The email of the person.")] string? email = null,
+            [ParameterDescription("The mobile phone number of the person.")] string? mobilePhone = null,
+            [ParameterDescription("The work phone number of the person.")] string? workPhone = null,
+            [ParameterDescription("A note to add to the person.")] string? note = null,
+            [ParameterDescription("The organization id to be linked to the person.")] string? organizationId = null)
+        {
+            // var parameters = GetType().GetMethod("AddNewPerson").GetParameters();
+            return ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object>>()
+            {
+                Data = new Dictionary<string, object>()
+                {
+                    {"familyName",familyName},
+                    {"fullName",fullName},
+                    {"firstName",firstName},
+                    {"email",email},
+                    {"mobilePhone",mobilePhone},
+                    {"note",note},
+            /*        FamilyName = familyName,
+                    FullName = fullName,
+                    FirstName = firstName,
+                    Phone = mobilePhone,
+                    Email = email,
+                    Note = note*/
+                }
+            }, "AddNewPerson");
+        }
+
         [MethodDescription("CRM", "Adds a new person to Simplicate.")]
         public async Task<ChatGPTeamsAIClientResponse?> AddNewPerson(
             [ParameterDescription("The family name of the person.")] string? familyName,
@@ -130,18 +163,19 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("CRM", "Search for persons", "ExportPersons")]
         public async Task<ChatGPTeamsAIClientResponse?>? SearchPersons(
-            [ParameterDescription("The first name of the person.")] string? firstName = null,
-            [ParameterDescription("The family name of the person.")] string? familyName = null,
-            [ParameterDescription("The email of the person.")] string? email = null,
-            [ParameterDescription("The address locality of the person")] string? locality = null,
-            [ParameterDescription("The name of the relation manager of the person.")] string? relationManager = null,
-            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
-            [ParameterDescription("The phone number of the person.")] string? phone = null,
-            [ParameterDescription("The page number.")] long pageNumber = 1)
+            [ParameterDescription("First name of the person")] string? firstName = null,
+            [ParameterDescription("Family name of the person")] string? familyName = null,
+            [ParameterDescription("Email of the person")] string? email = null,
+            [ParameterDescription("Address locality of the person")] string? locality = null,
+            [ParameterDescription("Name of the team")] string? team = null,
+            [ParameterDescription("Relation manager of the person")] string? relationManager = null,
+            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
+            [ParameterDescription("Phone number of the person")] string? phone = null,
+            [ParameterDescription("Page number")] long pageNumber = 1)
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = CreatePersonFilters(firstName, familyName, email, locality, relationManager, createdAfter, phone);
+            var filters = CreatePersonFilters(firstName, familyName, email, locality, team, relationManager, createdAfter, phone);
             var result = await FetchSimplicateDataCollection<Person>(filters, "crm/person", pageNumber, "family_name");
 
             return ToChatGPTeamsAIResponse(result);
@@ -152,6 +186,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             string? familyName,
             string? email,
             string? locality,
+            string? teams,
             string? relationManager,
             string? createdAfter,
             string? phone)
@@ -161,6 +196,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(familyName)) filters["[family_name]"] = $"*{familyName}*";
             if (!string.IsNullOrEmpty(email)) filters["[email]"] = $"*{email}*";
             if (!string.IsNullOrEmpty(locality)) filters["[address.locality]"] = $"*{locality}*";
+            if (!string.IsNullOrEmpty(teams)) filters["[teams.name]"] = $"*{teams}*";
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
             if (!string.IsNullOrEmpty(phone)) filters["[phone]"] = $"*{phone}*";
             if (!string.IsNullOrEmpty(relationManager)) filters["[relation_manager.name]"] = $"*{relationManager}*";
@@ -170,17 +206,18 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("Export", "Exports a list of persons")]
         public async Task<ChatGPTeamsAIClientResponse?> ExportPersons(
-            [ParameterDescription("The first name of the person")] string? firstName = null,
-            [ParameterDescription("The family name of the person")] string? familyName = null,
-            [ParameterDescription("The email of the person")] string? email = null,
-            [ParameterDescription("The address locality of the person")] string? locality = null,
-            [ParameterDescription("The name of the relation manager of the person.")] string? relationManager = null,
+            [ParameterDescription("First name of the person")] string? firstName = null,
+            [ParameterDescription("Family name of the person")] string? familyName = null,
+            [ParameterDescription("Email of the person")] string? email = null,
+            [ParameterDescription("Address locality of the person")] string? locality = null,
+            [ParameterDescription("Name of the team")] string? team = null,
+            [ParameterDescription("Name of the relation manager of the person.")] string? relationManager = null,
             [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
-            [ParameterDescription("The phone number of the person.")] string? phone = null)
+            [ParameterDescription("Phone number of the person.")] string? phone = null)
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = CreatePersonFilters(firstName, familyName, email, locality, relationManager, createdAfter, phone);
+            var filters = CreatePersonFilters(firstName, familyName, email, locality, team, relationManager, createdAfter, phone);
             var queryString = BuildQueryString(filters, "family_name");
             var response = await _httpClient.PagedRequest<Person>($"crm/person?{queryString}");
 
@@ -194,18 +231,19 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("Export", "Exports a list of organizations")]
         public async Task<ChatGPTeamsAIClientResponse?> ExportOrganizations(
-            [ParameterDescription("The name of the organization.")] string? name = null,
-            [ParameterDescription("The email of the organization.")] string? email = null,
-            [ParameterDescription("The phone number of the organization.")] string? phone = null,
-            [ParameterDescription("The visiting address locality of the organization.")] string? locality = null,
-            [ParameterDescription("The industry of the organization.")] string? industry = null,
-            [ParameterDescription("The relation type of the organization.")] string? relationType = null,
-            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
-            [ParameterDescription("The relation manager of the organization.")] string? relationManager = null)
+            [ParameterDescription("Name of the organization")] string? name = null,
+            [ParameterDescription("Email of the organization")] string? email = null,
+            [ParameterDescription("Phone number of the organization")] string? phone = null,
+            [ParameterDescription("Visiting address locality of the organization")] string? locality = null,
+            [ParameterDescription("Name of the team")] string? team = null,
+            [ParameterDescription("Industry of the organization")] string? industry = null,
+            [ParameterDescription("Relation type of the organization")] string? relationType = null,
+            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
+            [ParameterDescription("Relation manager of the organization")] string? relationManager = null)
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = CreateOrganizationFilters(name, email, phone, locality, industry, relationType, createdAfter, relationManager);
+            var filters = CreateOrganizationFilters(name, email, phone, locality, team, industry, relationType, createdAfter, relationManager);
             var queryString = BuildQueryString(filters, "name");
             var response = await _httpClient.PagedRequest<Organization>($"crm/organization?{queryString}");
 
@@ -220,19 +258,20 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("CRM", "Search for organizations", "ExportOrganizations")]
         public async Task<ChatGPTeamsAIClientResponse?>? SearchOrganizations(
-            [ParameterDescription("The name of the organization.")] string? name = null,
-            [ParameterDescription("The email of the organization.")] string? email = null,
-            [ParameterDescription("The phone number of the organization.")] string? phone = null,
-            [ParameterDescription("The visiting address locality of the organization.")] string? locality = null,
-            [ParameterDescription("The industry of the organization.")] string? industry = null,
-            [ParameterDescription("The relation type of the organization.")] string? relationType = null,
-            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
-            [ParameterDescription("The relation manager of the organization.")] string? relationManager = null,
+            [ParameterDescription("Name of the organization")] string? name = null,
+            [ParameterDescription("Email of the organization")] string? email = null,
+            [ParameterDescription("Phone number of the organization")] string? phone = null,
+            [ParameterDescription("Visiting address locality of the organization")] string? locality = null,
+            [ParameterDescription("Name of the team")] string? team = null,
+            [ParameterDescription("Industry of the organization")] string? industry = null,
+            [ParameterDescription("Relation type of the organization")] string? relationType = null,
+            [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
+            [ParameterDescription("Relation manager of the organization")] string? relationManager = null,
             [ParameterDescription("The page number.")] long pageNumber = 1)
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = CreateOrganizationFilters(name, email, phone, locality, industry, relationType, createdAfter, relationManager);
+            var filters = CreateOrganizationFilters(name, email, phone, locality, team, industry, relationType, createdAfter, relationManager);
             var result = await FetchSimplicateDataCollection<Organization>(filters, "crm/organization", pageNumber, "name");
 
             return ToChatGPTeamsAIResponse(result);
@@ -243,6 +282,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 string? email,
                 string? phone,
                 string? locality,
+                string? teams,
                 string? industry,
                 string? relationType,
                 string? createdAfter,
@@ -252,6 +292,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(name)) filters["[name]"] = $"*{name}*";
             if (!string.IsNullOrEmpty(email)) filters["[email]"] = $"*{email}*";
             if (!string.IsNullOrEmpty(phone)) filters["[phone]"] = $"*{phone}*";
+            if (!string.IsNullOrEmpty(teams)) filters["[teams.name]"] = $"*{teams}*";
             if (!string.IsNullOrEmpty(locality)) filters["[visiting_address.locality]"] = $"*{locality}*";
             if (!string.IsNullOrEmpty(industry)) filters["[industry.name]"] = $"*{industry}*";
             if (!string.IsNullOrEmpty(relationType)) filters["[relation_type.label]"] = $"*{relationType}*";

@@ -1,6 +1,7 @@
 using System.Reflection;
 using AdaptiveCards;
 using ChatGPTeamsAI.Data.Attributes;
+using ChatGPTeamsAI.Data.Models.Output;
 using ChatGPTeamsAI.Data.Translations;
 
 namespace ChatGPTeamsAI.Cards;
@@ -50,6 +51,59 @@ internal class CardRenderer : ICardRenderer
         return card;
     }
 
+    public AdaptiveCard CreateNewFormAdaptiveCard(ActionDescription description, IDictionary<string, object> values)
+    {
+        var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
+
+        card.Body.Add(new AdaptiveTextBlock
+        {
+            Text = _translatorService.Translate(description.Name),
+            Weight = AdaptiveTextWeight.Bolder,
+            Size = AdaptiveTextSize.Medium
+        });
+
+        foreach (var prop in description.Parameters.Properties)
+        {
+            switch (prop.Type)
+            {
+                case "boolean":
+                    card.Body.Add(new AdaptiveToggleInput
+                    {
+                        Id = prop.Name,
+                        Title = prop.Name,
+                        //Value = values.ContainsKey(prop.Name) ? values[prop.Name] : "false",
+                        ValueOn = "true",
+                        ValueOff = "false"
+                    });
+                    break;
+                case "number":
+                    card.Body.Add(new AdaptiveNumberInput
+                    {
+                        Id = prop.Name,
+                        Placeholder = prop.Name,
+                        Value = values.ContainsKey(prop.Name) && values[prop.Name] != null ? Convert.ToDouble(values[prop.Name].ToString()) : 0,
+                    });
+                    break;
+                default:
+                    card.Body.Add(new AdaptiveTextInput
+                    {
+                        Id = prop.Name,
+                        Placeholder = prop.Name,
+                        Value = values.ContainsKey(prop.Name) && values[prop.Name] != null ? values[prop.Name].ToString() : string.Empty,
+                    });
+                    break;
+            }
+
+        }
+
+        card.Actions.Add(new AdaptiveSubmitAction
+        {
+            Title = _translatorService.Translate(TranslationKeys.Submit),
+            Id = description.Name,
+        });
+
+        return card;
+    }
 
     public AdaptiveCard DefaultItemRender(object item)
     {
