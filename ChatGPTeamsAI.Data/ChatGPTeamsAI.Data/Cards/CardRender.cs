@@ -96,6 +96,13 @@ internal class CardRenderer : ICardRenderer
 
         }
 
+        card.Body.Add(new AdaptiveTextInput
+        {
+            Id = "ActionName",
+            IsVisible = false,
+            Value = description.Name,
+        });
+
         card.Actions.Add(new AdaptiveSubmitAction
         {
             Title = _translatorService.Translate(TranslationKeys.Submit),
