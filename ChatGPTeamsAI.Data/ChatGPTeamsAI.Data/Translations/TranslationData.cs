@@ -12,6 +12,8 @@ public class TranslationData
 public static class TranslationKeys
 {
     public const string ExecutingAction = "ExecutingAction";
+    public const string True = "True";
+    public const string False = "False";
     public const string ProcessingResult = "ProcessingResult";
     public const string Retrying = "Retrying";
     public const string ResultReady = "ResultReady";
@@ -51,7 +53,6 @@ public static class TranslationKeys
     public const string DebtorMail = "DebtorMail";
     public const string IndustryName = "IndustryName";
     public const string InterestsNames = "InterestsNames";
-
     public const string EmploymentStatus = "EmploymentStatus";
     public const string CivilStatusLabel = "CivilStatusLabel";
     public const string HourlySalesTariff = "HourlySalesTariff";
@@ -67,8 +68,24 @@ public static class TranslationKeys
     public const string CreatedDateTime = "CreatedDateTime";
     public const string AlternativeMail = "AlternativeMail";
     public const string AssignedLicenseCount = "AssignedLicenseCount";
-     public const string DisplayName = "DisplayName";
+    public const string DisplayName = "DisplayName";
     public const string Department = "Department";
+    public const string Previous = "Previous";
+    public const string Next = "Next";
     public const string JobTitle = "JobTitle";
-
+    public const string Export = "Export";
+    public const string Subject = "Subject";
+    public const string OrganizerName = "OrganizerName";
+    public const string StartDateTime = "StartDateTime";
+    public const string EndDateTime = "EndDateTime";
+    public const string LocationName = "LocationName";
+    public const string Content = "Content";
+    public const string AddressLocality = "AddressLocality";
+    public const string Organizations = "Organizations";
+    public const string RelationNumber = "RelationNumber";
+    public const string AddToChat = "AddToChat";
+    public const string SendMail = "SendMail";
+    public const string Call = "Call";
+    
+    
 }

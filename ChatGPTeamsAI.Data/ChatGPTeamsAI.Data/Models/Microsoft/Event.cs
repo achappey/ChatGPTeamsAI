@@ -78,12 +78,25 @@ internal class Event
     }
 
     [Ignore]
+    public IEnumerable<Attendee>? Attendees { get; set; }
+
+    [FormColumn]
+    public string? AttendeeNames
+    {
+        get
+        {
+            return Attendees != null
+                ? string.Join(", ", Attendees.Select(a => a.EmailAddress?.Name?.ToString()))
+                : string.Empty;
+        }
+        set { }
+    }
+
+    [Ignore]
     public OnlineMeetingInfo? OnlineMeeting { get; set; }
 
     [Ignore]
     public Location? Location { get; set; }
-
-
 
     [LinkColumn]
     public string? JoinUrl
@@ -102,6 +115,13 @@ internal class Event
 internal class OnlineMeetingInfo
 {
     public string? JoinUrl { get; set; }
+
+}
+
+
+internal class Attendee
+{
+    public EmailAddress? EmailAddress { get; set; }
 
 }
 

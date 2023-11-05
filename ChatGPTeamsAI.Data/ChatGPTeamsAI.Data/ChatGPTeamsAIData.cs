@@ -89,13 +89,13 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         };
     }
 
-    private static ActionResponse ToDataResponse(ChatGPTeamsAIClientResponse clientResponse)
+    private ActionResponse ToDataResponse(ChatGPTeamsAIClientResponse clientResponse)
     {
         return new ActionResponse()
         {
             ExecutedAction = clientResponse.ExecutedAction,
             Data = clientResponse.Data,
-            DataCard = clientResponse.DataCard?.WithButtons(clientResponse.NextPageAction, clientResponse.PreviousPageAction, clientResponse.ExportPageAction)?.ToJson()
+            DataCard = clientResponse.DataCard?.WithButtons(_translatorService, clientResponse.NextPageAction, clientResponse.PreviousPageAction, clientResponse.ExportPageAction)?.ToJson()
         };
     }
 

@@ -1,4 +1,5 @@
-﻿using ChatGPTeamsAI.Data.Attributes;
+﻿using System.Net.Http.Json;
+using ChatGPTeamsAI.Data.Attributes;
 using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Simplicate;
@@ -44,15 +45,34 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             if (response.IsSuccessStatusCode)
             {
-                var result = new SimplicateResponseBase<NoOutputResponse>()
-                {
-                    Data = SuccessResponse()
-                };
+                var newItem = await response.Content.ReadFromJsonAsync<SimplicateResponseBase<NewItem>>();
 
-                return ToChatGPTeamsAIResponse(result);
+                if (newItem != null && newItem.Data != null && newItem.Data.Id != null)
+                {
+                    return await GetOrganization(newItem.Data.Id);
+                }
+
             }
 
             throw new Exception(response.ReasonPhrase);
+        }
+
+        [MethodDescription("CRM", "Gets all details of a single organization")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetOrganization(
+                        [ParameterDescription("The organization id.")] string organizationId)
+        {
+            var result = await FetchSimplicateDataItem<Organization>($"crm/organization/{organizationId}");
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+        [MethodDescription("CRM", "Gets all details of a single person")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetPerson(
+                  [ParameterDescription("The person id.")] string personId)
+        {
+            var result = await FetchSimplicateDataItem<Person>($"crm/person/{personId}");
+
+            return ToChatGPTeamsAIResponse(result);
         }
 
         [MethodDescription("CRM", "Adds a new person to Simplicate.")]
@@ -96,12 +116,13 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             if (response.IsSuccessStatusCode)
             {
-                var result = new SimplicateResponseBase<NoOutputResponse>()
-                {
-                    Data = SuccessResponse()
-                };
+                var newItem = await response.Content.ReadFromJsonAsync<SimplicateResponseBase<NewItem>>();
 
-                return ToChatGPTeamsAIResponse(result);
+                if (newItem != null && newItem.Data != null && newItem.Data.Id != null)
+                {
+                    return await GetPerson(newItem.Data.Id);
+                }
+
             }
 
             throw new Exception(response.ReasonPhrase);

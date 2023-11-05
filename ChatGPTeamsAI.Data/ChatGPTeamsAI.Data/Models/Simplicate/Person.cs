@@ -140,14 +140,21 @@ internal class Person
     public RelationManager? RelationManager { get; set; }
 
     [JsonPropertyName("organizations")]
-    [ListColumn]
+    [FormColumn]
     public string? Organizations
     {
         get
         {
-            return LinkedAsContactToOrganization != null
-           ? string.Join(", ", LinkedAsContactToOrganization.Select(a => a.ToString()))
-           : string.Empty;
+               if (LinkedAsContactToOrganization != null && LinkedAsContactToOrganization.Any())
+        {
+            // Combineer alle items tot één string, elk voorafgegaan door "- " en gevolgd door "\r", behalve het laatste item.
+            return "- " + string.Join("\r- ", LinkedAsContactToOrganization.Select(a => a.ToString()));
+        }
+        return string.Empty;
+
+          //  return LinkedAsContactToOrganization != null
+          // ? string.Join("- ", LinkedAsContactToOrganization.Select(a => a.ToString() + "\r"))
+          // : string.Empty;
         }
         set { }
     }

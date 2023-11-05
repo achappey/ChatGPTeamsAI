@@ -75,6 +75,15 @@ internal class Metadata
     }
 }
 
+
+
+internal class NewItem
+{
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+}
+
 internal class SimplicateError
 {
     public string Message { get; set; } = null!;

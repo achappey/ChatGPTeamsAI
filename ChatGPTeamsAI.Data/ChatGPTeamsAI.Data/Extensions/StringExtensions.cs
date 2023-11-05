@@ -3,11 +3,18 @@ using System.Globalization;
 using System.Text.Json;
 
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 namespace ChatGPTeamsAI.Data.Extensions;
 
 internal static class StringExtensions
 {
+
+    public static string RemoveMarkup(this string? text)
+    {
+        return text is null ? string.Empty : Regex.Replace(text, "<.*?>", string.Empty);
+    }
+
     public static void EnsureValidDateFormat(this string dateStr, string expectedFormat = "yyyy-MM-dd HH:mm:ss")
     {
         if (!string.IsNullOrEmpty(dateStr) && !DateTime.TryParseExact(dateStr, expectedFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime temp))

@@ -1,12 +1,21 @@
 using ChatGPTeamsAI.Data.Attributes;
+using ChatGPTeamsAI.Data.Extensions;
+using CsvHelper.Configuration.Attributes;
 
 namespace ChatGPTeamsAI.Data.Models.Microsoft;
 
 internal class SearchHit
 {
 
+    [Ignore]
+    private string? _summary;
+
     [FormColumn]
-    public string? Summary { get; set; }
+    public string? Summary
+    {
+        get => _summary.RemoveMarkup();
+        set => _summary = value;
+    }
 
     [ListColumn]
     public string? ResourceName

@@ -10,7 +10,6 @@ internal interface ICardRenderer
     AdaptiveCard DefaultRender(object item);
 }
 
-
 internal class CardRenderer : ICardRenderer
 {
     private readonly ITranslationService _translatorService;
@@ -18,30 +17,6 @@ internal class CardRenderer : ICardRenderer
     public CardRenderer(ITranslationService translatorService)
     {
         _translatorService = translatorService;
-    }
-
-    public static AdaptiveTableCell CreateCell(string? value)
-    {
-        var cell = new AdaptiveTableCell();
-        if (!string.IsNullOrEmpty(value))
-        {
-            cell.Items.Add(new AdaptiveTextBlock
-            {
-                Text = value,
-                HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                Wrap = true
-            });
-        }
-        else
-        {
-            cell.Items.Add(new AdaptiveTextBlock
-            {
-                Text = " ",
-                HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                Wrap = true
-            });
-        }
-        return cell;
     }
 
     public AdaptiveCard DefaultRender(object item)
@@ -81,27 +56,151 @@ internal class CardRenderer : ICardRenderer
         var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
 
         var typeProperties = item.GetType().GetProperties();
-        var columnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
 
-        if (columnProperties.Count < 5)
-        {
-            var additionalProps = typeProperties.Except(columnProperties).Take(5 - columnProperties.Count).ToList();
-            columnProperties.AddRange(additionalProps);
-        }
-
-        var factSet = new AdaptiveFactSet();
-
-        foreach (var property in columnProperties)
-        {
-            var value = property.GetValue(item)?.ToString() ?? " ";
-
-            factSet.Facts.Add(new AdaptiveFact { Title = property.Name, Value = value });
-        }
-
-        card.Body.Add(factSet);
+        var container = CreateFormContainer(typeProperties.ToArray(), item);
+        card.Body.Add(container);
 
         return card;
     }
+
+    private void AddLinksToContainer(AdaptiveContainer container, PropertyInfo[] typeProperties, object item)
+    {
+        var columnSet = new AdaptiveColumnSet();
+
+        var linkColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null).ToList();
+        var chatColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null
+                && p.GetCustomAttribute<LinkColumnAttribute>()!.DocumentChat).ToList();
+
+        foreach (var linkColumns in linkColumnProperties)
+        {
+            var value = linkColumns.GetValue(item)?.ToString() ?? null;
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                if (!value.StartsWith("http") && !value.StartsWith("mailto:") && !value.StartsWith("tel:"))
+                {
+                    value = $"https://{value}";
+                }
+
+                columnSet.Columns.Add(new AdaptiveColumn()
+                {
+                    Items = new List<AdaptiveElement>() {
+                            new AdaptiveTextBlock
+                                {
+                                    Text = _translatorService.Translate(linkColumns.Name),
+                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Stretch,
+                                    Color = AdaptiveTextColor.Accent
+                                }
+                        },
+                    SelectAction = new AdaptiveOpenUrlAction
+                    {
+                        Url = new Uri(value),
+
+                    }
+                });
+
+                if (chatColumnProperties.Contains(linkColumns))
+                {
+                    columnSet.Columns.Add(new AdaptiveColumn()
+                    {
+                        Items = new List<AdaptiveElement>() {
+                            new AdaptiveTextBlock
+                                {
+                                    Text = _translatorService.Translate(TranslationKeys.AddToChat),
+                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                    Color = AdaptiveTextColor.Accent,
+                                }
+                        },
+                        SelectAction = new AdaptiveSubmitAction
+                        {
+                            Data = new Data.Models.Input.Action()
+                            {
+                                Name = "DocumentChat",
+                                Entities = new Dictionary<string, object?>() { { value, "" } }
+                            },
+                        }
+                    });
+                }
+            }
+        }
+
+        container.Items.Add(columnSet);
+    }
+
+
+    private AdaptiveContainer CreateFormContainer(PropertyInfo[] typeProperties, object item)
+    {
+        var formContainer = new AdaptiveContainer();
+
+        AddHeaderToContainer(formContainer, typeProperties, item);
+
+        AddFactsToContainer(formContainer, typeProperties, item);
+
+        AddLinksToContainer(formContainer, typeProperties, item);
+
+        return formContainer;
+    }
+
+    private void AddHeaderToContainer(AdaptiveContainer container, PropertyInfo[] typeProperties, object item)
+    {
+        var headerColumnSet = new AdaptiveColumnSet();
+        var imageProperty = typeProperties.FirstOrDefault(p => p.GetCustomAttribute<ImageColumnAttribute>() != null);
+        var titleProperty = typeProperties.FirstOrDefault(p => p.GetCustomAttribute<TitleColumnAttribute>() != null);
+        var updatedProperty = typeProperties.FirstOrDefault(p => p.GetCustomAttribute<UpdatedColumnAttribute>() != null);
+
+        if (imageProperty != null && titleProperty != null)
+        {
+            var imageColumn = new AdaptiveColumn { Width = "auto" };
+            var titleColumn = new AdaptiveColumn { Width = "stretch" };
+
+            var imageUrl = imageProperty.GetValue(item)?.ToString() ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                imageColumn.Items.Add(new AdaptiveImage
+                {
+                    Url = new Uri(imageUrl),
+                    AltText = titleProperty.GetValue(item)?.ToString() ?? string.Empty,
+                    Size = AdaptiveImageSize.Medium,
+                    Style = AdaptiveImageStyle.Default
+                });
+
+
+                var titleText = titleProperty.GetValue(item)?.ToString() ?? string.Empty;
+                if (!string.IsNullOrEmpty(titleText))
+                {
+                    titleColumn.Items.Add(new AdaptiveTextBlock
+                    {
+                        Text = titleText,
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Size = AdaptiveTextSize.Large,
+                        Wrap = true
+                    });
+                }
+
+                if (updatedProperty != null)
+                {
+                    var updatedText = updatedProperty.GetValue(item)?.ToString() ?? string.Empty;
+                    if (!string.IsNullOrEmpty(updatedText))
+                    {
+                        titleColumn.Items.Add(new AdaptiveTextBlock
+                        {
+                            Text = $"{_translatorService.Translate(TranslationKeys.UpdatedAt)} {updatedText}",
+                            IsSubtle = true,
+                            Size = AdaptiveTextSize.Small,
+                            Wrap = true
+                        });
+                    }
+                }
+
+                headerColumnSet.Columns.Add(imageColumn);
+                headerColumnSet.Columns.Add(titleColumn);
+
+                container.Items.Add(headerColumnSet);
+            }
+        }
+    }
+
 
 
     public AdaptiveCard DefaultListRender(IEnumerable<object> items)
@@ -118,7 +217,7 @@ internal class CardRenderer : ICardRenderer
 
         foreach (var item in items)
         {
-            var columnSetItem = new AdaptiveColumnSet() {Separator = toggleId != 1} ;
+            var columnSetItem = new AdaptiveColumnSet() { Separator = toggleId != 1 };
             AddColumnItem(columnSetItem, columnProperties, item, false);
 
             if (formColumnProperties.Count() > 0)
@@ -225,147 +324,46 @@ internal class CardRenderer : ICardRenderer
         });
     }
 
+    private void AddFactsToContainer(AdaptiveContainer container, PropertyInfo[] typeProperties, object item)
+    {
+        var factSet = new AdaptiveFactSet();
+        var columnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
+
+        foreach (var property in columnProperties)
+        {
+            var value = property.GetValue(item);
+
+            if (value != null)
+            {
+                string displayValue = property.PropertyType switch
+                {
+                    Type when property.PropertyType == typeof(bool) =>
+                        (bool)value ? _translatorService.Translate(TranslationKeys.True) : _translatorService.Translate(TranslationKeys.False),
+                    _ => value.ToString()
+                };
+
+                if (!string.IsNullOrEmpty(displayValue))
+                {
+                    factSet.Facts.Add(new AdaptiveFact
+                    {
+                        Title = _translatorService.Translate(property.Name),
+                        Value = displayValue
+                    });
+                }
+            }
+        }
+
+        container.Items.Add(factSet);
+    }
+
     private AdaptiveContainer CreateToggleContainer(PropertyInfo[] typeProperties, object item, int toggleId)
     {
-        var toggleContainer = new AdaptiveContainer { Id = $"cardContent{toggleId}", IsVisible = false };
+        var container = CreateFormContainer(typeProperties.ToArray(), item);
+        container.Id = $"cardContent{toggleId}";
+        container.IsVisible = false;
 
-        var headerColumnSet = new AdaptiveColumnSet();
-        var imageProperty = typeProperties.FirstOrDefault(p => p.GetCustomAttribute<ImageColumnAttribute>() != null);
-        var titleProperty = typeProperties.FirstOrDefault(p => p.GetCustomAttribute<TitleColumnAttribute>() != null);
-        var updatedProperty = typeProperties.FirstOrDefault(p => p.GetCustomAttribute<UpdatedColumnAttribute>() != null);
+        return container;
 
-        if (imageProperty != null && titleProperty != null)
-        {
-            var imageColumn = new AdaptiveColumn { Width = "auto" };
-            var titleColumn = new AdaptiveColumn { Width = "stretch" };
-
-            var imageUrl = imageProperty.GetValue(item)?.ToString() ?? string.Empty;
-
-            if (!string.IsNullOrEmpty(imageUrl))
-            {
-                imageColumn.Items.Add(new AdaptiveImage
-                {
-                    Url = new Uri(imageUrl),
-                    AltText = titleProperty.GetValue(item)?.ToString() ?? string.Empty,
-                    Size = AdaptiveImageSize.Medium,
-                    Style = AdaptiveImageStyle.Default
-                });
-
-
-                var titleText = titleProperty.GetValue(item)?.ToString() ?? string.Empty;
-                if (!string.IsNullOrEmpty(titleText))
-                {
-                    titleColumn.Items.Add(new AdaptiveTextBlock
-                    {
-                        Text = titleText,
-                        Weight = AdaptiveTextWeight.Bolder,
-                        Size = AdaptiveTextSize.Large,
-                        Wrap = true
-                    });
-                }
-
-                if (updatedProperty != null)
-                {
-                    var updatedText = updatedProperty.GetValue(item)?.ToString() ?? string.Empty;
-                    if (!string.IsNullOrEmpty(updatedText))
-                    {
-                        titleColumn.Items.Add(new AdaptiveTextBlock
-                        {
-                            Text = $"{_translatorService.Translate(TranslationKeys.UpdatedAt)} {updatedText}",
-                            IsSubtle = true,
-                            Size = AdaptiveTextSize.Small,
-                            Wrap = true
-                        });
-                    }
-                }
-
-                headerColumnSet.Columns.Add(imageColumn);
-                headerColumnSet.Columns.Add(titleColumn);
-
-                toggleContainer.Items.Add(headerColumnSet);
-            }
-        }
-
-
-        var factSet = new AdaptiveFactSet();
-
-        var formColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
-
-        foreach (var property in formColumnProperties)
-        {
-            var value = property.GetValue(item)?.ToString() ?? string.Empty;
-
-            if (!string.IsNullOrEmpty(value))
-            {
-                factSet.Facts.Add(new AdaptiveFact { Title = _translatorService.Translate(property.Name), Value = value });
-            }
-
-        }
-
-        toggleContainer.Items.Add(factSet);
-
-        var linkColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null).ToList();
-        var chatColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null
-                && p.GetCustomAttribute<LinkColumnAttribute>()!.DocumentChat).ToList();
-
-        var columnSet = new AdaptiveColumnSet();
-
-        foreach (var linkColumns in linkColumnProperties)
-        {
-            var value = linkColumns.GetValue(item)?.ToString() ?? null;
-
-            if (!string.IsNullOrEmpty(value))
-            {
-                if (!value.StartsWith("http") && !value.StartsWith("mailto:") && !value.StartsWith("tel:"))
-                {
-                    value = $"https://{value}";
-                }
-
-                columnSet.Columns.Add(new AdaptiveColumn()
-                {
-                    Items = new List<AdaptiveElement>() {
-                            new AdaptiveTextBlock
-                                {
-                                    Text = linkColumns.Name,
-                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
-                                    Color = AdaptiveTextColor.Accent
-                                }
-                        },
-                    SelectAction = new AdaptiveOpenUrlAction
-                    {
-                        Url = new Uri(value),
-                        
-                    }
-                });
-
-                if (chatColumnProperties.Contains(linkColumns))
-                {
-                    columnSet.Columns.Add(new AdaptiveColumn()
-                    {
-                        Items = new List<AdaptiveElement>() {
-                            new AdaptiveTextBlock
-                                {
-                                    Text = "Add to chat",
-                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
-                                    Color = AdaptiveTextColor.Accent,
-                                }
-                        },
-                        SelectAction = new AdaptiveSubmitAction
-                        {
-                            Data = new Data.Models.Input.Action()
-                            {
-                                Name = "DocumentChat",
-                                Entities = new Dictionary<string, object?>() { { value, "" } }
-                            },
-                        }
-                    });
-                }
-            }
-        }
-
-        toggleContainer.Items.Add(columnSet);
-     
-        return toggleContainer;
     }
 
 }

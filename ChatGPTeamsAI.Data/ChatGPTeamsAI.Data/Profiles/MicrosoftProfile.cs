@@ -42,6 +42,7 @@ internal class MicrosoftProfile : Profile
         CreateMap<Microsoft.Graph.SitePage, Models.Microsoft.Page>();
         CreateMap<Microsoft.Graph.OnlineMeetingInfo, Models.Microsoft.OnlineMeetingInfo>();
         CreateMap<Microsoft.Graph.Location, Models.Microsoft.Location>();
+        CreateMap<Microsoft.Graph.Attendee, Models.Microsoft.Attendee>();
 
         CreateMap<Microsoft.Graph.User, Models.Microsoft.User>();
 
