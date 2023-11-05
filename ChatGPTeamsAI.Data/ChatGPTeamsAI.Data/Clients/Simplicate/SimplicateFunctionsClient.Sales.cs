@@ -140,8 +140,8 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("CRM", "Create a Simplicate new sale form")]
-        public Task<ChatGPTeamsAIClientResponse?> NewSale(
+        [MethodDescription("CRM", "Create a Simplicate new sales form")]
+        public Task<ChatGPTeamsAIClientResponse?> NewSales(
         [ParameterDescription("The subject of the sale")] string? subject = null,
         [ParameterDescription("A note to add to the sale", true)] string? note = null,
         [ParameterDescription("The expected revenue")] long? expectedRevenue = null,
@@ -161,8 +161,8 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             }, "AddNewSale"));
         }
 
-        [MethodDescription("CRM", "Adds a new sale to Simplicate.")]
-        public async Task<ChatGPTeamsAIClientResponse?> AddNewSale(
+        [MethodDescription("CRM", "Adds a new sales to Simplicate.")]
+        public async Task<ChatGPTeamsAIClientResponse?> AddNewSales(
             [ParameterDescription("The subject of the sale")] string? subject,
             [ParameterDescription("A note to add to the sale", true)] string? note = null,
             [ParameterDescription("The expected revenue")] long? expectedRevenue = null,
@@ -184,7 +184,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
                 if (newItem != null && newItem.Data != null && newItem.Data.Id != null)
                 {
-                    return await GetSale(newItem.Data.Id);
+                    return await GetSales(newItem.Data.Id);
                 }
 
             }
@@ -192,9 +192,9 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             throw new Exception(response.ReasonPhrase);
         }
 
-        [MethodDescription("CRM", "Gets all details of a single sale")]
-        public async Task<ChatGPTeamsAIClientResponse?> GetSale(
-                 [ParameterDescription("The sale id.")] string saleId)
+        [MethodDescription("CRM", "Gets all details of a single sales")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetSales(
+                 [ParameterDescription("The sales id.")] string saleId)
         {
             var result = await FetchSimplicateDataItem<Person>($"sales/sales/{saleId}");
 

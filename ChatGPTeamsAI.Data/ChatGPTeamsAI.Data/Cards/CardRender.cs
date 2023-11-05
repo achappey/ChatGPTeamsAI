@@ -144,7 +144,7 @@ internal class CardRenderer : ICardRenderer
                                 {
                                     Text = _translatorService.Translate(linkColumns.Name),
                                     HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
-                                    Size = AdaptiveTextSize.Small,
+                                   Size = AdaptiveTextSize.Default,
                                     Color = AdaptiveTextColor.Accent
                                 }
                         },
@@ -190,7 +190,7 @@ internal class CardRenderer : ICardRenderer
                                 {
                                     Text = _translatorService.Translate(linkColumns.Name),
                                     HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
-                                    Size = AdaptiveTextSize.Small,
+                                    Size = AdaptiveTextSize.Default,
                                     Color = AdaptiveTextColor.Accent
                                 }
                         },
