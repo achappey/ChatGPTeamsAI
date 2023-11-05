@@ -206,6 +206,23 @@ internal class Organization
     [LinkColumn]
     public string? Simplicate { get; set; }
 
+    [JsonPropertyName("newPerson")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object>? NewPerson
+    {
+        get { return Id != null ? new Dictionary<string, object>() { { "organizationId", Id } } : null; }
+        set { }
+    }
+
+    [JsonPropertyName("newSales")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object>? NewSales
+    {
+        get { return Id != null ? new Dictionary<string, object>() { { "organizationId", Id } } : null; }
+        set { }
+    }
 }
 
 internal class Address

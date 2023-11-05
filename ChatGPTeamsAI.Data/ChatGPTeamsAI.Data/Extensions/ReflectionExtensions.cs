@@ -204,6 +204,7 @@ internal static class ReflectionExtensions
             {
                 Type = jsonSchemaType,
                 Name = paramInfo?.Name ?? string.Empty,
+                IsMultiline = paramInfo?.GetCustomAttribute<ParameterDescriptionAttribute>()?.IsMultiline ?? false,
                 Description = paramInfo?.GetCustomAttribute<ParameterDescriptionAttribute>()?.Description ?? string.Empty
             };
         }

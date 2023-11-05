@@ -1,4 +1,5 @@
-﻿using ChatGPTeamsAI.Data.Attributes;
+﻿using System.Net.Http.Json;
+using ChatGPTeamsAI.Data.Attributes;
 using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Simplicate;
@@ -138,6 +139,70 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             return ToChatGPTeamsAIResponse(result);
         }
+
+        [MethodDescription("CRM", "Create a Simplicate new sale form")]
+        public Task<ChatGPTeamsAIClientResponse?> NewSale(
+        [ParameterDescription("The subject of the sale")] string? subject,
+        [ParameterDescription("A note to add to the sale", true)] string? note = null,
+        [ParameterDescription("The expected revenue")] long? expectedRevenue = null,
+        [ParameterDescription("The organization id to be linked to the sale")] string? organizationId = null,
+        [ParameterDescription("The person id to be linked to the sale")] string? personId = null)
+        {
+            return Task.FromResult(ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object?>>()
+            {
+                Data = new Dictionary<string, object?>()
+                {
+                    {"subject",subject},
+                    {"note",note},
+                    {"expectedRevenue",expectedRevenue},
+                    {"personId",personId},
+                    {"organizationId",organizationId }
+                }
+            }, "AddNewSale"));
+        }
+
+        [MethodDescription("CRM", "Adds a new sale to Simplicate.")]
+        public async Task<ChatGPTeamsAIClientResponse?> AddNewSale(
+            [ParameterDescription("The subject of the sale")] string? subject,
+            [ParameterDescription("A note to add to the sale", true)] string? note = null,
+            [ParameterDescription("The expected revenue")] long? expectedRevenue = null,
+            [ParameterDescription("The organization id to be linked to the sale")] string? organizationId = null,
+            [ParameterDescription("The person id to be linked to the sale")] string? personId = null)
+        {
+            var data = new Dictionary<string, object>();
+            if (!string.IsNullOrEmpty(organizationId)) data["organization_id"] = organizationId;
+            if (!string.IsNullOrEmpty(personId)) data["person_id"] = personId;
+            if (!string.IsNullOrEmpty(subject)) data["subject"] = subject;
+            if (!string.IsNullOrEmpty(note)) data["note"] = note;
+            if (expectedRevenue.HasValue) data["expected_revenue"] = expectedRevenue;
+
+            var response = await _httpClient.PostAsync("sales/sales", data.PrepareJsonContent());
+
+            if (response.IsSuccessStatusCode)
+            {
+                var newItem = await response.Content.ReadFromJsonAsync<SimplicateResponseBase<NewItem>>();
+
+                if (newItem != null && newItem.Data != null && newItem.Data.Id != null)
+                {
+                    return await GetSale(newItem.Data.Id);
+                }
+
+            }
+
+            throw new Exception(response.ReasonPhrase);
+        }
+
+        [MethodDescription("CRM", "Gets all details of a single sale")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetSale(
+                 [ParameterDescription("The sale id.")] string saleId)
+        {
+            var result = await FetchSimplicateDataItem<Person>($"sales/sales/{saleId}");
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+
+
     }
 
 }

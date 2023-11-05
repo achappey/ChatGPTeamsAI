@@ -22,6 +22,13 @@ internal sealed class MethodDescriptionAttribute : Attribute
 internal sealed class ParameterDescriptionAttribute : Attribute
 {
     public string Description { get; }
+    public bool? IsMultiline { get; }
+
+    public ParameterDescriptionAttribute(string description, bool isMultiline = false)
+    {
+        Description = description;
+        IsMultiline = isMultiline;
+    }
 
     public ParameterDescriptionAttribute(string description)
     {
@@ -59,6 +66,12 @@ internal class TitleColumnAttribute : Attribute
     public TitleColumnAttribute() { }
 }
 
+
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+internal class ActionColumnAttribute : Attribute
+{
+    public ActionColumnAttribute() { }
+}
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 internal class UpdatedColumnAttribute : Attribute

@@ -80,5 +80,8 @@ public class EnglishTranslations
         [TranslationKeys.TeamNames] = "Team(s)",
         [TranslationKeys.FullName] = "Name",
         [TranslationKeys.AddNewPerson] = "New person",
+        [TranslationKeys.NewPerson] = "New contactperson",
+        [TranslationKeys.NewSales] = "New sales",
+        [TranslationKeys.NewOrganization] = "New company",
     };
 }

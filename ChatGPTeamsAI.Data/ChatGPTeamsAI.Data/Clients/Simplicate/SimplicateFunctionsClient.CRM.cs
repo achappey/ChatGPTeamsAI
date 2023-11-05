@@ -9,7 +9,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
     internal partial class SimplicateFunctionsClient
     {
 
-        [MethodDescription("CRM", "Adds a new organization to Simplicate.")]
+        [MethodDescription("CRM", "Adds a new organization to Simplicate")]
         public async Task<ChatGPTeamsAIClientResponse?> AddNewOrganization(
             [ParameterDescription("The name of the organization.")] string name,
             [ParameterDescription("The email of the organization.")] string? email = null,
@@ -75,8 +75,36 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
-        [MethodDescription("CRM", "Create a form for a new person in Simplicate.")]
-        public async Task<ChatGPTeamsAIClientResponse?> NewPerson(
+        [MethodDescription("CRM", "Create a Simplicate new organization form")]
+        public Task<ChatGPTeamsAIClientResponse?> NewOrganization(
+            [ParameterDescription("The name of the organization.")] string name,
+            [ParameterDescription("The email of the organization.")] string? email = null,
+            [ParameterDescription("The linkedin url of the organization.")] string? linkedin = null,
+            [ParameterDescription("The website url of the organization.")] string? website = null,
+            [ParameterDescription("The industry id of the organization.")] string? industryId = null,
+            [ParameterDescription("A note to add to the organization", true)] string? note = null,
+            [ParameterDescription("The phone number of the organization.")] string? phone = null,
+            [ParameterDescription("The person id to be linked to the organization.")] string? personId = null)
+        {
+             return Task.FromResult(ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object>>()
+            {
+                Data = new Dictionary<string, object>()
+                {
+                    {"name",name ?? string.Empty},
+                    {"email",email ?? string.Empty},
+                    {"linkedin",linkedin ?? string.Empty},
+                    {"website",website ?? string.Empty},
+                    {"industryId",industryId ?? string.Empty},
+                    {"note",note ?? string.Empty},
+                    {"email",email ?? string.Empty},
+                    {"phone", phone ?? string.Empty},
+                    {"personId",personId ?? string.Empty},
+                }
+            }, "AddNewOrganization"));
+        }
+
+        [MethodDescription("CRM", "Create a Simplicate new person form")]
+        public Task<ChatGPTeamsAIClientResponse?> NewPerson(
             [ParameterDescription("The family name of the person.")] string? familyName,
             [ParameterDescription("The full name of the person.")] string? fullName,
             [ParameterDescription("The first name of the person.")] string? firstName = null,
@@ -84,28 +112,24 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             [ParameterDescription("The email of the person.")] string? email = null,
             [ParameterDescription("The mobile phone number of the person.")] string? mobilePhone = null,
             [ParameterDescription("The work phone number of the person.")] string? workPhone = null,
-            [ParameterDescription("A note to add to the person.")] string? note = null,
+            [ParameterDescription("A note to add to the person.", true)] string? note = null,
             [ParameterDescription("The organization id to be linked to the person.")] string? organizationId = null)
         {
-            // var parameters = GetType().GetMethod("AddNewPerson").GetParameters();
-            return ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object>>()
+            return Task.FromResult(ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object>>()
             {
                 Data = new Dictionary<string, object>()
                 {
-                    {"familyName",familyName},
-                    {"fullName",fullName},
-                    {"firstName",firstName},
-                    {"email",email},
-                    {"mobilePhone",mobilePhone},
-                    {"note",note},
-            /*        FamilyName = familyName,
-                    FullName = fullName,
-                    FirstName = firstName,
-                    Phone = mobilePhone,
-                    Email = email,
-                    Note = note*/
+                    {"familyName",familyName ?? string.Empty},
+                    {"fullName",fullName ?? string.Empty},
+                    {"firstName",firstName ?? string.Empty},
+                    {"jobTitle",jobTitle ?? string.Empty},
+                    {"workPhone",workPhone ?? string.Empty},
+                    {"organizationId",organizationId ?? string.Empty},
+                    {"email",email ?? string.Empty},
+                    {"mobilePhone", mobilePhone ?? string.Empty},
+                    {"note",note ?? string.Empty},
                 }
-            }, "AddNewPerson");
+            }, "AddNewPerson"));
         }
 
         [MethodDescription("CRM", "Adds a new person to Simplicate.")]
@@ -117,7 +141,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             [ParameterDescription("The email of the person.")] string? email = null,
             [ParameterDescription("The mobile phone number of the person.")] string? mobilePhone = null,
             [ParameterDescription("The work phone number of the person.")] string? workPhone = null,
-            [ParameterDescription("A note to add to the person.")] string? note = null,
+            [ParameterDescription("A note to add to the person.", true)] string? note = null,
             [ParameterDescription("The organization id to be linked to the person.")] string? organizationId = null)
         {
             var linkedOrganizations = new List<object>();

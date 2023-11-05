@@ -155,13 +155,9 @@ internal class Person
         {
             if (LinkedAsContactToOrganization != null && LinkedAsContactToOrganization.Any())
             {
-                return "- " + string.Join("\r- ", LinkedAsContactToOrganization.Select(a => a.ToString()));
+                return string.Join("\r", LinkedAsContactToOrganization.Select(a => a.ToString()));
             }
             return string.Empty;
-
-            //  return LinkedAsContactToOrganization != null
-            // ? string.Join("- ", LinkedAsContactToOrganization.Select(a => a.ToString() + "\r"))
-            // : string.Empty;
         }
         set { }
     }
@@ -174,7 +170,7 @@ internal class Person
         {
             if (Teams != null && Teams.Any())
             {
-                return "- " + string.Join("\r- ", Teams.Select(a => a.Name));
+                return string.Join("\r", Teams.Select(a => a.Name));
             }
             return string.Empty;
         }
@@ -202,6 +198,24 @@ internal class Person
     [FormColumn]
     [UpdatedColumn]
     public string? UpdatedAt { get; set; }
+
+    [JsonPropertyName("newOrganization")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object>? NewOrganization
+    {
+        get { return Id != null ? new Dictionary<string, object>() { { "personId", Id } } : null; }
+        set { }
+    }
+
+    [JsonPropertyName("newSale")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object>? NewSale
+    {
+        get { return Id != null ? new Dictionary<string, object>() { { "personId", Id } } : null; }
+        set { }
+    }
 
 }
 

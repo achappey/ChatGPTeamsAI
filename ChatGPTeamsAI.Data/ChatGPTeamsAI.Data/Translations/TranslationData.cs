@@ -14,6 +14,8 @@ public static class TranslationKeys
     public const string Submit = "Submit";
     public const string ExecutingAction = "ExecutingAction";
     public const string True = "True";
+    public const string Links = "Links";
+    public const string Actions = "Actions";
     public const string False = "False";
     public const string ProcessingResult = "ProcessingResult";
     public const string Retrying = "Retrying";
@@ -100,7 +102,11 @@ public static class TranslationKeys
     public const string TeamNames = "TeamNames";
     public const string FullName = "FullName";
     public const string AddNewPerson = "AddNewPerson";
+    public const string NewPerson = "NewPerson";
+    public const string NewSales = "NewSales";
+    public const string NewOrganization = "NewOrganization";
 
 
 
 }
+

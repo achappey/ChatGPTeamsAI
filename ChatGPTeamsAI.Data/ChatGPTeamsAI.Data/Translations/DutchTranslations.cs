@@ -90,5 +90,9 @@ public class DutchTranslations
         [TranslationKeys.FullName] = "Naam",
         [TranslationKeys.Submit] = "Verstuur",
         [TranslationKeys.AddNewPerson] = "Nieuw persoon",
+        [TranslationKeys.NewPerson] = "Nieuw contactpersoon",
+        [TranslationKeys.NewSales] = "Nieuwe sales",
+        [TranslationKeys.NewOrganization] = "Nieuw bedrijf",
+        
     };
 }

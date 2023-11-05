@@ -71,6 +71,7 @@ internal class CardRenderer : ICardRenderer
                     {
                         Id = prop.Name,
                         Title = prop.Name,
+                        Label = _translatorService.Translate(prop.Name),
                         //Value = values.ContainsKey(prop.Name) ? values[prop.Name] : "false",
                         ValueOn = "true",
                         ValueOff = "false"
@@ -80,7 +81,7 @@ internal class CardRenderer : ICardRenderer
                     card.Body.Add(new AdaptiveNumberInput
                     {
                         Id = prop.Name,
-                        Placeholder = prop.Name,
+                        Placeholder = _translatorService.Translate(prop.Name),
                         Value = values.ContainsKey(prop.Name) && values[prop.Name] != null ? Convert.ToDouble(values[prop.Name].ToString()) : 0,
                     });
                     break;
@@ -88,12 +89,12 @@ internal class CardRenderer : ICardRenderer
                     card.Body.Add(new AdaptiveTextInput
                     {
                         Id = prop.Name,
-                        Placeholder = prop.Name,
+                        IsMultiline = prop.IsMultiline.HasValue ? prop.IsMultiline.Value : false,
+                        Placeholder = _translatorService.Translate(prop.Name),
                         Value = values.ContainsKey(prop.Name) && values[prop.Name] != null ? values[prop.Name].ToString() : string.Empty,
                     });
                     break;
             }
-
         }
 
         card.Body.Add(new AdaptiveTextInput
@@ -124,6 +125,45 @@ internal class CardRenderer : ICardRenderer
         return card;
     }
 
+    private void AddActionsToContainer(AdaptiveContainer container, PropertyInfo[] typeProperties, object item)
+    {
+        var columnSet = new AdaptiveColumnSet();
+
+        var actionColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<ActionColumnAttribute>() != null).ToList();
+
+        foreach (var linkColumns in actionColumnProperties)
+        {
+            var value = linkColumns.GetValue(item) as IDictionary<string, object?> ?? null;
+
+            if (value != null && value.Any())
+            {
+                columnSet.Columns.Add(new AdaptiveColumn()
+                {
+                    Items = new List<AdaptiveElement>() {
+                            new AdaptiveTextBlock
+                                {
+                                    Text = _translatorService.Translate(linkColumns.Name),
+                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                    Size = AdaptiveTextSize.Small,
+                                    Color = AdaptiveTextColor.Accent
+                                }
+                        },
+                    SelectAction = new AdaptiveSubmitAction
+                    {
+                        Data = new Data.Models.Input.Action()
+                        {
+                            Name = linkColumns.Name,
+                            Entities = value
+                        }
+                    }
+                });
+            }
+        }
+
+        container.Items.Add(columnSet);
+    }
+
+
     private void AddLinksToContainer(AdaptiveContainer container, PropertyInfo[] typeProperties, object item)
     {
         var columnSet = new AdaptiveColumnSet();
@@ -149,7 +189,8 @@ internal class CardRenderer : ICardRenderer
                             new AdaptiveTextBlock
                                 {
                                     Text = _translatorService.Translate(linkColumns.Name),
-                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Stretch,
+                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                    Size = AdaptiveTextSize.Small,
                                     Color = AdaptiveTextColor.Accent
                                 }
                         },
@@ -195,9 +236,11 @@ internal class CardRenderer : ICardRenderer
 
         AddHeaderToContainer(formContainer, typeProperties, item);
 
+        AddLinksToContainer(formContainer, typeProperties, item);
+
         AddFactsToContainer(formContainer, typeProperties, item);
 
-        AddLinksToContainer(formContainer, typeProperties, item);
+        AddActionsToContainer(formContainer, typeProperties, item);
 
         return formContainer;
     }
