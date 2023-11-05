@@ -77,7 +77,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("CRM", "Create a Simplicate new organization form")]
         public Task<ChatGPTeamsAIClientResponse?> NewOrganization(
-            [ParameterDescription("The name of the organization.")] string name,
+            [ParameterDescription("The name of the organization.")] string? name = null,
             [ParameterDescription("The email of the organization.")] string? email = null,
             [ParameterDescription("The linkedin url of the organization.")] string? linkedin = null,
             [ParameterDescription("The website url of the organization.")] string? website = null,
@@ -105,8 +105,8 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("CRM", "Create a Simplicate new person form")]
         public Task<ChatGPTeamsAIClientResponse?> NewPerson(
-            [ParameterDescription("The family name of the person.")] string? familyName,
-            [ParameterDescription("The full name of the person.")] string? fullName,
+            [ParameterDescription("The family name of the person.")] string? familyName = null,
+            [ParameterDescription("The full name of the person.")] string? fullName = null,
             [ParameterDescription("The first name of the person.")] string? firstName = null,
             [ParameterDescription("The job title of the person.")] string? jobTitle = null,
             [ParameterDescription("The email of the person.")] string? email = null,

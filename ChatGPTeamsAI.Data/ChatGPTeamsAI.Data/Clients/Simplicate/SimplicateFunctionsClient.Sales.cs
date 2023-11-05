@@ -142,7 +142,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("CRM", "Create a Simplicate new sale form")]
         public Task<ChatGPTeamsAIClientResponse?> NewSale(
-        [ParameterDescription("The subject of the sale")] string? subject,
+        [ParameterDescription("The subject of the sale")] string? subject = null,
         [ParameterDescription("A note to add to the sale", true)] string? note = null,
         [ParameterDescription("The expected revenue")] long? expectedRevenue = null,
         [ParameterDescription("The organization id to be linked to the sale")] string? organizationId = null,
