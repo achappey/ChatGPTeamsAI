@@ -23,11 +23,19 @@ internal sealed class ParameterDescriptionAttribute : Attribute
 {
     public string Description { get; }
     public bool? IsMultiline { get; }
+    public bool? IsHidden { get; }
 
     public ParameterDescriptionAttribute(string description, bool isMultiline = false)
     {
         Description = description;
         IsMultiline = isMultiline;
+    }
+
+    public ParameterDescriptionAttribute(string description, bool isMultiline = false, bool isHidden = false)
+    {
+        Description = description;
+        IsMultiline = isMultiline;
+        IsHidden = isHidden;
     }
 
     public ParameterDescriptionAttribute(string description)
@@ -45,7 +53,14 @@ internal class ListColumnAttribute : Attribute
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 internal class FormColumnAttribute : Attribute
 {
+    public string? Category { get; }
+    
     public FormColumnAttribute() { }
+
+    public FormColumnAttribute(string category)
+    {
+        Category = category;
+    }
 }
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
@@ -83,11 +98,13 @@ internal class UpdatedColumnAttribute : Attribute
 internal class LinkColumnAttribute : Attribute
 {
     public bool DocumentChat { get; } = false;
+    public string? Category { get; }
 
     public LinkColumnAttribute() { }
 
-    public LinkColumnAttribute(bool documentChat = false)
+    public LinkColumnAttribute(bool documentChat = false, string? category = null)
     {
         DocumentChat = documentChat;
+        Category = category;
     }
 }

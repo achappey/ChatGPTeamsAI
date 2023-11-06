@@ -86,7 +86,7 @@ internal class Event
         get
         {
             return Attendees != null
-                ? string.Join(", ", Attendees.Select(a => a.EmailAddress?.Name?.ToString()))
+                ? string.Join("\r", Attendees.Select(a => a.EmailAddress?.Name?.ToString()))
                 : string.Empty;
         }
         set { }

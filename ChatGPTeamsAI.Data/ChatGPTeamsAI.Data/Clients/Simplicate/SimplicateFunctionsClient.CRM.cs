@@ -132,6 +132,68 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             }, "AddNewPerson"));
         }
 
+        [MethodDescription("CRM", "Create a Simplicate edit person form")]
+        public async Task<ChatGPTeamsAIClientResponse?> EditPerson(
+            [ParameterDescription("The person id", isHidden: true)] string personId,
+            [ParameterDescription("The family name of the person.")] string? familyName = null,
+            [ParameterDescription("The full name of the person.")] string? fullName = null,
+            [ParameterDescription("The first name of the person.")] string? firstName = null,
+            [ParameterDescription("The email of the person.")] string? email = null,
+            [ParameterDescription("The mobile phone number of the person.")] string? mobilePhone = null,
+            [ParameterDescription("A note to add to the person.", true)] string? note = null)
+        {
+            var result = await FetchSimplicateDataItem<Person>($"crm/person/{personId}");
+
+            return await Task.FromResult(ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object?>>()
+            {
+                Data = new Dictionary<string, object?>()
+                {
+                    {"familyName",familyName ?? result?.Data?.FamilyName},
+                    {"fullName",fullName ?? result?.Data?.FullName},
+                    {"firstName",firstName ?? result?.Data?.FirstName},
+                    {"email",email ?? result?.Data?.Email},
+                    {"mobilePhone", mobilePhone ?? result?.Data?.Phone},
+                    {"note",note ?? result?.Data?.Note},
+                    {"personId",personId},
+                }
+            }, "UpdatePerson"));
+        }
+
+        [MethodDescription("CRM", "Updates a person in Simplicate.")]
+        public async Task<ChatGPTeamsAIClientResponse?> UpdatePerson(
+            [ParameterDescription("The person id", isHidden: true)] string personId,
+            [ParameterDescription("The family name of the person.")] string? familyName,
+            [ParameterDescription("The full name of the person.")] string? fullName,
+            [ParameterDescription("The first name of the person.")] string? firstName = null,
+            [ParameterDescription("The email of the person.")] string? email = null,
+            [ParameterDescription("The mobile phone number of the person.")] string? mobilePhone = null,
+            [ParameterDescription("A note to add to the person.", true)] string? note = null)
+        {
+
+            var personData = new Dictionary<string, object>();
+            if (!string.IsNullOrEmpty(firstName)) personData["first_name"] = firstName;
+            if (!string.IsNullOrEmpty(familyName)) personData["family_name"] = familyName;
+            if (!string.IsNullOrEmpty(fullName)) personData["full_name"] = fullName;
+            if (!string.IsNullOrEmpty(email)) personData["email"] = email;
+            if (!string.IsNullOrEmpty(mobilePhone)) personData["phone"] = mobilePhone;
+            if (!string.IsNullOrEmpty(note)) personData["note"] = note;
+
+            var response = await _httpClient.PutAsync($"crm/person/{personId}", personData.PrepareJsonContent());
+
+            if (response.IsSuccessStatusCode)
+            {
+                var newItem = await response.Content.ReadFromJsonAsync<SimplicateResponseBase<NewItem>>();
+
+                if (newItem != null && newItem.Data != null && newItem.Data.Id != null)
+                {
+                    return await GetPerson(newItem.Data.Id);
+                }
+            }
+
+            throw new Exception(response.ReasonPhrase);
+        }
+
+
         [MethodDescription("CRM", "Adds a new person to Simplicate.")]
         public async Task<ChatGPTeamsAIClientResponse?> AddNewPerson(
             [ParameterDescription("The family name of the person.")] string? familyName,

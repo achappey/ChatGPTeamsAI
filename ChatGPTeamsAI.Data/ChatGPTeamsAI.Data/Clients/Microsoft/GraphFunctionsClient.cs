@@ -147,7 +147,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             string? pageValue = skipToken ?? skip;
 
             var hasPageProperty = action.Parameters?.Properties?.Any(p => p.Name == pageProperty) ?? false;
-            if (!hasPageProperty || pageValue == null)
+            if (!hasPageProperty || pageValue == null || pageProperty == null)
             {
                 return null;
             }

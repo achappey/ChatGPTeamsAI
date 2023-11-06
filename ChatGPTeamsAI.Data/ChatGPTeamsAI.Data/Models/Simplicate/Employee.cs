@@ -22,9 +22,11 @@ internal class Employee
     }
 
     [JsonPropertyName("function")]
+    [FormColumn]
     public string? Function { get; set; }
 
     [JsonPropertyName("work_email")]
+    [FormColumn]
     public string? WorkEmail { get; set; }
 
     [JsonPropertyName("id")]

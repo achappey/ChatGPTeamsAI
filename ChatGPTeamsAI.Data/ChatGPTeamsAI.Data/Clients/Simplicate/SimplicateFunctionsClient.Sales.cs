@@ -14,13 +14,16 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             [ParameterDescription("The name of the responsible employee")] string? responsibleEmployeeName = null,
             [ParameterDescription("Organization name")] string? organizationName = null,
             [ParameterDescription("Person name")] string? personName = null,
+            [ParameterDescription("Team name")] string? teamName = null,
+            [ParameterDescription("Sales status")] string? status = null,
+            [ParameterDescription("Sales source")] string? source = null,
             [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
             [ParameterDescription("Sales subject")] string? subject = null,
             [ParameterDescription("The page number")] long pageNumber = 1)
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = CreateSalesFilters(responsibleEmployeeName, organizationName, personName, createdAfter, subject);
+            var filters = CreateSalesFilters(responsibleEmployeeName, organizationName, personName, teamName, status, source, createdAfter, subject);
             var result = await FetchSimplicateDataCollection<Sales>(filters, "sales/sales", pageNumber);
 
             return ToChatGPTeamsAIResponse(result);
@@ -31,12 +34,15 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             [ParameterDescription("The name of the responsible employee")] string? responsibleEmployeeName = null,
             [ParameterDescription("Organization name")] string? organizationName = null,
             [ParameterDescription("Person name")] string? personName = null,
+            [ParameterDescription("Team name")] string? teamName = null,
+            [ParameterDescription("Sales status")] string? status = null,
+            [ParameterDescription("Sales source")] string? source = null,
             [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
             [ParameterDescription("Sales subject")] string? subject = null)
         {
             createdAfter?.EnsureValidDateFormat();
 
-            var filters = CreateSalesFilters(responsibleEmployeeName, organizationName, personName, createdAfter, subject);
+            var filters = CreateSalesFilters(responsibleEmployeeName, organizationName, personName, teamName, status, source, createdAfter, subject);
             var queryString = BuildQueryString(filters);
             var response = await _httpClient.PagedRequest<Sales>($"sales/sales?{queryString}");
 
@@ -116,6 +122,9 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                 string? responsibleEmployeeName,
                 string? organizationName,
                 string? personName,
+                string? team,
+                string? status,
+                string? source,
                 string? createdAfter,
                 string? subject)
         {
@@ -123,6 +132,9 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             if (!string.IsNullOrEmpty(responsibleEmployeeName)) filters["[responsible_employee.name]"] = $"*{responsibleEmployeeName}*";
             if (!string.IsNullOrEmpty(organizationName)) filters["[organization.name]"] = $"*{organizationName}*";
             if (!string.IsNullOrEmpty(personName)) filters["[person.full_name]"] = $"*{personName}*";
+            if (!string.IsNullOrEmpty(team)) filters["[teams.name]"] = $"*{team}*";
+            if (!string.IsNullOrEmpty(status)) filters["[status.label]"] = $"*{status}*";
+            if (!string.IsNullOrEmpty(source)) filters["[source.name]"] = $"*{source}*";
             if (!string.IsNullOrEmpty(subject)) filters["[subject]"] = $"*{subject}*";
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
 
@@ -158,7 +170,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                     {"personId",personId},
                     {"organizationId",organizationId }
                 }
-            }, "AddNewSale"));
+            }, "AddNewSales"));
         }
 
         [MethodDescription("CRM", "Adds a new sales to Simplicate.")]

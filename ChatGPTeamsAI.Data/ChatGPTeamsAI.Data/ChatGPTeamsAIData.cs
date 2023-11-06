@@ -17,7 +17,7 @@ public interface IChatGPTeamsAIData
 public class ChatGPTeamsAIData : IChatGPTeamsAIData
 {
     private readonly Configuration _config;
-       protected readonly ITranslationService _translatorService;
+    protected readonly ITranslationService _translatorService;
 
     public ChatGPTeamsAIData(Configuration config)
     {
@@ -65,7 +65,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
                 _ => throw new InvalidOperationException("Unknown publisher"),
             };
 
-            return actionResult != null ? action.Name.StartsWith("Export") ? await CreateExport(actionResult) 
+            return actionResult != null ? action.Name.StartsWith("Export") ? await CreateExport(actionResult)
             : ToDataResponse(actionResult) : new ActionResponse()
             {
                 Error = "Something went wrong",
@@ -76,6 +76,16 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
 
     private async Task<ActionResponse> CreateExport(ChatGPTeamsAIClientResponse clientResponse)
     {
+        if (_config.GraphApiToken == null)
+        {
+            throw new UnauthorizedAccessException("No Microsoft Graph credentials available");
+        }
+
+        if (clientResponse.Data == null || !clientResponse.TotalItems.HasValue || clientResponse.ExecutedAction == null || clientResponse.ExecutedAction.Name == null)
+        {
+            throw new Exception("No data available");
+        }
+
         var microsoftClient = new GraphFunctionsClient(_config.GraphApiToken, _translatorService);
         var sanitizedDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
         var filename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.csv";

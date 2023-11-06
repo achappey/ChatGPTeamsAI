@@ -51,7 +51,7 @@ internal class CardRenderer : ICardRenderer
         return card;
     }
 
-    public AdaptiveCard CreateNewFormAdaptiveCard(ActionDescription description, IDictionary<string, object> values)
+    public AdaptiveCard CreateNewFormAdaptiveCard(ActionDescription description, IDictionary<string, object>? values)
     {
         var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 3));
 
@@ -62,38 +62,44 @@ internal class CardRenderer : ICardRenderer
             Size = AdaptiveTextSize.Medium
         });
 
-        foreach (var prop in description.Parameters.Properties)
+        if (description.Parameters != null && description.Parameters.Properties != null)
         {
-            switch (prop.Type)
+            foreach (var prop in description.Parameters.Properties)
             {
-                case "boolean":
-                    card.Body.Add(new AdaptiveToggleInput
-                    {
-                        Id = prop.Name,
-                        Title = prop.Name,
-                        Label = _translatorService.Translate(prop.Name),
-                        //Value = values.ContainsKey(prop.Name) ? values[prop.Name] : "false",
-                        ValueOn = "true",
-                        ValueOff = "false"
-                    });
-                    break;
-                case "number":
-                    card.Body.Add(new AdaptiveNumberInput
-                    {
-                        Id = prop.Name,
-                        Placeholder = _translatorService.Translate(prop.Name),
-                        Value = values.ContainsKey(prop.Name) && values[prop.Name] != null ? Convert.ToDouble(values[prop.Name].ToString()) : 0,
-                    });
-                    break;
-                default:
-                    card.Body.Add(new AdaptiveTextInput
-                    {
-                        Id = prop.Name,
-                        IsMultiline = prop.IsMultiline.HasValue ? prop.IsMultiline.Value : false,
-                        Placeholder = _translatorService.Translate(prop.Name),
-                        Value = values.ContainsKey(prop.Name) && values[prop.Name] != null ? values[prop.Name].ToString() : string.Empty,
-                    });
-                    break;
+                switch (prop.Type)
+                {
+                    case "boolean":
+                        card.Body.Add(new AdaptiveToggleInput
+                        {
+                            Id = prop.Name,
+                            Title = prop.Name,
+                            Label = _translatorService.Translate(prop.Name),
+                            IsVisible = !prop.IsHidden.HasValue || !prop.IsHidden.Value,
+                            //Value = values.ContainsKey(prop.Name) ? values[prop.Name] : "false",
+                            ValueOn = "true",
+                            ValueOff = "false"
+                        });
+                        break;
+                    case "number":
+                        card.Body.Add(new AdaptiveNumberInput
+                        {
+                            Id = prop.Name,
+                            Placeholder = _translatorService.Translate(prop.Name),
+                            IsVisible = !prop.IsHidden.HasValue || !prop.IsHidden.Value,
+                            Value = values != null && values.ContainsKey(prop.Name) && values[prop.Name] != null ? Convert.ToDouble(values[prop.Name].ToString()) : 0,
+                        });
+                        break;
+                    default:
+                        card.Body.Add(new AdaptiveTextInput
+                        {
+                            Id = prop.Name,
+                            IsVisible = !prop.IsHidden.HasValue || !prop.IsHidden.Value,
+                            IsMultiline = prop.IsMultiline.HasValue ? prop.IsMultiline.Value : false,
+                            Placeholder = _translatorService.Translate(prop.Name),
+                            Value = values != null && values.ContainsKey(prop.Name) && values[prop.Name] != null ? values[prop.Name].ToString() : string.Empty,
+                        });
+                        break;
+                }
             }
         }
 
@@ -164,12 +170,12 @@ internal class CardRenderer : ICardRenderer
     }
 
 
-    private void AddLinksToContainer(AdaptiveContainer container, PropertyInfo[] typeProperties, object item)
+    private void AddLinksToContainer(AdaptiveContainer container, PropertyInfo[] typeProperties, object item, string? category = null)
     {
         var columnSet = new AdaptiveColumnSet();
 
-        var linkColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null).ToList();
-        var chatColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null
+        var linkColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null && p.GetCustomAttribute<LinkColumnAttribute>()!.Category == category).ToList();
+        var chatColumnProperties = typeProperties.Where(p => p.GetCustomAttribute<LinkColumnAttribute>() != null && p.GetCustomAttribute<LinkColumnAttribute>()!.Category == category
                 && p.GetCustomAttribute<LinkColumnAttribute>()!.DocumentChat).ToList();
 
         foreach (var linkColumns in linkColumnProperties)
@@ -236,11 +242,11 @@ internal class CardRenderer : ICardRenderer
 
         AddHeaderToContainer(formContainer, typeProperties, item);
 
+        AddActionsToContainer(formContainer, typeProperties, item);
+
         AddLinksToContainer(formContainer, typeProperties, item);
 
         AddFactsToContainer(formContainer, typeProperties, item);
-
-        AddActionsToContainer(formContainer, typeProperties, item);
 
         return formContainer;
     }
@@ -430,34 +436,62 @@ internal class CardRenderer : ICardRenderer
 
     private void AddFactsToContainer(AdaptiveContainer container, PropertyInfo[] typeProperties, object item)
     {
-        var factSet = new AdaptiveFactSet();
-        var columnProperties = typeProperties.Where(p => p.GetCustomAttribute<FormColumnAttribute>() != null).ToList();
-
-        foreach (var property in columnProperties)
-        {
-            var value = property.GetValue(item);
-
-            if (value != null)
+        var groupedProperties = typeProperties
+            .Select(p => new
             {
-                string displayValue = property.PropertyType switch
-                {
-                    Type when property.PropertyType == typeof(bool) =>
-                        (bool)value ? _translatorService.Translate(TranslationKeys.True) : _translatorService.Translate(TranslationKeys.False),
-                    _ => value.ToString()
-                };
+                Property = p,
+                Attribute = p.GetCustomAttribute<FormColumnAttribute>()
+            })
+            .Where(p => p.Attribute != null)
+            .GroupBy(p => p.Attribute?.Category)
+            .OrderByDescending(g => g.Count());
 
-                if (!string.IsNullOrEmpty(displayValue))
+        foreach (var group in groupedProperties)
+        {
+            var factSet = new AdaptiveFactSet();
+
+            foreach (var propertyInfo in group)
+            {
+                var property = propertyInfo.Property;
+                var value = property.GetValue(item);
+
+                if (value != null)
                 {
-                    factSet.Facts.Add(new AdaptiveFact
+                    string? displayValue = property.PropertyType switch
                     {
-                        Title = _translatorService.Translate(property.Name),
-                        Value = displayValue
-                    });
+                        Type when property.PropertyType == typeof(bool) =>
+                            (bool)value ? _translatorService.Translate(TranslationKeys.True) : _translatorService.Translate(TranslationKeys.False),
+                        _ => value.ToString()
+                    };
+
+                    if (!string.IsNullOrEmpty(displayValue))
+                    {
+                        factSet.Facts.Add(new AdaptiveFact
+                        {
+                            Title = _translatorService.Translate(property.Name),
+                            Value = displayValue
+                        });
+                    }
                 }
             }
-        }
 
-        container.Items.Add(factSet);
+            if (factSet.Facts.Any())
+            {
+                if (!string.IsNullOrEmpty(group.Key))
+                {
+                    container.Items.Add(new AdaptiveTextBlock
+                    {
+                        Text = _translatorService.Translate(group.Key),
+                        Weight = AdaptiveTextWeight.Default,
+                        Size = AdaptiveTextSize.Large
+                    });
+                }
+
+                container.Items.Add(factSet);
+
+                AddLinksToContainer(container, typeProperties, item, group.Key);
+            }
+        }
     }
 
     private AdaptiveContainer CreateToggleContainer(PropertyInfo[] typeProperties, object item, int toggleId)

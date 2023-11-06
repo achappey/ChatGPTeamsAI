@@ -105,8 +105,38 @@ public static class TranslationKeys
     public const string NewPerson = "NewPerson";
     public const string NewSales = "NewSales";
     public const string NewOrganization = "NewOrganization";
+    public const string LostToCompetitorName = "LostToCompetitorName";
+    public const string Reason = "Reason";
+    public const string Status = "Status";
+    public const string SourceName = "SourceName";
+    public const string ExpectedRevenue = "ExpectedRevenue";
+    public const string ChanceToScore = "ChanceToScore";
+    public const string ExpectedClosingDate = "ExpectedClosingDate";
+    public const string StatusUpdatedAt = "StatusUpdatedAt";
+    public const string ReasonName = "ReasonName";
+    public const string ResponsibleEmployeeName = "ResponsibleEmployeeName";
+    public const string ProgressLabel = "ProgressLabel";
+    public const string LinkedProjectName = "LinkedProjectName";
+    public const string GetProject = "GetProject";
+    public const string GetSales = "GetSales";
+    public const string GetOrganization = "GetOrganization";
 
+     public const string QuoteNumber = "QuoteNumber";
+    public const string QuoteDate = "QuoteDate";
+    public const string QuoteSubject = "QuoteSubject";
+    public const string CreatedBy = "CreatedBy"; 
+    public const string QuoteStatusLabel = "QuoteStatusLabel";
+    public const string QuoteTemplateName = "QuoteTemplateName";
+    public const string Contact = "Contact";
+    public const string Extra = "Extra";
+    public const string General = "General";
+    public const string Address = "Address";
+    public const string TotalExcl = "TotalExcl";
+    public const string ContactAt = "ContactAt";
+    
+    
 
 
 }
+
 

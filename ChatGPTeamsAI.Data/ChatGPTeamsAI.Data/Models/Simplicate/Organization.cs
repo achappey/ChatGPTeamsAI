@@ -13,7 +13,7 @@ internal class Organization
     public string? Name { get; set; }
 
     [JsonPropertyName("email")]
-    [FormColumn]
+    [FormColumn("General")]
     public string? Email { get; set; }
 
     [JsonPropertyName("logo")]
@@ -34,18 +34,18 @@ internal class Organization
     }
 
     [JsonPropertyName("phone")]
-    [FormColumn]
+    [FormColumn("General")]
     public string? Phone { get; set; }
 
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
     [JsonPropertyName("coc_code")]
-    [FormColumn]
+    [FormColumn("General")]
     public string? CocCode { get; set; }
 
     [JsonPropertyName("vat_number")]
-    [FormColumn]
+    [FormColumn("Invoicing")]
     public string? VatNumber { get; set; }
 
     [JsonPropertyName("is_active")]
@@ -53,11 +53,11 @@ internal class Organization
     public bool IsActive { get; set; }
 
     [JsonPropertyName("url")]
-    [LinkColumn]
+    [LinkColumn(category: "General")]
     public string? Website { get; set; }
 
     [JsonPropertyName("linkedin_url")]
-    [LinkColumn]
+    [LinkColumn(category: "General")]
     public string? LinkedIn { get; set; }
 
     [JsonPropertyName("relation_manager")]
@@ -114,7 +114,7 @@ internal class Organization
     }
 
     [JsonPropertyName("debtorEmail")]
-    [FormColumn]
+    [FormColumn("Invoicing")]
     public string? DebtorMail
     {
         get
@@ -125,7 +125,7 @@ internal class Organization
     }
 
     [JsonPropertyName("industryName")]
-    [FormColumn]
+    [FormColumn("Extra")]
     public string? IndustryName
     {
         get
@@ -135,7 +135,7 @@ internal class Organization
         set { }
     }
 
-    [LinkColumn]
+    [LinkColumn(category: "General")]
     public string? SendMail
     {
         get
@@ -145,7 +145,7 @@ internal class Organization
         set { }
     }
 
-    [LinkColumn]
+    [LinkColumn(category: "General")]
     public string? Call
     {
         get
@@ -159,19 +159,8 @@ internal class Organization
     [Ignore]
     public IEnumerable<Interest>? Interests { get; set; }
 
-    [JsonPropertyName("InteresNames")]
-    [FormColumn]
-    public string? InterestsNames
-    {
-        get
-        {
-            return Interests != null ? string.Join(", ", Interests.Select(a => a.Name)) : string.Empty;
-        }
-        set { }
-    }
-
     [JsonPropertyName("teamNames")]
-    [FormColumn]
+    [FormColumn("Extra")]
     public string? TeamNames
     {
         get
@@ -190,20 +179,20 @@ internal class Organization
     public IEnumerable<Team>? Teams { get; set; }
 
     [JsonPropertyName("created_at")]
-    [FormColumn]
+    [FormColumn("General")]
     public string? CreatedAt { get; set; }
 
     [JsonPropertyName("updated_at")]
-    [FormColumn]
+    [FormColumn("General")]
     [UpdatedColumn]
     public string? UpdatedAt { get; set; }
 
     [JsonPropertyName("note")]
-    [FormColumn]
+    [FormColumn("General")]
     public string? Note { get; set; }
 
     [JsonPropertyName("simplicate_url")]
-    [LinkColumn]
+    [LinkColumn(category: "General")]
     public string? Simplicate { get; set; }
 
     [JsonPropertyName("newPerson")]

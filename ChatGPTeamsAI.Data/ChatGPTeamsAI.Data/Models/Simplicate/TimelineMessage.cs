@@ -15,14 +15,18 @@ internal class TimelineMessage
     [FormColumn]
     public string? CreatedAt { get; set; }
 
-    [JsonPropertyName("linkedToName")]
-    [ListColumn]
+
+    [JsonPropertyName("linkedToNames")]
     [FormColumn]
-    public string? LinkedToName
+    public string? LinkedToNames
     {
         get
         {
-            return LinkedTo?.FirstOrDefault()?.Label;
+            if (LinkedTo != null && LinkedTo.Any())
+            {
+                return string.Join("\r", LinkedTo.Select(a => $"{a.Label} ({a.Type})" ));
+            }
+            return string.Empty;
         }
         set { }
     }
@@ -72,4 +76,7 @@ internal class LinkedTo
 {
     [JsonPropertyName("label")]
     public string? Label { get; set; }
+
+    [JsonPropertyName("type")]
+    public string? Type { get; set; }
 }

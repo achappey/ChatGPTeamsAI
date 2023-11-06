@@ -93,6 +93,35 @@ public class DutchTranslations
         [TranslationKeys.NewPerson] = "Nieuw contactpersoon",
         [TranslationKeys.NewSales] = "Nieuwe sales",
         [TranslationKeys.NewOrganization] = "Nieuw bedrijf",
-        
+        [TranslationKeys.LostToCompetitorName] = "Verloren aan concurrent",
+        [TranslationKeys.Reason] = "Reden",
+        [TranslationKeys.Status] = "Status",
+        [TranslationKeys.SourceName] = "Bron",
+        [TranslationKeys.ExpectedRevenue] = "Potentiële omzet",
+        [TranslationKeys.ChanceToScore] = "Scoringskans",
+        [TranslationKeys.ExpectedClosingDate] = "Einddatum",
+        [TranslationKeys.StatusUpdatedAt] = "Status bijgewerkt",
+        [TranslationKeys.ReasonName] = "Reden",
+        [TranslationKeys.ResponsibleEmployeeName] = "Verantwoordelijke",
+        [TranslationKeys.ProgressLabel] = "Voortgang",
+        [TranslationKeys.LinkedProjectName] = "Project",
+        [TranslationKeys.GetProject] = "Project",
+        [TranslationKeys.GetSales] = "Sales",
+        [TranslationKeys.GetOrganization] = "Bedrijf",
+        [TranslationKeys.QuoteNumber] = "Offertenummer",
+        [TranslationKeys.QuoteDate] = "Offertedatum",
+        [TranslationKeys.QuoteSubject] = "Onderwerp offerte",
+        [TranslationKeys.CreatedBy] = "Aangemaakt door",
+        [TranslationKeys.QuoteStatusLabel] = "Status",
+        [TranslationKeys.QuoteTemplateName] = "Offertesjabloon",
+        [TranslationKeys.TotalExcl] = "Totaal excl.",
+        [TranslationKeys.General] = "Algemene gegevens",
+        [TranslationKeys.Extra] = "Extra gegevens",
+        [TranslationKeys.Contact] = "Contactgegevens",
+        [TranslationKeys.ContactAt] = "Contactpersoon bij",
+        [TranslationKeys.Address] = "Adres",
+
+
+
     };
 }

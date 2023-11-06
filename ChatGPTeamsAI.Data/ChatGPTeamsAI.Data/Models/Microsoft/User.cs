@@ -38,7 +38,7 @@ internal class User
     {
         get
         {
-            return Skills != null ? string.Join(", ", Skills) : null;
+            return Skills != null ? string.Join("\r", Skills) : null;
         }
         set { }
     }

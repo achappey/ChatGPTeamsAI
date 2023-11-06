@@ -43,7 +43,7 @@ internal class Project
     public Budget? Budget { get; set; }
 
     [JsonPropertyName("project_number")]
-    [ListColumn]
+    [FormColumn]
     public string? ProjectNumber { get; set; }
 
     [FormColumn]
@@ -148,7 +148,7 @@ internal class Project
     {
         get
         {
-            return Employees != null ? string.Join(", ", Employees.Select(a => a.Name)) : string.Empty;
+            return Employees != null ? string.Join("\r", Employees.Select(a => a.Name)) : string.Empty;
         }
         set { }
     }

@@ -8,11 +8,12 @@ using CsvHelper.Configuration.Attributes;
 
 internal class Quote
 {
-    [ListColumn]
+    [FormColumn]
     [JsonPropertyName("quote_number")]
     public string? QuoteNumber { get; set; }
 
     [ListColumn]
+    [FormColumn]
     [JsonPropertyName("quote_date")]
     public string? QuoteDate { get; set; }
 
@@ -28,9 +29,28 @@ internal class Quote
     [Ignore]
     public QuoteStatus? QuoteStatus { get; set; }
 
+    [JsonPropertyName("quotetemplate")]
+    [Ignore]
+    public QuoteTemplate? QuoteTemplate { get; set; }
+
+    [JsonPropertyName("created_by")]
+    [Ignore]
+    public CreatedBy? CreatedBy { get; set; }
+
     [JsonPropertyName("customer_reference")]
     [FormColumn]
     public string? CustomerReference { get; set; }
+
+    [JsonPropertyName("createdByName")]
+    [FormColumn]
+    public string? CreatedByName
+    {
+        get
+        {
+            return CreatedBy?.Name;
+        }
+        set { }
+    }
 
     [JsonPropertyName("quoteStatusLabel")]
     [FormColumn]
@@ -42,6 +62,18 @@ internal class Quote
         }
         set { }
     }
+
+    [JsonPropertyName("quoteTemplateName")]
+    [FormColumn]
+    public string? QuoteTemplateName
+    {
+        get
+        {
+            return QuoteTemplate?.Name;
+        }
+        set { }
+    }
+
     [JsonPropertyName("sales_id")]
     public string? SalesId { get; set; }
 
@@ -52,6 +84,15 @@ internal class Quote
     [JsonPropertyName("total_excl")]
     [FormColumn]
     public double TotalExcl { get; set; }
+
+    [JsonPropertyName("getSales")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object?>? GetSales
+    {
+        get { return SalesId != null ? new Dictionary<string, object?>() { { "saleId", SalesId } } : null; }
+        set { }
+    }
 }
 
 internal class QuoteStatus
@@ -63,3 +104,15 @@ internal class QuoteStatus
     public string? Label { get; set; }
 
 }
+
+
+internal class QuoteTemplate
+{
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+}
+

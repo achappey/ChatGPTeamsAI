@@ -11,6 +11,7 @@ internal class Person
 
     [JsonPropertyName("full_name")]
     [ListColumn]
+    [FormColumn("General")]
     [NewFormColumn]
     [TitleColumn]
     public string? FullName { get; set; }
@@ -35,47 +36,47 @@ internal class Person
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
-    [JsonPropertyName("initials")]
-    [NewFormColumn]
-    [FormColumn]
-    public string? Initials { get; set; }
+    [JsonPropertyName("gender")]
+    [FormColumn("General")]
+    public string? Gender { get; set; }
 
     [JsonPropertyName("first_name")]
     [NewFormColumn]
-    [FormColumn]
+    [FormColumn("General")]
     public string? FirstName { get; set; }
+
+    [JsonPropertyName("initials")]
+    [NewFormColumn]
+    [FormColumn("General")]
+    public string? Initials { get; set; }
 
     [JsonPropertyName("family_name")]
     [NewFormColumn]
-    [FormColumn]
+    [FormColumn("General")]
     public string? FamilyName { get; set; }
 
-    [JsonPropertyName("gender")]
-    [FormColumn]
-    public string? Gender { get; set; }
-
-    [FormColumn]
+    [FormColumn("Contact")]
     [NewFormColumn]
     [JsonPropertyName("email")]
     public string? Email { get; set; }
 
     [NewFormColumn]
-    [FormColumn]
+    [FormColumn("Contact")]
     [JsonPropertyName("phone")]
     public string? Phone { get; set; }
 
     [JsonPropertyName("linkedin_url")]
     [NewFormColumn]
-    [LinkColumn]
+    [LinkColumn(category: "Contact")]
     public string? LinkedIn { get; set; }
 
     [JsonPropertyName("website_url")]
     [NewFormColumn]
-    [LinkColumn]
+    [LinkColumn(category: "Contact")]
     public string? Website { get; set; }
 
     [JsonPropertyName("relation_number")]
-    [FormColumn]
+    [FormColumn("Extra")]
     public string? RelationNumber { get; set; }
 
     [JsonPropertyName("relation_type")]
@@ -83,7 +84,7 @@ internal class Person
     public RelationType? RelationType { get; set; }
 
     [JsonPropertyName("relationTypeLabel")]
-    [FormColumn]
+    [FormColumn("General")]
     public string? RelationTypeLabel
     {
         get
@@ -98,7 +99,7 @@ internal class Person
     public Address? Address { get; set; }
 
     [JsonPropertyName("addressLocality")]
-    [FormColumn]
+    [FormColumn("Address")]
     public string? AddressLocality
     {
         get
@@ -109,7 +110,7 @@ internal class Person
     }
 
     [JsonPropertyName("relationManagerName")]
-    [FormColumn]
+    [FormColumn("Extra")]
     public string? RelationManagerName
     {
         get
@@ -119,7 +120,7 @@ internal class Person
         set { }
     }
 
-    [LinkColumn]
+    [LinkColumn(category: "Contact")]
     public string? SendMail
     {
         get
@@ -129,7 +130,7 @@ internal class Person
         set { }
     }
 
-    [LinkColumn]
+    [LinkColumn(category: "Contact")]
     public string? Call
     {
         get
@@ -140,7 +141,7 @@ internal class Person
     }
 
     [JsonPropertyName("simplicate_url")]
-    [LinkColumn]
+    [LinkColumn(category: "General")]
     public string? Simplicate { get; set; }
 
     [Ignore]
@@ -148,7 +149,7 @@ internal class Person
     public RelationManager? RelationManager { get; set; }
 
     [JsonPropertyName("organizations")]
-    [FormColumn]
+    [FormColumn("ContactAt")]
     public string? Organizations
     {
         get
@@ -163,7 +164,7 @@ internal class Person
     }
 
     [JsonPropertyName("teamNames")]
-    [FormColumn]
+    [FormColumn("Extra")]
     public string? TeamNames
     {
         get
@@ -187,15 +188,15 @@ internal class Person
 
     [JsonPropertyName("note")]
     [NewFormColumn]
-    [FormColumn]
+    [FormColumn("General")]
     public string? Note { get; set; }
 
     [JsonPropertyName("created_at")]
-    [FormColumn]
+    [FormColumn("General")]
     public string? CreatedAt { get; set; }
 
     [JsonPropertyName("updated_at")]
-    [FormColumn]
+    [FormColumn("General")]
     [UpdatedColumn]
     public string? UpdatedAt { get; set; }
 
@@ -204,7 +205,7 @@ internal class Person
     [ActionColumn]
     public IDictionary<string, object>? NewOrganization
     {
-        get { return Id != null ? new Dictionary<string, object>() { { "personId", Id } } : null; }
+        get { return Id != null && (LinkedAsContactToOrganization == null || !LinkedAsContactToOrganization.Any()) ? new Dictionary<string, object>() { { "personId", Id } } : null; }
         set { }
     }
 
