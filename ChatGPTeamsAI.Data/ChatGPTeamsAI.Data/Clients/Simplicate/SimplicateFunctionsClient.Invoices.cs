@@ -69,12 +69,12 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             createdBefore?.EnsureValidDateFormat();
 
             var filters = new Dictionary<string, string>();
-            if (!string.IsNullOrEmpty(createdBy)) filters["[title]"] = $"*{title}*";
+            if (!string.IsNullOrEmpty(title)) filters["[title]"] = $"*{title}*";
             if (!string.IsNullOrEmpty(createdBy)) filters["[created_by.name]"] = $"*{createdBy}*";
             if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
             if (!string.IsNullOrEmpty(createdBefore)) filters["[created_at][le]"] = createdBefore;
 
-            var result = await FetchSimplicateDataCollection<InvoiceDocument>(filters, "invoices/document", pageNumber, "created_at");
+            var result = await FetchSimplicateDataCollection<InvoiceDocument>(filters, "invoices/document", pageNumber, "-created_at");
 
             return ToChatGPTeamsAIResponse(result);
         }

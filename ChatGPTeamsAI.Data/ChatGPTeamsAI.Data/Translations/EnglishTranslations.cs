@@ -106,6 +106,7 @@ public class EnglishTranslations
         [TranslationKeys.QuoteTemplateName] = "Quote template",
         [TranslationKeys.TotalExcl] = "Total excl.",
         [TranslationKeys.ContactAt] = "Contactperson at",
+        [TranslationKeys.InvoiceNumber] = "Invoice",
 
 
     };

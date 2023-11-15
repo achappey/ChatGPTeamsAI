@@ -14,6 +14,7 @@ internal class Sales
     public string? Subject { get; set; }
 
     [JsonPropertyName("image")]
+    [Ignore]
     [ImageColumn]
     public string? Image
     {

@@ -133,6 +133,21 @@ public static class TranslationKeys
     public const string Address = "Address";
     public const string TotalExcl = "TotalExcl";
     public const string ContactAt = "ContactAt";
+    public const string BankAccount = "BankAccount";
+    public const string InvoiceNumber = "InvoiceNumber";
+    public const string StatusName = "StatusName";
+    public const string TotalExcludingVat = "TotalExcludingVat";
+    public const string Date = "Date";
+    public const string DocumentTypeLabel = "DocumentTypeLabel";
+    public const string ProjectName = "ProjectName";
+    public const string Tariff = "Tariff";
+    
+    
+    
+    
+    
+    
+    
     
     
 

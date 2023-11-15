@@ -1,4 +1,3 @@
-
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
@@ -146,7 +145,12 @@ internal class PaymentTerm
 
 }
 
-internal class InvoiceDocument
+internal class InvoiceDocument : Document
+{
+
+}
+
+internal class Document
 {
     [JsonPropertyName("id")]
     public string? Id { get; set; }
@@ -174,6 +178,17 @@ internal class InvoiceDocument
         get
         {
             return CreatedBy?.Name;
+        }
+        set { }
+    }
+
+    [FormColumn]
+    [JsonPropertyName("documentTypeLabel")]
+    public string? DocumentTypeLabel
+    {
+        get
+        {
+            return DocumentType?.Label;
         }
         set { }
     }

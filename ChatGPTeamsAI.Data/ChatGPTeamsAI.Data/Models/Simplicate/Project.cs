@@ -245,3 +245,8 @@ internal class Total
     [JsonPropertyName("value_invoiced")]
     public double? ValueInvoiced { get; set; }
 }
+
+internal class ProjectDocument : Document
+{
+
+}

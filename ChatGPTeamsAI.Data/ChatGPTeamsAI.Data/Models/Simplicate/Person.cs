@@ -17,6 +17,7 @@ internal class Person
     public string? FullName { get; set; }
 
     [JsonPropertyName("image")]
+    [Ignore]
     [ImageColumn]
     public string? Image
     {
@@ -120,6 +121,7 @@ internal class Person
         set { }
     }
 
+    [Ignore]
     [LinkColumn(category: "Contact")]
     public string? SendMail
     {
@@ -130,6 +132,7 @@ internal class Person
         set { }
     }
 
+    [Ignore]
     [LinkColumn(category: "Contact")]
     public string? Call
     {

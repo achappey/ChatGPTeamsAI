@@ -17,6 +17,7 @@ internal class Organization
     public string? Email { get; set; }
 
     [JsonPropertyName("logo")]
+    [Ignore]
     [ImageColumn]
     public string? Logo
     {
@@ -135,6 +136,7 @@ internal class Organization
         set { }
     }
 
+    [Ignore]
     [LinkColumn(category: "General")]
     public string? SendMail
     {
@@ -145,6 +147,7 @@ internal class Organization
         set { }
     }
 
+    [Ignore]
     [LinkColumn(category: "General")]
     public string? Call
     {
@@ -167,7 +170,7 @@ internal class Organization
         {
             if (Teams != null && Teams.Any())
             {
-                return "- " + string.Join("\r- ", Teams.Select(a => a.Name));
+                return string.Join("\r", Teams.Select(a => a.Name));
             }
             return string.Empty;
         }
@@ -261,7 +264,7 @@ internal class MyOrganizationProfile
     public string? Id { get; set; }
 
     [JsonPropertyName("name")]
-    [FormColumn]
+    [FormColumn("General")]
     [ListColumn]
     public string? Name { get; set; }
 
@@ -269,15 +272,15 @@ internal class MyOrganizationProfile
     public string? OrganizationId { get; set; }
 
     [JsonPropertyName("vat_number")]
-    [FormColumn]
+    [FormColumn("Invoicing")]
     public string? VatNumber { get; set; }
 
     [JsonPropertyName("coc_code")]
-    [FormColumn]
+    [FormColumn("Invoicing")]
     [ListColumn]
     public string? CocCode { get; set; }
 
-    [FormColumn]
+    [FormColumn("Invoicing")]
     [JsonPropertyName("bank_account")]
     public string? BankAccount { get; set; }
 

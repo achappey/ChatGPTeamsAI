@@ -244,7 +244,7 @@ internal class CardRenderer : ICardRenderer
 
         AddActionsToContainer(formContainer, typeProperties, item);
 
-        AddLinksToContainer(formContainer, typeProperties, item);
+      //  AddLinksToContainer(formContainer, typeProperties, item);
 
         AddFactsToContainer(formContainer, typeProperties, item);
 

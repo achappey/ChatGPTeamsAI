@@ -120,6 +120,15 @@ public class DutchTranslations
         [TranslationKeys.Contact] = "Contactgegevens",
         [TranslationKeys.ContactAt] = "Contactpersoon bij",
         [TranslationKeys.Address] = "Adres",
+        [TranslationKeys.BankAccount] = "IBAN",
+        [TranslationKeys.InvoiceNumber] = "Factuurnummer",
+        [TranslationKeys.TotalExcludingVat] = "Factuurtotaal excl.",
+        [TranslationKeys.StatusName] = "Status",
+        [TranslationKeys.Date] = "Date",
+        [TranslationKeys.DocumentTypeLabel] = "Type document",
+        [TranslationKeys.ProjectName] = "Project",
+        [TranslationKeys.Tariff] = "Tarief",
+        
 
 
 

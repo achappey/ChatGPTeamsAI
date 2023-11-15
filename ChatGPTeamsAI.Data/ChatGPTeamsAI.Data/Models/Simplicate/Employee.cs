@@ -12,6 +12,7 @@ internal class Employee
     public string? Name { get; set; }
 
     [JsonPropertyName("image")]
+    [Ignore]
     [ImageColumn]
     public string? Image
     {

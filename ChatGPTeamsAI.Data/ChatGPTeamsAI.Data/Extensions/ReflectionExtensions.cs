@@ -6,6 +6,7 @@ using System.Globalization;
 using CsvHelper;
 using ChatGPTeamsAI.Data.Models.Output;
 using CsvHelper.TypeConversion;
+using System.Text;
 
 namespace ChatGPTeamsAI.Data.Extensions;
 
@@ -120,8 +121,18 @@ internal static class ReflectionExtensions
                     using var csv = new CsvWriter(writer, config);
 
                     csv.WriteRecords(listResult);
-                    return writer.ToString();
 
+                    string utf16String = writer.ToString();
+                    byte[] utf16Bytes = Encoding.Unicode.GetBytes(utf16String);
+                    byte[] utf8Bytes = Encoding.Convert(Encoding.Unicode, Encoding.UTF8, utf16Bytes);
+                    string utf8String = Encoding.UTF8.GetString(utf8Bytes);
+
+                    return utf8String;
+
+                }
+                else
+                {
+                    return "No items in the list.";
                 }
             }
             else

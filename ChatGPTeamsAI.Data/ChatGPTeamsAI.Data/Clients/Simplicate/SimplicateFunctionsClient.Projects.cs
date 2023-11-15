@@ -78,5 +78,27 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             return ToChatGPTeamsAIResponse(result);
         }
+
+        [MethodDescription("Projects", "Search for project documents")]
+        public async Task<ChatGPTeamsAIClientResponse?> SearchProjectDocuments(
+                  [ParameterDescription("Type of the document")] string? documentType = null,
+                  [ParameterDescription("Title of the document")] string? title = null,
+                  [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
+                  [ParameterDescription("Created at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdBefore = null,
+                  [ParameterDescription("Page number")] long pageNumber = 1)
+        {
+            createdAfter?.EnsureValidDateFormat();
+            createdBefore?.EnsureValidDateFormat();
+
+            var filters = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(title)) filters["[title]"] = $"*{title}*";
+            if (!string.IsNullOrEmpty(documentType)) filters["[document_type.label]"] = $"*{documentType}*";
+            if (!string.IsNullOrEmpty(createdAfter)) filters["[created_at][ge]"] = createdAfter;
+            if (!string.IsNullOrEmpty(createdBefore)) filters["[created_at][le]"] = createdBefore;
+
+            var result = await FetchSimplicateDataCollection<ProjectDocument>(filters, "projects/document", pageNumber, "-created_at");
+
+            return ToChatGPTeamsAIResponse(result);
+        }
     }
 }
