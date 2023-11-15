@@ -113,12 +113,22 @@ internal static class ReflectionExtensions
                 {
                     var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                     {
-                        ShouldQuote = (args) => true,
-                        Quote = '\"'
+                        //  ShouldQuote = (args) => true,
+                        //   Quote = '\"'
+                        Delimiter = ",",
+
+                        // Enclose fields in quotes only if necessary (e.g., when they contain a comma).
+                        ShouldQuote = (args) => args.Field.Contains(","),
+
+                        // Use double quotes as the standard quote character.
+                        Quote = '\"',
+
+                        // Ensure line breaks within fields are correctly handled.
+                        NewLine = Environment.NewLine
                     };
 
                     using (var stream = new MemoryStream())
-                    using (var writer = new StreamWriter(stream, new UTF8Encoding(true))) 
+                    using (var writer = new StreamWriter(stream, new UTF8Encoding(true)))
                     using (var csv = new CsvWriter(writer, config))
                     {
                         csv.WriteRecords(listResult);
