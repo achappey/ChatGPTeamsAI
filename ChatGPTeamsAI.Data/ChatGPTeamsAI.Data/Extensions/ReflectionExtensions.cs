@@ -117,17 +117,14 @@ internal static class ReflectionExtensions
                         Quote = '\"'
                     };
 
-                    using var writer = new StringWriter();
-                    using var csv = new CsvWriter(writer, config);
-
-                    csv.WriteRecords(listResult);
-
-                    string utf16String = writer.ToString();
-                    byte[] utf16Bytes = Encoding.Unicode.GetBytes(utf16String);
-                    byte[] utf8Bytes = Encoding.Convert(Encoding.Unicode, Encoding.UTF8, utf16Bytes);
-                    string utf8String = Encoding.UTF8.GetString(utf8Bytes);
-
-                    return utf8String;
+                    using (var stream = new MemoryStream())
+                    using (var writer = new StreamWriter(stream, new UTF8Encoding(true))) 
+                    using (var csv = new CsvWriter(writer, config))
+                    {
+                        csv.WriteRecords(listResult);
+                        writer.Flush();
+                        return Encoding.UTF8.GetString(stream.ToArray());
+                    }
 
                 }
                 else
