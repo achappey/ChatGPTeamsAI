@@ -128,7 +128,7 @@ internal static class ReflectionExtensions
                     };
 
                     using (var stream = new MemoryStream())
-                    using (var writer = new StreamWriter(stream, new UTF8Encoding(true)))
+                    using (var writer = new StreamWriter(stream, new UTF8Encoding(false)))
                     using (var csv = new CsvWriter(writer, config))
                     {
                         csv.WriteRecords(listResult);
