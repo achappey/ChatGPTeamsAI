@@ -113,9 +113,9 @@ internal static class ReflectionExtensions
                 {
                     var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                     {
-                        //  ShouldQuote = (args) => true,
-                        //   Quote = '\"'
-                        Delimiter = ",",
+                          ShouldQuote = (args) => true,
+                           Quote = '\"'
+                     /*   Delimiter = ",",
 
                         // Enclose fields in quotes only if necessary (e.g., when they contain a comma).
                         ShouldQuote = (args) => args.Field.Contains(","),
@@ -124,7 +124,7 @@ internal static class ReflectionExtensions
                         Quote = '\"',
 
                         // Ensure line breaks within fields are correctly handled.
-                        NewLine = Environment.NewLine
+                        NewLine = Environment.NewLine*/
                     };
 
                     using (var stream = new MemoryStream())
