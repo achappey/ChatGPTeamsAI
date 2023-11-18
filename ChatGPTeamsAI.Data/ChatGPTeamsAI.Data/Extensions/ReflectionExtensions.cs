@@ -132,7 +132,7 @@ internal static class ReflectionExtensions
             }
             else
             {
-                return JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+                return JsonSerializer.Serialize(result, new JsonSerializerOptions { });
             }
         }
 

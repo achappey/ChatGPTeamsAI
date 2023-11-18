@@ -1,4 +1,5 @@
 
+using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
 using CsvHelper.Configuration.Attributes;
 using HtmlAgilityPack;
@@ -142,6 +143,7 @@ internal class Email
 
 internal class ItemBody
 {
+    [JsonIgnore]
     public string? Content { get; set; }
 
     public string? ContentType { get; set; }
