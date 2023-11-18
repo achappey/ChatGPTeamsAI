@@ -1,4 +1,5 @@
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 namespace ChatGPTeamsAI.Data.Models.Microsoft;
 
@@ -26,5 +27,6 @@ internal class Group
         set { }
     }
 
+    [Ignore]
     public Team? Team { get; set; }
 }

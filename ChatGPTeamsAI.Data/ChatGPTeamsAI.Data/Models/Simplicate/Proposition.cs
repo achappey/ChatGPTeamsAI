@@ -67,10 +67,22 @@ internal class Proposition
 
     [JsonPropertyName("id")]
     public string? Id { get; set; }
+
+    [JsonPropertyName("getProject")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object?>? GetProject
+    {
+        get { return Project != null ? new Dictionary<string, object?>() { { "projectId", Project.Id } } : null; }
+        set { }
+    }
 }
 
 internal class PropositionProject
 {
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 

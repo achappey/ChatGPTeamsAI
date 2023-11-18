@@ -72,6 +72,7 @@ internal class Recipient
     public EmailAddress? EmailAddress { get; set; }
 
 }
+
 internal class EmailAddress
 {
     public string? Address { get; set; }

@@ -1,6 +1,5 @@
 using AdaptiveCards;
 using ChatGPTeamsAI.Cards;
-using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Output;
 using ChatGPTeamsAI.Data.Translations;
@@ -14,7 +13,6 @@ internal abstract class BaseClient : IBaseClient
 
     public abstract IEnumerable<ActionDescription> GetAvailableActions();
 
-    //protected string _locale = "en-US";
     protected readonly ITranslationService _translatorService;
 
     public abstract Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Models.Input.Action action);
@@ -38,17 +36,7 @@ internal abstract class BaseClient : IBaseClient
             return null;
         }
 
-        var dataType = data.GetType();
-        if (_cardRenderers.TryGetValue(dataType, out var rendererObj) && rendererObj is ICardRenderer renderer)
-        {
-            //      return renderer.Render(data);
-        }
-        //var defaultRender = new CardRenderer();
-
         return defaultRender.DefaultRender(data);
-        //  base.RenderData(data)
-
-        //   return null;
     }
 
     public static NoOutputResponse SuccessResponse()
@@ -57,16 +45,6 @@ internal abstract class BaseClient : IBaseClient
         {
             Status = "success",
             Message = "The function was executed successfully.",
-            Timestamp = DateTime.UtcNow
-        };
-    }
-
-    public static NoOutputResponse ErrorResponse(string error)
-    {
-        return new NoOutputResponse
-        {
-            Status = "exception",
-            Message = error,
             Timestamp = DateTime.UtcNow
         };
     }

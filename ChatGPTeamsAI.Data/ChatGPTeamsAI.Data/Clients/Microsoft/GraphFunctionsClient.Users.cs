@@ -103,16 +103,15 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         }
 
-
         // Get information about a specific user by their ID.
         [MethodDescription("Users", "Gets information about a specific user based on their ID.")]
-        public async Task<Models.Microsoft.User> GetUser(
+        public async Task<ChatGPTeamsAIClientResponse?> GetUser(
             [ParameterDescription("The ID of the user.")] string userId)
         {
             
             var user = await _graphClient.Users[userId].Request().GetAsync();
 
-            return _mapper.Map<Models.Microsoft.User>(user);
+            return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.User>(user));
         }
         /*
                 [MethodDescription("Creates a user with the specified properties.")]

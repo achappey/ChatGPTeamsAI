@@ -96,11 +96,31 @@ internal class Invoice
     [FormColumn]
     public double? TotalExcludingVat { get; set; }
 
+    [JsonPropertyName("getProject")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object?>? GetProject
+    {
+        get { return Project != null ? new Dictionary<string, object?>() { { "projectId", Project.Id } } : null; }
+        set { }
+    }
+
+    [JsonPropertyName("getOrganization")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object?>? GetOrganization
+    {
+        get { return Organization != null ? new Dictionary<string, object?>() { { "organizationId", Organization.Id } } : null; }
+        set { }
+    }
 
 }
 
 internal class OrganizationInvoice
 {
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 }
@@ -121,6 +141,9 @@ internal class InvoiceStatus
 
 internal class ProjectInvoice
 {
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 }
@@ -236,6 +259,7 @@ internal class Document
             _description = value;
         }
     }
+
 
 }
 

@@ -87,6 +87,15 @@ internal class Employee
     [JsonPropertyName("avatar")]
     [Ignore]
     public Avatar? Avatar { get; set; }
+
+    [JsonPropertyName("getPerson")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object?>? GetOrganization
+    {
+        get { return PersonId != null ? new Dictionary<string, object?>() { { "personId", PersonId } } : null; }
+        set { }
+    }
 }
 
 internal class Avatar

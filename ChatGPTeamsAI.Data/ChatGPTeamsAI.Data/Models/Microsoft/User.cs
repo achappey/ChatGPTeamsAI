@@ -1,39 +1,46 @@
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 namespace ChatGPTeamsAI.Data.Models.Microsoft;
 
 internal class User
 {
     [ListColumn]
+    [FormColumn("Identity")]
     public string? DisplayName { get; set; }
 
-    [FormColumn]
+    [FormColumn("Job Information")]
     public string? EmployeeId { get; set; }
 
     public string? Id { get; set; }
 
     [ListColumn]
-    public string? Department { get; set; }
-
-    [FormColumn]
-    public string? MobilePhone { get; set; }
-
-    [FormColumn]
-    public string? Mail { get; set; }
-
-    [ListColumn]
+    [FormColumn("Job Information")]
     public string? JobTitle { get; set; }
 
-    [FormColumn]
+    [ListColumn]
+    [FormColumn("Job Information")]
+    public string? Department { get; set; }
+
+    [FormColumn("Job Information")]
+    public string? CompanyName { get; set; }
+
+    [FormColumn("Contact Information")]
+    public string? MobilePhone { get; set; }
+
+    [FormColumn("Contact Information")]
+    public string? Mail { get; set; }
+
+    [FormColumn("Identity")]
     public string? AboutMe { get; set; }
 
-    [FormColumn]
+    [FormColumn("Identity")]
     public string? PreferredLanguage { get; set; }
 
-    [FormColumn]
+    [FormColumn("Settings")]
     public bool AccountEnabled { get; set; }
 
-    [FormColumn]
+    [FormColumn("Identity")]
     public string? SkillNames
     {
         get
@@ -63,15 +70,16 @@ internal class User
         set { }
     }
 
+    [Ignore]
     public IEnumerable<string>? Skills { get; set; }
 
-    [FormColumn]
+    [FormColumn("Job Information")]
     public DateTimeOffset? EmployeeHireDate { get; set; }
 
-    [FormColumn]
+    [FormColumn("Identity")]
     public DateTimeOffset? CreatedDateTime { get; set; }
 
-    [FormColumn]
+    [FormColumn("Contact Information")]
     public string? AlternativeMail
     {
         get
@@ -81,7 +89,7 @@ internal class User
         set { }
     }
 
-    [FormColumn]
+    [FormColumn("Identity")]
     public int? AssignedLicenseCount
     {
         get
@@ -91,8 +99,10 @@ internal class User
         set { }
     }
 
+    [Ignore]
     public IEnumerable<string>? OtherMails { get; set; }
 
+    [Ignore]
     public IEnumerable<AssignedLicense>? AssignedLicenses { get; set; }
 
     [LinkColumn]

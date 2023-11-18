@@ -81,7 +81,7 @@ public class DutchTranslations
         [TranslationKeys.LinkedToLabels] = "Gekoppeld aan",
         [TranslationKeys.CreatedByName] = "Aangemaakt door",
         [TranslationKeys.ProductivityTarget] = "Productiviteitstarget %",
-        [TranslationKeys.EmployeeName] = "Naam",
+        [TranslationKeys.EmployeeName] = "Medewerker",
         [TranslationKeys.LeaveTypeLabel] = "Verlofsoort",
         [TranslationKeys.Balance] = "Saldo",
         [TranslationKeys.Year] = "Jaar",
@@ -124,11 +124,11 @@ public class DutchTranslations
         [TranslationKeys.InvoiceNumber] = "Factuurnummer",
         [TranslationKeys.TotalExcludingVat] = "Factuurtotaal excl.",
         [TranslationKeys.StatusName] = "Status",
-        [TranslationKeys.Date] = "Date",
+        [TranslationKeys.Date] = "Datum",
         [TranslationKeys.DocumentTypeLabel] = "Type document",
         [TranslationKeys.ProjectName] = "Project",
         [TranslationKeys.Tariff] = "Tarief",
-        
+        [TranslationKeys.ApprovalStatusDescription] = "Omschrijving",
 
 
 

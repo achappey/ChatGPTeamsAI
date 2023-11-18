@@ -1,4 +1,3 @@
-
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
 using CsvHelper.Configuration.Attributes;
@@ -7,7 +6,6 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 internal class ContactPerson
 {
-
     [JsonPropertyName("personFullName")]
     [ListColumn]
     public string? PersonName
@@ -70,8 +68,25 @@ internal class ContactPerson
     [Ignore]
     [FormColumn]
     public string? UpdatedAt { get; set; }
-}
 
+    [JsonPropertyName("getPerson")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object?>? GetPerson
+    {
+        get { return Person != null ? new Dictionary<string, object?>() { { "personId", Person.Id } } : null; }
+        set { }
+    }
+
+    [JsonPropertyName("getOrganization")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object?>? GetOrganization
+    {
+        get { return Organization != null ? new Dictionary<string, object?>() { { "organizationId", Organization.Id } } : null; }
+        set { }
+    }
+}
 
 internal class OrganizationContactPerson
 {
@@ -84,8 +99,6 @@ internal class OrganizationContactPerson
     [JsonPropertyName("relation_number")]
     public string? RelationNumber { get; set; }
 }
-
-
 
 internal class PersonContactPerson
 {

@@ -7,6 +7,55 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 {
     internal partial class SimplicateFunctionsClient
     {
+
+        [MethodDescription("Hours", "Fetches the approval status of each day for each employee", "ExportHoursApprovals")]
+        public async Task<ChatGPTeamsAIClientResponse?>? GetHoursApprovals(
+                [ParameterDescription("Employee name")] string? employeeName = null,
+                [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateAfter = null,
+                [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateBefore = null,
+                [ParameterDescription("The page number")] long pageNumber = 1)
+        {
+            dateAfter?.EnsureValidDateFormat();
+            dateBefore?.EnsureValidDateFormat();
+
+            var filters = new Dictionary<string, string>();
+
+            if (!string.IsNullOrEmpty(employeeName)) filters["[employee.name]"] = $"*{employeeName}*";
+            if (!string.IsNullOrEmpty(dateAfter)) filters["[date][ge]"] = dateAfter;
+            if (!string.IsNullOrEmpty(dateBefore)) filters["[date][le]"] = dateBefore;
+
+            var result = await FetchSimplicateDataCollection<HourApproval>(filters, "hours/approval", pageNumber);
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+        [MethodDescription("Export", "Exports a list of approval status of each day for each employee")]
+        public async Task<ChatGPTeamsAIClientResponse?>? ExportHoursApprovals(
+            [ParameterDescription("Employee name")] string? employeeName = null,
+            [ParameterDescription("Date at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateAfter = null,
+            [ParameterDescription("Date at or before this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? dateBefore = null)
+        {
+            dateAfter?.EnsureValidDateFormat();
+            dateBefore?.EnsureValidDateFormat();
+
+            var filters = new Dictionary<string, string>();
+
+            if (!string.IsNullOrEmpty(employeeName)) filters["[employee.name]"] = $"*{employeeName}*";
+            if (!string.IsNullOrEmpty(dateAfter)) filters["[date][ge]"] = dateAfter;
+            if (!string.IsNullOrEmpty(dateBefore)) filters["[date][le]"] = dateBefore;
+
+            var queryString = BuildQueryString(filters);
+            var response = await _httpClient.PagedRequest<HourApproval>($"hours/approval?{queryString}");
+
+            var result = new SimplicateDataCollectionResponse<HourApproval>()
+            {
+                Data = response
+            };
+
+            return ToChatGPTeamsAIResponse(result);
+        }
+
+
         [MethodDescription("Hours", "Search for hours", "ExportHours")]
         public async Task<ChatGPTeamsAIClientResponse?>? SearchHours(
                 [ParameterDescription("Employee name")] string? employeeName = null,
@@ -97,7 +146,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         CreateProjectManagerSummary, true);
         }
 
-        
+
 
         [MethodDescription("Hours", "Get total hours with status forwarded per project", "ExportTotalHoursForwardedPerProject")]
         public async Task<ChatGPTeamsAIClientResponse?> GetTotalHoursForwardedPerProject(
@@ -217,7 +266,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             throw new Exception(response.ReasonPhrase);
         }
 
-        [MethodDescription("Hours", "Fetches all hours types.")]
+        [MethodDescription("Hours", "Fetches all hours types")]
         public async Task<ChatGPTeamsAIClientResponse?> GetAllHoursTypes()
         {
             var response = await _httpClient.GetAsync("hours/hourstype");

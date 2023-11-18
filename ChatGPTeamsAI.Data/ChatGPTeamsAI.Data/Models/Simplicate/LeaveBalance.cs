@@ -47,11 +47,23 @@ internal class LeaveBalance
     [Ignore]
     public LeaveBalanceEmployee? Employee { get; set; }
 
+    [JsonPropertyName("getEmployee")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object?>? GetEmployee
+    {
+        get { return Employee != null ? new Dictionary<string, object?>() { { "employeeId", Employee.Id } } : null; }
+        set { }
+    }
+
 
 }
 
 internal class LeaveBalanceEmployee
 {
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 }

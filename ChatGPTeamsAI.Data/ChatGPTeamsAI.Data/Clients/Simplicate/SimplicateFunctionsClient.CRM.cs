@@ -75,6 +75,72 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
+        [MethodDescription("CRM", "Updates an organization in Simplicate")]
+        public async Task<ChatGPTeamsAIClientResponse?> UpdateOrganization(
+            [ParameterDescription("The organization id", isHidden: true)] string organizationId,
+            [ParameterDescription("The name of the organization.")] string? name = null,
+            [ParameterDescription("The email of the organization.")] string? email = null,
+            [ParameterDescription("The linkedin url of the organization.")] string? linkedin = null,
+            [ParameterDescription("The website url of the organization.")] string? website = null,
+            [ParameterDescription("The industry id of the organization.")] string? industryId = null,
+            [ParameterDescription("A note to add to the organization", true)] string? note = null,
+            [ParameterDescription("The phone number of the organization.")] string? phone = null)
+        {
+
+            var personData = new Dictionary<string, object>();
+            if (!string.IsNullOrEmpty(name)) personData["name"] = name;
+            if (!string.IsNullOrEmpty(linkedin)) personData["linkedin_url"] = linkedin;
+            if (!string.IsNullOrEmpty(website)) personData["url"] = website;
+            if (!string.IsNullOrEmpty(industryId)) personData["industry"] = new { id = industryId };
+            if (!string.IsNullOrEmpty(email)) personData["email"] = email;
+            if (!string.IsNullOrEmpty(phone)) personData["phone"] = phone;
+            if (!string.IsNullOrEmpty(note)) personData["note"] = note;
+
+            var response = await _httpClient.PutAsync($"crm/organization/{organizationId}", personData.PrepareJsonContent());
+
+            if (response.IsSuccessStatusCode)
+            {
+                var newItem = await response.Content.ReadFromJsonAsync<SimplicateResponseBase<NewItem>>();
+
+                if (newItem != null && newItem.Data != null && newItem.Data.Id != null)
+                {
+                    return await GetOrganization(newItem.Data.Id);
+                }
+            }
+
+            throw new Exception(response.ReasonPhrase);
+        }
+
+
+        [MethodDescription("CRM", "Create a Simplicate edit organization form")]
+        public async Task<ChatGPTeamsAIClientResponse?> EditOrganization(
+            [ParameterDescription("The organization id", isHidden: true)] string organizationId,
+            [ParameterDescription("The name of the organization.")] string? name = null,
+            [ParameterDescription("The email of the organization.")] string? email = null,
+            [ParameterDescription("The linkedin url of the organization.")] string? linkedin = null,
+            [ParameterDescription("The website url of the organization.")] string? website = null,
+            [ParameterDescription("The industry id of the organization.")] string? industryId = null,
+            [ParameterDescription("A note to add to the organization", true)] string? note = null,
+            [ParameterDescription("The phone number of the organization.")] string? phone = null)
+        {
+            var result = await FetchSimplicateDataItem<Organization>($"crm/organization/{organizationId}");
+
+            return ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object?>>()
+            {
+                Data = new Dictionary<string, object?>()
+                {
+                    {"name",name ?? result?.Data?.Name},
+                    {"email",email ?? result?.Data?.Email},
+                    {"linkedin",linkedin ?? result?.Data?.LinkedIn},
+                    {"website",website ?? result?.Data?.Website},
+                    {"industryId",industryId ?? result?.Data?.Industry?.Id},
+                    {"note",note ?? result?.Data?.Note},
+                    {"phone", phone ?? result?.Data?.Phone}
+                }
+            }, "UpdateOrganization");
+
+        }
+
         [MethodDescription("CRM", "Create a Simplicate new organization form")]
         public Task<ChatGPTeamsAIClientResponse?> NewOrganization(
             [ParameterDescription("The name of the organization.")] string? name = null,
@@ -86,7 +152,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             [ParameterDescription("The phone number of the organization.")] string? phone = null,
             [ParameterDescription("The person id to be linked to the organization.")] string? personId = null)
         {
-             return Task.FromResult(ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object>>()
+            return Task.FromResult(ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object>>()
             {
                 Data = new Dictionary<string, object>()
                 {
@@ -96,7 +162,6 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
                     {"website",website ?? string.Empty},
                     {"industryId",industryId ?? string.Empty},
                     {"note",note ?? string.Empty},
-                    {"email",email ?? string.Empty},
                     {"phone", phone ?? string.Empty},
                     {"personId",personId ?? string.Empty},
                 }
@@ -390,14 +455,14 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("CRM", "Search for contact persons", "ExportContactPersons")]
         public async Task<ChatGPTeamsAIClientResponse?>? SearchContactPersons(
-                    [ParameterDescription("The full name of the contact person.")] string? fullName = null,
-                    [ParameterDescription("The organization name of the contact person.")] string? organizationName = null,
-                    [ParameterDescription("The work email of the contact person.")] string? workEmail = null,
-                    [ParameterDescription("The work function of the contact person.")] string? workFunction = null,
-                    [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
-                    [ParameterDescription("The work phone of the contact person.")] string? workPhone = null,
-                    [ParameterDescription("The work mobile of the contact person.")] string? workMobile = null,
-                    [ParameterDescription("The page number.")] long pageNumber = 1)
+                    [ParameterDescription("The full name of the contact person")] string? fullName = null,
+                    [ParameterDescription("The organization name of the contact person")] string? organizationName = null,
+                    [ParameterDescription("The work email of the contact person")] string? workEmail = null,
+                    [ParameterDescription("The work function of the contact person")] string? workFunction = null,
+                    [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss)")] string? createdAfter = null,
+                    [ParameterDescription("The work phone of the contact person")] string? workPhone = null,
+                    [ParameterDescription("The work mobile of the contact person")] string? workMobile = null,
+                    [ParameterDescription("The page number")] long pageNumber = 1)
         {
             createdAfter?.EnsureValidDateFormat();
 
@@ -408,13 +473,13 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         [MethodDescription("Export", "Exports a list of contact persons")]
         public async Task<ChatGPTeamsAIClientResponse?> ExportContactPersons(
-            [ParameterDescription("The full name of the contact person.")] string? fullName = null,
-            [ParameterDescription("The organization name of the contact person.")] string? organizationName = null,
-            [ParameterDescription("The work email of the contact person.")] string? workEmail = null,
-            [ParameterDescription("The work function of the contact person.")] string? workFunction = null,
+            [ParameterDescription("The full name of the contact person")] string? fullName = null,
+            [ParameterDescription("The organization name of the contact person")] string? organizationName = null,
+            [ParameterDescription("The work email of the contact person")] string? workEmail = null,
+            [ParameterDescription("The work function of the contact person")] string? workFunction = null,
             [ParameterDescription("Created at or after this date and time (format: yyyy-MM-dd HH:mm:ss).")] string? createdAfter = null,
-            [ParameterDescription("The work phone of the contact person.")] string? workPhone = null,
-            [ParameterDescription("The work mobile of the contact person.")] string? workMobile = null)
+            [ParameterDescription("The work phone of the contact person")] string? workPhone = null,
+            [ParameterDescription("The work mobile of the contact person")] string? workMobile = null)
         {
             createdAfter?.EnsureValidDateFormat();
 
@@ -467,7 +532,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         }
 
         [MethodDescription("CRM", "Gets all relation types")]
-        public async Task<ChatGPTeamsAIClientResponse?>? GetAllRelationTypes()
+        public async Task<ChatGPTeamsAIClientResponse?> GetAllRelationTypes()
         {
             var response = await _httpClient.GetAsync("crm/relationtype");
 
@@ -481,8 +546,14 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             throw new Exception(response.ReasonPhrase);
         }
 
-        [MethodDescription("CRM", "Gets all industry types")]
-        public async Task<ChatGPTeamsAIClientResponse?>? GetAllIndustries()
+        [MethodDescription("Export", "Exports a list of all relation types")]
+        public Task<ChatGPTeamsAIClientResponse?> ExportAllRelationTypes()
+        {
+            return GetAllRelationTypes();
+        }
+
+        [MethodDescription("CRM", "Gets all industry types", "ExportAllIndustries")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetAllIndustries()
         {
             var response = await _httpClient.GetAsync("crm/industry");
 
@@ -495,5 +566,12 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
             throw new Exception(response.ReasonPhrase);
         }
+
+        [MethodDescription("Export", "Exports a list of all industry types")]
+        public Task<ChatGPTeamsAIClientResponse?> ExportAllIndustries()
+        {
+            return GetAllIndustries();
+        }
+
     }
 }

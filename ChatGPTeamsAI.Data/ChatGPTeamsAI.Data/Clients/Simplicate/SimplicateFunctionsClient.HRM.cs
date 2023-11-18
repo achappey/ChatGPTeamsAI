@@ -196,6 +196,13 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
             return ToChatGPTeamsAIResponse(result);
         }
 
+        [MethodDescription("HRM", "Gets all details of a single employee")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetEmployee(
+            [ParameterDescription("The employee id")] string employeeId)
+        {
+            var result = await FetchSimplicateDataItem<Employee>($"hrm/employee/{employeeId}");
 
+            return ToChatGPTeamsAIResponse(result);
+        }
     }
 }

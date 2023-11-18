@@ -1,6 +1,5 @@
 using AdaptiveCards;
 using ChatGPTeamsAI.Data.Translations;
-using Microsoft.Graph;
 
 namespace ChatGPTeamsAI.Data.Extensions;
 

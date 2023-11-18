@@ -141,6 +141,10 @@ public static class TranslationKeys
     public const string DocumentTypeLabel = "DocumentTypeLabel";
     public const string ProjectName = "ProjectName";
     public const string Tariff = "Tariff";
+    public const string Open = "Open";
+    public const string ApprovalStatusDescription = "ApprovalStatusDescription";
+    public const string ApprovalStatusLabel = "ApprovalStatusLabel";
+    
     
     
     

@@ -3,6 +3,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using CsvHelper.Configuration.Attributes;
 
 internal class Hour
 {
@@ -39,13 +40,16 @@ internal class Hour
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
+    [Ignore]
     [JsonPropertyName("employee")]
     public HourEmployee? Employee { get; set; }
 
+    [Ignore]
     [JsonPropertyName("project")]
     public HourProject? Project { get; set; }
 
     [JsonPropertyName("projectservice")]
+    [Ignore]
     public HourProjectService? ProjectService { get; set; }
 
     [JsonPropertyName("status")]
@@ -135,4 +139,63 @@ internal class HourEmployee
 
     [JsonPropertyName("name")]
     public string? Name { get; set; }
+}
+
+
+internal class HourApproval
+{
+    [ListColumn]
+    [FormColumn]
+    [JsonPropertyName("date")]
+    public string? Date { get; set; }
+
+    [ListColumn]
+    [FormColumn]
+    [JsonPropertyName("approvalStatusDescription")]
+    public string? ApprovalStatusDescription
+    {
+        get
+        {
+            return ApprovalStatus?.Description;
+        }
+        set { }
+    }
+
+    [ListColumn]
+    [FormColumn]
+    [JsonPropertyName("employeeName")]
+    public string? EmployeeName
+    {
+        get
+        {
+            return Employee?.Name;
+        }
+        set { }
+    }
+
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [Ignore]
+    [JsonPropertyName("employee")]
+    public HourEmployee? Employee { get; set; }
+
+    [Ignore]
+    [JsonPropertyName("approvalstatus")]
+    public HourApprovalStatis? ApprovalStatus { get; set; }
+
+}
+
+
+internal class HourApprovalStatis
+{
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [JsonPropertyName("label")]
+    public string? Label { get; set; }
+
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
+
 }

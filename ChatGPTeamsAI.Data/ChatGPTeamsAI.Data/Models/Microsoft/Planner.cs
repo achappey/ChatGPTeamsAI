@@ -1,4 +1,3 @@
-using System;
 using ChatGPTeamsAI.Data.Attributes;
 
 namespace ChatGPTeamsAI.Data.Models.Microsoft;

@@ -4,6 +4,7 @@ using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Clients.Microsoft;
 using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Translations;
+using ChatGPTeamsAI.Data.Clients.Azure.Maps;
 
 namespace ChatGPTeamsAI.Data;
 
@@ -37,12 +38,20 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             throw new UnauthorizedAccessException("No Microsoft Graph credentials available");
         }
 
+        if (_config.AzureMapsSubscriptionKey == null)
+        {
+            throw new UnauthorizedAccessException("No Azure Maps credentials available");
+        }
+
         var simplicateClient = new SimplicateFunctionsClient(_config.SimplicateToken, null, _translatorService);
         var simplicateActions = simplicateClient.GetAvailableActions();
         var microsoftClient = new GraphFunctionsClient(_config.GraphApiToken, _translatorService);
         var microsoftActions = microsoftClient.GetAvailableActions();
 
-        return microsoftActions.Concat(simplicateActions).OrderBy(a => a.Category);
+        var azureMapsClient = new AzureMapsFunctionsClient(_config.AzureMapsSubscriptionKey, _translatorService);
+        var azureMapsActions = azureMapsClient.GetAvailableActions();
+
+        return microsoftActions.Concat(simplicateActions).Concat(azureMapsActions).OrderBy(a => a.Category);
     }
 
     public async Task<ActionResponse> ExecuteAction(Models.Input.Action action)
@@ -62,6 +71,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             {
                 SimplicateFunctionsClient.SIMPLICATE => await ExecuteSimplicateActionAsync(action),
                 GraphFunctionsClient.MICROSOFT => await ExecuteMicrosoftActionAsync(action),
+                AzureMapsFunctionsClient.AZURE_MAPS => await ExecuteAzureMapsActionAsync(action),
                 _ => throw new InvalidOperationException("Unknown publisher"),
             };
 
@@ -95,7 +105,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         {
             ExecutedAction = clientResponse.ExecutedAction,
             Data = clientResponse.Data,
-            DataCard = microsoftClient.CreateExportCard(clientResponse.TotalItems.Value, filename, webUrl, clientResponse.ExecutedAction.Name)?.ToJson()
+            DataCard = microsoftClient.CreateExportCard(clientResponse.TotalItems.Value, filename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson()
         };
     }
 
@@ -121,6 +131,18 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         return await client.ExecuteAction(action);
     }
 
+
+    private async Task<ChatGPTeamsAIClientResponse?> ExecuteAzureMapsActionAsync(Models.Input.Action action)
+    {
+        if (_config.AzureMapsSubscriptionKey == null)
+        {
+            throw new UnauthorizedAccessException("No Azure Maps credentials available");
+        }
+
+        var client = new AzureMapsFunctionsClient(_config.AzureMapsSubscriptionKey, _translatorService);
+
+        return await client.ExecuteAction(action);
+    }
 
     private async Task<ChatGPTeamsAIClientResponse?> ExecuteMicrosoftActionAsync(Models.Input.Action action)
     {

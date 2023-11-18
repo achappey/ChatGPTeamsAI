@@ -203,6 +203,16 @@ internal class Person
     [UpdatedColumn]
     public string? UpdatedAt { get; set; }
 
+    [JsonPropertyName("edit")]
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object>? Edit
+    {
+        get { return Id != null ? new Dictionary<string, object>() { { "personId", Id } } : null; }
+        set { }
+    }
+
+
     [JsonPropertyName("newOrganization")]
     [Ignore]
     [ActionColumn]
@@ -212,10 +222,10 @@ internal class Person
         set { }
     }
 
-    [JsonPropertyName("newSale")]
+    [JsonPropertyName("newSales")]
     [Ignore]
     [ActionColumn]
-    public IDictionary<string, object>? NewSale
+    public IDictionary<string, object>? NewSales
     {
         get { return Id != null ? new Dictionary<string, object>() { { "personId", Id } } : null; }
         set { }
