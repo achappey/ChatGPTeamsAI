@@ -210,6 +210,15 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.Email>(item));
         }
 
+        [MethodDescription("Download", "Downloads an email based on message id")]
+        public async Task<ChatGPTeamsAIClientResponse?> DownloadEmail(
+           [ParameterDescription("The ID of the mail message")] string messageId)
+        {
+            var item = await _graphClient.Me.Messages[messageId].Request().GetAsync();
+
+            return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.Email>(item));
+        }
+
         [MethodDescription("Mail", "Gets mail for the user using the Microsoft Graph API")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchMail(
             [ParameterDescription("Subject of the email to search for")] string? subject = null,
@@ -278,6 +287,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(filteredGroups.Select(_mapper.Map<Models.Microsoft.Team>));
         }
 
-       
+
     }
 }

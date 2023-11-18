@@ -53,7 +53,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
                 allEvents.AddRange(events.CurrentPage.Select(_mapper.Map<Models.Microsoft.Event>));
 
-                if (!getAllItems) break; 
+                if (!getAllItems) break;
 
                 skipToken = events.NextPageRequest?.QueryOptions.GetSkipToken();
             } while (getAllItems && skipToken != null);
@@ -82,5 +82,13 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return RetrieveEvents(userId, subject, organizer, date, skipToken, PAGESIZE, false);
         }
 
+        [MethodDescription("Calendar", "Gets an event based on event id")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetEvent(
+         [ParameterDescription("The ID of the event")] string eventId)
+        {
+            var item = await _graphClient.Me.Events[eventId].Request().GetAsync();
+
+            return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.Event>(item));
+        }
     }
 }

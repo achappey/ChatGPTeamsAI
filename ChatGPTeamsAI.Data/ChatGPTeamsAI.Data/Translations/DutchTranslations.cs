@@ -158,6 +158,10 @@ public class DutchTranslations
         [TranslationKeys.BccNames] = "Bcc",
         [TranslationKeys.IsDraft] = "Concept",
         [TranslationKeys.Message] = "Bericht",
+        [TranslationKeys.FromEmail] = "Afzender",
+        [TranslationKeys.SentDateTime] = "Verstuurd op",
+        [TranslationKeys.LastModifiedDateTime] = "Gewijzigd op",
+        
 
     };
 }

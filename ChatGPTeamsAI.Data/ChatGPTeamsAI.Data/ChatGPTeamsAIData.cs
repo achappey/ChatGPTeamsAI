@@ -76,6 +76,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             };
 
             return actionResult != null ? action.Name.StartsWith("Export") ? await CreateExport(actionResult)
+            : action.Name.StartsWith("Download") ? await CreateDownload(actionResult)
             : ToDataResponse(actionResult) : new ActionResponse()
             {
                 Error = "Something went wrong",
@@ -106,6 +107,31 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             ExecutedAction = clientResponse.ExecutedAction,
             Data = clientResponse.Data,
             DataCard = microsoftClient.CreateExportCard(clientResponse.TotalItems.Value, filename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson()
+        };
+    }
+
+    private async Task<ActionResponse> CreateDownload(ChatGPTeamsAIClientResponse clientResponse)
+    {
+        if (_config.GraphApiToken == null)
+        {
+            throw new UnauthorizedAccessException("No Microsoft Graph credentials available");
+        }
+
+        if (clientResponse.Data == null || !clientResponse.TotalItems.HasValue || clientResponse.ExecutedAction == null || clientResponse.ExecutedAction.Name == null)
+        {
+            throw new Exception("No data available");
+        }
+
+        var microsoftClient = new GraphFunctionsClient(_config.GraphApiToken, _translatorService);
+        var sanitizedDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
+        var filename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.json";
+        var webUrl = await microsoftClient.UploadFile(filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data));
+
+        return new ActionResponse()
+        {
+            ExecutedAction = clientResponse.ExecutedAction,
+            Data = clientResponse.Data,
+            DataCard = microsoftClient.CreateDownloadCard(filename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson()
         };
     }
 

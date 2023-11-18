@@ -39,25 +39,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
             return ToChatGPTeamsAIResponse(items.Select(_mapper.Map<Models.Microsoft.SecureScore>), null, null);
         }
-
-        [MethodDescription("Security", "Gets Microsoft security alerts")]
-        public async Task<ChatGPTeamsAIClientResponse?> GetSecurityAlerts(
-            [ParameterDescription("The number of items to skip")] string? skip = null)
-        {
-            var filterOptions = new List<QueryOption>();
-
-            if (!string.IsNullOrEmpty(skip))
-            {
-                filterOptions.Add(new QueryOption("$skip", skip));
-            }
-
-            var items = await _graphClient.Security.Alerts_v2
-                .Request(filterOptions)
-                .Top(PAGESIZE)
-                .GetAsync();
-
-            return ToChatGPTeamsAIResponse(items.Select(_mapper.Map<Models.Microsoft.SecureScore>), null, items.NextPageRequest?.QueryOptions.GetSkip());
-        }
+      
 
     }
 }

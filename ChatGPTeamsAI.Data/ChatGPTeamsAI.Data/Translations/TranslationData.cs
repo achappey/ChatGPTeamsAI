@@ -172,6 +172,10 @@ public static class TranslationKeys
     public const string CcNames = "CcNames"; 
     public const string BccNames = "BccNames"; 
     public const string ToNames = "ToNames"; 
+    public const string LastModifiedDateTime = "LastModifiedDateTime"; 
+    
+    public const string SentDateTime = "SentDateTime"; 
+    public const string FromEmail = "FromEmail"; 
 
     
 }

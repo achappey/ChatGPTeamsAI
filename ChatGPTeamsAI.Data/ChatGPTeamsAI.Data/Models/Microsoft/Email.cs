@@ -52,7 +52,7 @@ internal class Email
     {
         get
         {
-            return ToRecipients != null ? "- " + string.Join("\r- ", ToRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
+            return ToRecipients != null && ToRecipients.Any() ? "- " + string.Join("\r- ", ToRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
         }
         set { }
     }
@@ -62,7 +62,7 @@ internal class Email
     {
         get
         {
-            return CcRecipients != null ? "- " + string.Join("\r- ", CcRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
+            return CcRecipients != null && CcRecipients.Any() ? "- " + string.Join("\r- ", CcRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
         }
         set { }
     }
@@ -72,7 +72,7 @@ internal class Email
     {
         get
         {
-            return BccRecipients != null ? "- " + string.Join("\r- ", BccRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
+            return BccRecipients != null && BccRecipients.Any() ? "- " + string.Join("\r- ", BccRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
         }
         set { }
     }
@@ -133,7 +133,7 @@ internal class Email
 
     [Ignore]
     [ActionColumn]
-    public IDictionary<string, object?>? GetEmail
+    public IDictionary<string, object?>? DownloadEmail
     {
         get { return Id != null ? new Dictionary<string, object?>() { { "messageId", Id } } : null; }
         set { }

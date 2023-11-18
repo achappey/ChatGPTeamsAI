@@ -73,6 +73,42 @@ namespace ChatGPTeamsAI.Data.Clients.Azure.Maps
             return result;
         }
 
+        public AdaptiveCard CreateDownloadCard(string fileName, string url, string name)
+        {
+            AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
+
+            card.Body.Add(new AdaptiveTextBlock
+            {
+                Text = name,
+                Weight = AdaptiveTextWeight.Bolder,
+                Size = AdaptiveTextSize.Large
+            });
+
+            AdaptiveFactSet factSet = new AdaptiveFactSet();
+            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Filename"), fileName));
+            card.Body.Add(factSet);
+
+            AdaptiveOpenUrlAction urlAction = new AdaptiveOpenUrlAction
+            {
+                Title = _translatorService.Translate(TranslationKeys.Open),
+                Url = new Uri(url)
+            };
+
+            AdaptiveSubmitAction chatAction = new AdaptiveSubmitAction
+            {
+                Title = _translatorService.Translate(TranslationKeys.AddToChat),
+                Data = new Models.Input.Action()
+                {
+                    Name = "DocumentChat",
+                    Entities = new Dictionary<string, object?>() { { url, "" } }
+                },
+            };
+
+            card.Actions.Add(urlAction);
+            card.Actions.Add(chatAction);
+
+            return card;
+        }
 
         public AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url, string name)
         {

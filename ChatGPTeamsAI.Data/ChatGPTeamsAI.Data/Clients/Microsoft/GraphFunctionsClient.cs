@@ -140,6 +140,43 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return card;
         }
 
+        public AdaptiveCard CreateDownloadCard(string fileName, string url, string name)
+        {
+            AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
+
+            card.Body.Add(new AdaptiveTextBlock
+            {
+                Text = name,
+                Weight = AdaptiveTextWeight.Bolder,
+                Size = AdaptiveTextSize.Large
+            });
+
+            AdaptiveFactSet factSet = new AdaptiveFactSet();
+            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Filename"), fileName));
+            card.Body.Add(factSet);
+
+            AdaptiveOpenUrlAction urlAction = new AdaptiveOpenUrlAction
+            {
+                Title = "Open",
+                Url = new Uri(url)
+            };
+
+            AdaptiveSubmitAction chatAction = new AdaptiveSubmitAction
+            {
+                Title = "Add to chat",
+                Data = new Models.Input.Action()
+                {
+                    Name = "DocumentChat",
+                    Entities = new Dictionary<string, object?>() { { url, "" } }
+                },
+            };
+
+            card.Actions.Add(urlAction);
+            card.Actions.Add(chatAction);
+
+            return card;
+        }
+
         private Models.Input.Action? GetNextPageAction(Models.Input.Action currentPageAction,
             ActionDescription action, string? skipToken, string? skip)
         {
