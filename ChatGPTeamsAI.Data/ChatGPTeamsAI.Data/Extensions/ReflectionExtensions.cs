@@ -6,6 +6,7 @@ using System.Globalization;
 using CsvHelper;
 using ChatGPTeamsAI.Data.Models.Output;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace ChatGPTeamsAI.Data.Extensions;
 
@@ -112,8 +113,8 @@ internal static class ReflectionExtensions
                 {
                     var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                     {
-                          ShouldQuote = (args) => true,
-                           Quote = '\"'
+                        ShouldQuote = (args) => true,
+                        Quote = '\"'
                     };
 
                     using (var stream = new MemoryStream())
@@ -132,7 +133,16 @@ internal static class ReflectionExtensions
             }
             else
             {
-                return JsonSerializer.Serialize(result, new JsonSerializerOptions { });
+                string xmlString;
+                using (var writer = new StringWriter())
+                {
+                    new XmlSerializer(result.GetType()).Serialize(writer, result);
+                    xmlString = writer.ToString();
+                    return xmlString;
+                }
+
+             //   return new XmlSerializer(result.GetType()).Serialize(new StringWriter(), result);
+              //  return JsonSerializer.Serialize(result, new JsonSerializerOptions { });
             }
         }
 
