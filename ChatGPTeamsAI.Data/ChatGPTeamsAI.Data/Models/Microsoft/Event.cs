@@ -10,8 +10,25 @@ internal class Event
 
     [ListColumn]
     [FormColumn]
-
+    [TitleColumn]
     public string? Subject { get; set; }
+
+    [Ignore]
+    [ImageColumn]
+    public string? Image
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Organizer?.EmailAddress?.Address) || !Organizer.EmailAddress.Address.Contains('@'))
+            {
+                return string.Empty;
+            }
+
+            var domain = Organizer.EmailAddress.Address.Split('@')[1];
+
+            return $"https://logo.clearbit.com/{domain}";
+        }
+    }
 
     [Ignore]
     public ItemBody? Body { get; set; }
@@ -20,7 +37,7 @@ internal class Event
     public Recipient? Organizer { get; set; }
 
     [FormColumn]
-    public bool? HasAttachments { get; set; }
+    public bool HasAttachments { get; set; }
 
     [ListColumn]
     [FormColumn]
@@ -59,6 +76,10 @@ internal class Event
 
     [Ignore]
     public DateTimeTimeZone? End { get; set; }
+
+    [UpdatedColumn]
+    [FormColumn]
+    public DateTimeOffset? LastModifiedDateTime { get; set; }
 
     [FormColumn]
     public string? LocationName

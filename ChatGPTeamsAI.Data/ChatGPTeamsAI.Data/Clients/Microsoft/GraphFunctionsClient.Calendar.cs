@@ -68,7 +68,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             string? organizer = null,
             string? date = null)
         {
-            return RetrieveEvents(userId, subject, organizer, date, null, 999, true);
+            return RetrieveEvents(userId, subject, organizer, date, null, 100, true);
         }
 
         [MethodDescription("Calendar", "Gets Outlook calender events for the specified user", "ExportEvents")]

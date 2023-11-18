@@ -157,10 +157,22 @@ public static class TranslationKeys
     public const string ContactInformation = "ContactInformation";   
     public const string JobInformation = "JobInformation";   
     public const string Settings = "Settings";   
-    public const string FromName = "Settings";   
-    public const string BodyPreview = "Settings";   
-    public const string ReceivedDateTime = "Settings";   
-    public const string AttendeeNames = "AttendeeNames";   
+    public const string FromName = "FromName";   
+    public const string BodyPreview = "BodyPreview";   
+    public const string ReceivedDateTime = "ReceivedDateTime";   
+    public const string AttendeeNames = "AttendeeNames"; 
+    public const string HasAttachments = "HasAttachments"; 
+    public const string Importance = "Importance"; 
+    public const string IsDeliveryReceiptRequested = "IsDeliveryReceiptRequested"; 
+    public const string IsReadReceiptRequested = "IsReadReceiptRequested"; 
+    public const string IsRead = "IsRead"; 
+    public const string IsDraft = "IsDraft"; 
+    public const string Options = "Options"; 
+    public const string Message = "Message"; 
+    public const string CcNames = "CcNames"; 
+    public const string BccNames = "BccNames"; 
+    public const string ToNames = "ToNames"; 
+
     
 }
 

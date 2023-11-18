@@ -241,7 +241,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             }
 
             var filterQuery = string.Join(" and ", filterQueries);
-           // var selectQuery = "id,webLink,bodyPreview,subject,receivedDateTime";
 
             var filterOptions = new List<QueryOption>();
             if (!string.IsNullOrEmpty(filterQuery))
@@ -253,8 +252,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             {
                 filterOptions.Add(new QueryOption("$skip", skip));
             }
-
-          //  filterOptions.Add(new QueryOption("$select", selectQuery));
 
             var messages = await _graphClient.Me.Messages
                 .Request(filterOptions)

@@ -48,5 +48,7 @@ internal class MicrosoftProfile : Profile
         CreateMap<Microsoft.Graph.SecureScore, Models.Microsoft.SecureScore>();
         CreateMap<Microsoft.Graph.ControlScore, Models.Microsoft.ControlScore>();
         CreateMap<Microsoft.Graph.AverageComparativeScore, Models.Microsoft.AverageComparativeScore>();
+        CreateMap<Microsoft.Graph.SecurityNamespace.Alert, Models.Microsoft.SecurityAlert>();
+        CreateMap<Microsoft.Graph.SecurityNamespace.AlertEvidence, Models.Microsoft.AlertEvidence>();
     }
 }

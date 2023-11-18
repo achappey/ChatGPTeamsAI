@@ -20,6 +20,23 @@ internal class Email
         set { }
     }
 
+    [Ignore]
+    [ImageColumn]
+    public string? Image
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(FromEmail) || !FromEmail.Contains('@'))
+            {
+                return string.Empty;
+            }
+
+            var domain = FromEmail.Split('@')[1];
+
+            return $"https://logo.clearbit.com/{domain}";
+        }
+    }
+
     [FormColumn("Message")]
     public string? FromEmail
     {
@@ -61,6 +78,7 @@ internal class Email
     }
 
     [FormColumn("Message")]
+    [TitleColumn]
     [ListColumn]
     public string? Subject { get; set; }
 
@@ -69,6 +87,10 @@ internal class Email
 
     [FormColumn("Message")]
     public DateTimeOffset? SentDateTime { get; set; }
+
+    [FormColumn("Message")]
+    [UpdatedColumn]
+    public DateTimeOffset? LastModifiedDateTime { get; set; }
 
     [FormColumn("Message")]
     public bool? HasAttachments { get; set; }

@@ -147,6 +147,17 @@ public class DutchTranslations
         [TranslationKeys.BodyPreview] = "Preview",
         [TranslationKeys.ReceivedDateTime] = "Ontvangen",
         [TranslationKeys.AttendeeNames] = "Deelnemers",
+        [TranslationKeys.HasAttachments] = "Bijlages",
+        [TranslationKeys.IsRead] = "Gelezen",
+        [TranslationKeys.IsReadReceiptRequested] = "Leesbevestiging",
+        [TranslationKeys.IsDeliveryReceiptRequested] = "Ontvangsbevestiging",
+        [TranslationKeys.Importance] = "Prioriteit",
+        [TranslationKeys.Options] = "Opties",
+        [TranslationKeys.ToNames] = "Aan",
+        [TranslationKeys.CcNames] = "Cc",
+        [TranslationKeys.BccNames] = "Bcc",
+        [TranslationKeys.IsDraft] = "Concept",
+        [TranslationKeys.Message] = "Bericht",
 
     };
 }

@@ -13,7 +13,7 @@ public class SecureScore
 
     [FormColumn]
     [ListColumn]
-    public DateTime CreatedDateTime { get; set; }
+    public DateTimeOffset? CreatedDateTime { get; set; }
 
     [FormColumn]
     [ListColumn]
