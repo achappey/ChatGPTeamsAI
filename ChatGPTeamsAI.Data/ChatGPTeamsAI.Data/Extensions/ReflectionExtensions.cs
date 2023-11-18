@@ -133,16 +133,7 @@ internal static class ReflectionExtensions
             }
             else
             {
-                string xmlString;
-                using (var writer = new StringWriter())
-                {
-                    new XmlSerializer(result.GetType()).Serialize(writer, result);
-                    xmlString = writer.ToString();
-                    return xmlString;
-                }
-
-             //   return new XmlSerializer(result.GetType()).Serialize(new StringWriter(), result);
-              //  return JsonSerializer.Serialize(result, new JsonSerializerOptions { });
+                return JsonSerializer.Serialize(result, new JsonSerializerOptions { });
             }
         }
 
