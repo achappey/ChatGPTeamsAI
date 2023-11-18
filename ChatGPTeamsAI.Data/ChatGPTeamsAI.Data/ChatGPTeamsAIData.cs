@@ -117,7 +117,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             throw new UnauthorizedAccessException("No Microsoft Graph credentials available");
         }
 
-        if (clientResponse.Data == null || !clientResponse.TotalItems.HasValue || clientResponse.ExecutedAction == null || clientResponse.ExecutedAction.Name == null)
+        if (clientResponse.Data == null || clientResponse.ExecutedAction == null || clientResponse.ExecutedAction.Name == null)
         {
             throw new Exception("No data available");
         }
