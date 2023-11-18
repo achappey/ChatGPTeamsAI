@@ -124,7 +124,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
 
         var microsoftClient = new GraphFunctionsClient(_config.GraphApiToken, _translatorService);
         var sanitizedDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
-        var filename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.xml";
+        var filename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.json";
         var webUrl = await microsoftClient.UploadFile(filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data));
 
         return new ActionResponse()
