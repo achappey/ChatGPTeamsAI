@@ -13,8 +13,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The ID of the channel.")] string channelId,
             [ParameterDescription("The html content of the message.")] string messageContent)
         {
-            
-
             var newMessage = new ChatMessage
             {
                 Body = new ItemBody
@@ -60,8 +58,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The ID of the user.")] string userId,
             [ParameterDescription("The ID of the team.")] string teamId)
         {
-            
-
             var member = new AadUserConversationMember
             {
                 ODataType = "#microsoft.graph.aadUserConversationMember",
@@ -84,7 +80,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(SuccessResponse());
         }
 
-        [MethodDescription("Teams", "Adds an owner to a team based on the user's ID and team ID.")]
+        [MethodDescription("Teams", "Adds an owner to a team based on the user's ID and team ID")]
         public async Task<ChatGPTeamsAIClientResponse?> AddOwnerToTeam(
          [ParameterDescription("The ID of the user.")] string userId,
          [ParameterDescription("The ID of the team.")] string teamId)
@@ -193,7 +189,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
            [ParameterDescription("The ID of the chat.")] string chatId,
            [ParameterDescription("The html content of the message.")] string content)
         {
-            
             var chatMessage = new ChatMessage
             {
                 Body = new ItemBody
@@ -210,14 +205,12 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(SuccessResponse());
         }
 
-        [MethodDescription("Teams", "Gets the replies to a specific message in a team's channel.")]
+        [MethodDescription("Teams", "Gets the replies to a specific message in a team's channel")]
         public async Task<ChatGPTeamsAIClientResponse?> GetChannelMessageReplies(
             [ParameterDescription("The ID of the team.")] string teamId,
             [ParameterDescription("The ID of the channel.")] string channelId,
             [ParameterDescription("The ID of the message.")] string messageId)
         {
-            
-
             var items = await _graphClient.Teams[teamId].Channels[channelId].Messages[messageId].Replies
                 .Request()
                 .Top(PAGESIZE)
@@ -236,8 +229,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The new display name for the channel.")] string newDisplayName,
             [ParameterDescription("The new description for the channel.")] string newDescription)
         {
-            
-
             var updatedChannel = new Channel()
             {
                 DisplayName = newDisplayName,
@@ -254,12 +245,10 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         [MethodDescription("Teams", "Updates a team based on the team ID.")]
         public async Task<ChatGPTeamsAIClientResponse?> UpdateTeam(
-    [ParameterDescription("The ID of the team.")] string teamId,
-    [ParameterDescription("The new display name for the team.")] string newDisplayName,
-    [ParameterDescription("The new description for the team.")] string newDescription)
+            [ParameterDescription("The ID of the team.")] string teamId,
+            [ParameterDescription("The new display name for the team.")] string newDisplayName,
+            [ParameterDescription("The new description for the team.")] string newDescription)
         {
-            
-
             var updatedTeam = new Team()
             {
                 DisplayName = newDisplayName,
@@ -277,7 +266,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         [MethodDescription("Teams", "Retrieves all TeamsRooms devices.")]
         public async Task<ChatGPTeamsAIClientResponse?> GetTeamworkDevices()
         {
-            
             var devices = await _graphClient.Teamwork.Devices.Request().GetAsync();
             var result = devices.CurrentPage.Select(_mapper.Map<Models.Microsoft.TeamworkDevice>);
 
@@ -288,8 +276,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public async Task<ChatGPTeamsAIClientResponse?> RestartTeamworkDevice(
             [ParameterDescription("The ID of the teamwork device to restart.")] string deviceId)
         {
-            
-
             await _graphClient.Teamwork.Devices[deviceId].Restart().Request().PostAsync();
 
             return ToChatGPTeamsAIResponse(SuccessResponse());
@@ -301,8 +287,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The name of the channel.")] string channelName,
             [ParameterDescription("The description of the channel.")] string? channelDescription = null)
         {
-            
-
             var newChannel = new Channel
             {
                 DisplayName = channelName,

@@ -159,7 +159,7 @@ internal class Person
         {
             if (LinkedAsContactToOrganization != null && LinkedAsContactToOrganization.Any())
             {
-                return string.Join("\r", LinkedAsContactToOrganization.Select(a => a.ToString()));
+                return "- " + string.Join("\r- ", LinkedAsContactToOrganization.Select(a => a.ToString()));
             }
             return string.Empty;
         }
@@ -174,7 +174,7 @@ internal class Person
         {
             if (Teams != null && Teams.Any())
             {
-                return string.Join("\r", Teams.Select(a => a.Name));
+                return "- " + string.Join("\r- ", Teams.Select(a => a.Name));
             }
             return string.Empty;
         }
@@ -211,7 +211,6 @@ internal class Person
         get { return Id != null ? new Dictionary<string, object>() { { "personId", Id } } : null; }
         set { }
     }
-
 
     [JsonPropertyName("newOrganization")]
     [Ignore]

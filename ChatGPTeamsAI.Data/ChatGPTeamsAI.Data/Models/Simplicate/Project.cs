@@ -148,7 +148,7 @@ internal class Project
     {
         get
         {
-            return Employees != null ? string.Join("\r", Employees.Select(a => a.Name)) : string.Empty;
+            return Employees != null ?  "- " + string.Join("\r- ", Employees.Select(a => a.Name)) : string.Empty;
         }
         set { }
     }

@@ -124,7 +124,6 @@ internal static class ReflectionExtensions
                         writer.Flush();
                         return Encoding.UTF8.GetString(stream.ToArray());
                     }
-
                 }
                 else
                 {

@@ -23,12 +23,19 @@ internal class Organization
     {
         get
         {
-            if (string.IsNullOrEmpty(Email) || !Email.Contains('@'))
+            string? emailToUse = Email;
+
+            if (string.IsNullOrEmpty(emailToUse) || !emailToUse.Contains('@'))
+            {
+                emailToUse = DebtorMail;
+            }
+
+            if (string.IsNullOrEmpty(emailToUse) || !emailToUse.Contains('@'))
             {
                 return string.Empty;
             }
 
-            var domain = Email.Split('@')[1];
+            var domain = emailToUse.Split('@')[1];
 
             return $"https://logo.clearbit.com/{domain}";
         }
@@ -50,7 +57,7 @@ internal class Organization
     public string? VatNumber { get; set; }
 
     [JsonPropertyName("is_active")]
-    [FormColumn]
+    [FormColumn("General")]
     public bool IsActive { get; set; }
 
     [JsonPropertyName("url")]
@@ -66,7 +73,7 @@ internal class Organization
     public RelationManager? RelationManager { get; set; }
 
     [JsonPropertyName("relationManagerName")]
-    [FormColumn]
+    [FormColumn("Extra")]
     public string? RelationManagerName
     {
         get
@@ -77,7 +84,7 @@ internal class Organization
     }
 
     [JsonPropertyName("relationTypeLabel")]
-    [FormColumn]
+    [FormColumn("General")]
     public string? RelationTypeLabel
     {
         get
@@ -170,7 +177,7 @@ internal class Organization
         {
             if (Teams != null && Teams.Any())
             {
-                return string.Join("\r", Teams.Select(a => a.Name));
+                return "- " + string.Join("\r- ", Teams.Select(a => a.Name));
             }
             return string.Empty;
         }

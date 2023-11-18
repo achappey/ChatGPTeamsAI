@@ -1,4 +1,3 @@
-
 using ChatGPTeamsAI.Data.Attributes;
 using CsvHelper.Configuration.Attributes;
 
@@ -8,7 +7,7 @@ internal class SearchAddress
 {
 
     [ListColumn]
-    [FormColumn("Point of interest")]
+    [FormColumn("Point of Interest")]
     public string? Name
     {
         get
@@ -18,7 +17,7 @@ internal class SearchAddress
         set { }
     }
 
-    [FormColumn("Point of interest")]
+    [FormColumn("Point of Interest")]
     public string? Phone
     {
         get
@@ -28,12 +27,12 @@ internal class SearchAddress
         set { }
     }
 
-    [FormColumn("Point of interest")]
+    [FormColumn("Point of Interest")]
     public string? Categories
     {
         get
         {
-            return PointOfInterest?.Categories != null ? string.Join("\r", PointOfInterest.Categories) : string.Empty;
+            return PointOfInterest?.Categories != null && PointOfInterest.Categories.Any() ? "- " + string.Join("\r- ", PointOfInterest.Categories) : string.Empty;
         }
         set { }
     }

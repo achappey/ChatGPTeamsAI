@@ -2,7 +2,7 @@ namespace ChatGPTeamsAI.Data.Translations;
 
 public class EnglishTranslations
 {
-    public static Dictionary<string, string> Data = new Dictionary<string, string>
+    public readonly static Dictionary<string, string> Data = new()
     {
         [TranslationKeys.ExecutingAction] = "Executing action...",
         [TranslationKeys.ProcessingResult] = "Processing result...",

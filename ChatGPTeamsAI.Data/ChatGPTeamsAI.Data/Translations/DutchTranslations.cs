@@ -2,7 +2,7 @@ namespace ChatGPTeamsAI.Data.Translations;
 
 public class DutchTranslations
 {
-    public static Dictionary<string, string> Data = new Dictionary<string, string>
+    public readonly static Dictionary<string, string> Data = new()
     {
         [TranslationKeys.ExecutingAction] = "Actie uitvoeren...",
         [TranslationKeys.ProcessingResult] = "Resultaat verwerken...",
@@ -129,8 +129,24 @@ public class DutchTranslations
         [TranslationKeys.ProjectName] = "Project",
         [TranslationKeys.Tariff] = "Tarief",
         [TranslationKeys.ApprovalStatusDescription] = "Omschrijving",
-
-
+        [TranslationKeys.Latitude] = "Breedtegraad",
+        [TranslationKeys.Longitude] = "Lengtegraad",
+        [TranslationKeys.Categories] = "Categorieën",
+        [TranslationKeys.FreeformAddress] = "Adres",
+        [TranslationKeys.StreetName] = "Straat",
+        [TranslationKeys.StreetNumber] = "Huisnummer",
+        [TranslationKeys.CountrySubdivision] = "Provincie",
+        [TranslationKeys.Invoicing] = "Facturatie",
+        [TranslationKeys.Identity] = "Identiteit",        
+        [TranslationKeys.CompanyName] = "Onderneming",
+        [TranslationKeys.JobInformation] = "Medewerker gegevens",
+        [TranslationKeys.ContactInformation] = "Contact gegevens",
+        [TranslationKeys.Settings] = "Instellingen",
+        [TranslationKeys.EmployeeId] = "Medewerker Id",
+        [TranslationKeys.FromName] = "Van",
+        [TranslationKeys.BodyPreview] = "Preview",
+        [TranslationKeys.ReceivedDateTime] = "Ontvangen",
+        [TranslationKeys.AttendeeNames] = "Deelnemers",
 
     };
 }

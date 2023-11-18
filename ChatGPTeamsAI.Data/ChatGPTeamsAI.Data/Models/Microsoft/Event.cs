@@ -1,7 +1,5 @@
-
 using ChatGPTeamsAI.Data.Attributes;
 using CsvHelper.Configuration.Attributes;
-using HtmlAgilityPack;
 using Microsoft.Graph;
 
 namespace ChatGPTeamsAI.Data.Models.Microsoft;
@@ -15,9 +13,14 @@ internal class Event
 
     public string? Subject { get; set; }
 
+    [Ignore]
     public ItemBody? Body { get; set; }
 
+    [Ignore]
     public Recipient? Organizer { get; set; }
+
+    [FormColumn]
+    public bool? HasAttachments { get; set; }
 
     [ListColumn]
     [FormColumn]
@@ -86,7 +89,7 @@ internal class Event
         get
         {
             return Attendees != null
-                ? string.Join("\r", Attendees.Select(a => a.EmailAddress?.Name?.ToString()))
+                ? "- " + string.Join("\r- ", Attendees.Select(a => a.EmailAddress?.Name?.ToString()))
                 : string.Empty;
         }
         set { }

@@ -43,11 +43,10 @@ internal class MicrosoftProfile : Profile
         CreateMap<Microsoft.Graph.OnlineMeetingInfo, Models.Microsoft.OnlineMeetingInfo>();
         CreateMap<Microsoft.Graph.Location, Models.Microsoft.Location>();
         CreateMap<Microsoft.Graph.Attendee, Models.Microsoft.Attendee>();
-
         CreateMap<Microsoft.Graph.User, Models.Microsoft.User>();
-
         CreateMap<Microsoft.Graph.ConversationMember, Models.Microsoft.User>();
-
+        CreateMap<Microsoft.Graph.SecureScore, Models.Microsoft.SecureScore>();
+        CreateMap<Microsoft.Graph.ControlScore, Models.Microsoft.ControlScore>();
+        CreateMap<Microsoft.Graph.AverageComparativeScore, Models.Microsoft.AverageComparativeScore>();
     }
-
 }

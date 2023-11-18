@@ -2,7 +2,7 @@ namespace ChatGPTeamsAI.Data.Translations;
 
 public class TranslationData
 {
-    public static Dictionary<string, Dictionary<string, string>> Data = new Dictionary<string, Dictionary<string, string>>
+    public readonly static Dictionary<string, Dictionary<string, string>> Data = new()
     {
         ["en-US"] = EnglishTranslations.Data,
         ["nl-NL"] = DutchTranslations.Data
@@ -23,7 +23,6 @@ public static class TranslationKeys
     public const string NoItems = "NoItems";
     public const string Items = "Items";
     public const string Filename = "Filename";
-
     public const string ProjectNumber = "ProjectNumber";
     public const string Name = "Name";
     public const string ProjectManagerName = "ProjectManagerName";
@@ -144,18 +143,25 @@ public static class TranslationKeys
     public const string Open = "Open";
     public const string ApprovalStatusDescription = "ApprovalStatusDescription";
     public const string ApprovalStatusLabel = "ApprovalStatusLabel";
+    public const string Categories = "Categories";    
+    public const string Longitude = "Longitude";
+    public const string Latitude = "Latitude";    
+    public const string FreeformAddress = "FreeformAddress";
+    public const string StreetName = "StreetName";
+    public const string StreetNumber = "StreetNumber";
+    public const string CountrySubdivision = "CountrySubdivision";
+    public const string Invoicing = "Invoicing";   
+    public const string Identity = "Identity";   
+    public const string EmployeeId = "EmployeeId";   
+    public const string CompanyName = "CompanyName";   
+    public const string ContactInformation = "ContactInformation";   
+    public const string JobInformation = "JobInformation";   
+    public const string Settings = "Settings";   
+    public const string FromName = "Settings";   
+    public const string BodyPreview = "Settings";   
+    public const string ReceivedDateTime = "Settings";   
+    public const string AttendeeNames = "AttendeeNames";   
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
 }
 
 

@@ -8,9 +8,10 @@ public interface ITranslationService
 
 public class TranslationService : ITranslationService
 {
-    private Dictionary<string, Dictionary<string, string>> translations;
+    private readonly Dictionary<string, Dictionary<string, string>> translations;
 
     private const string DefaultLocale = "en-US";
+    
     private readonly string? _locale;
 
     public TranslationService(string? locale = null)

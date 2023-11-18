@@ -196,11 +196,18 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         [MethodDescription("Users", "Retrieves information about the current user's manager")]
         public async Task<ChatGPTeamsAIClientResponse?> MyManager()
         {
-
             var manager = await _graphClient.Me.Manager.Request().GetAsync();
 
             return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.User>(manager));
+        }
 
+        [MethodDescription("Mail", "Gets an email based on message id")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetEmail(
+            [ParameterDescription("The ID of the mail message")] string messageId)
+        {
+            var item = await _graphClient.Me.Messages[messageId].Request().GetAsync();
+
+            return ToChatGPTeamsAIResponse(_mapper.Map<Models.Microsoft.Email>(item));
         }
 
         [MethodDescription("Mail", "Gets mail for the user using the Microsoft Graph API")]
@@ -262,8 +269,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The team name to filter on.")] string? name = null,
             [ParameterDescription("The description to filter on.")] string? description = null)
         {
-
-
             var groups = await _graphClient.Me.JoinedTeams
                                 .Request()
                                 .GetAsync();
@@ -275,5 +280,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
             return ToChatGPTeamsAIResponse(filteredGroups.Select(_mapper.Map<Models.Microsoft.Team>));
         }
+
+       
     }
 }

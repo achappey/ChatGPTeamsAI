@@ -1,5 +1,3 @@
-
-
 namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System;
@@ -24,8 +22,9 @@ internal class TimelineMessage
         {
             if (LinkedTo != null && LinkedTo.Any())
             {
-                return string.Join("\r", LinkedTo.Select(a => $"{a.Label} ({a.Type})" ));
+                return "- " + string.Join("\r- ", LinkedTo.Select(a => $"{a.Label} ({a.Type})" ));
             }
+
             return string.Empty;
         }
         set { }

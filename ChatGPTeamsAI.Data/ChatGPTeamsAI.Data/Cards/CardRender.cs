@@ -75,7 +75,6 @@ internal class CardRenderer : ICardRenderer
                             Title = prop.Name,
                             Label = _translatorService.Translate(prop.Name),
                             IsVisible = !prop.IsHidden.HasValue || !prop.IsHidden.Value,
-                            //Value = values.ContainsKey(prop.Name) ? values[prop.Name] : "false",
                             ValueOn = "true",
                             ValueOff = "false"
                         });
@@ -243,8 +242,6 @@ internal class CardRenderer : ICardRenderer
         AddHeaderToContainer(formContainer, typeProperties, item);
 
         AddActionsToContainer(formContainer, typeProperties, item);
-
-      //  AddLinksToContainer(formContainer, typeProperties, item);
 
         AddFactsToContainer(formContainer, typeProperties, item);
 
