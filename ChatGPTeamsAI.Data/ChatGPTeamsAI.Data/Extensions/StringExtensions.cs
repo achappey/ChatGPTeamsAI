@@ -4,6 +4,7 @@ using System.Text.Json;
 
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using AdaptiveCards;
 
 namespace ChatGPTeamsAI.Data.Extensions;
 
@@ -13,6 +14,26 @@ internal static class StringExtensions
     public static string RemoveMarkup(this string? text)
     {
         return text is null ? string.Empty : Regex.Replace(text, "<.*?>", string.Empty);
+    }
+
+    public static AdaptiveOpenUrlAction? TryGetAdaptiveOpenUrlAction(this string value)
+    {
+
+        Uri? uri;
+        try
+        {
+            uri = new Uri(value);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+
+        return new AdaptiveOpenUrlAction
+        {
+            Url = uri,
+
+        };
     }
 
     public static void EnsureValidDateFormat(this string dateStr, string expectedFormat = "yyyy-MM-dd HH:mm:ss")

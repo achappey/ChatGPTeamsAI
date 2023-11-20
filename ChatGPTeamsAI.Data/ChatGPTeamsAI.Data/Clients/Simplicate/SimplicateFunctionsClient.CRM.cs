@@ -259,7 +259,7 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
         }
 
 
-        [MethodDescription("CRM", "Adds a new person to Simplicate.")]
+        [MethodDescription("CRM", "Adds a new person to Simplicate")]
         public async Task<ChatGPTeamsAIClientResponse?> AddNewPerson(
             [ParameterDescription("The family name of the person.")] string? familyName,
             [ParameterDescription("The full name of the person.")] string? fullName,

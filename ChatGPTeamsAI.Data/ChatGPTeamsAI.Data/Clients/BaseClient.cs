@@ -1,5 +1,6 @@
 using AdaptiveCards;
 using ChatGPTeamsAI.Cards;
+using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Output;
 using ChatGPTeamsAI.Data.Translations;
@@ -23,6 +24,28 @@ internal abstract class BaseClient : IBaseClient
         defaultRender = new CardRenderer(_translatorService);
     }
 
+
+    public ChatGPTeamsAIClientResponse? ToChatGPTeamsAINewFormResponse<T>(T? response, string actionName)
+    {
+        if (response == null)
+        {
+            return new ChatGPTeamsAIClientResponse()
+            {
+                Type = typeof(T).ToString(),
+                Error = "Something went wrong"
+            };
+        }
+
+        var functionDefintition = GetAvailableActions().FirstOrDefault(a => a.Name == actionName) ?? throw new ArgumentException("Action missing");
+        var dataCard = RenderNewCard(functionDefintition, response as IDictionary<string, object>);
+
+        return new ChatGPTeamsAIClientResponse()
+        {
+            Data = response?.RenderData(),
+            DataCard = dataCard,
+            Type = typeof(T).ToString(),
+        };
+    }
 
     public AdaptiveCard? RenderNewCard(ActionDescription actionDescription, IDictionary<string, object>? values)
     {

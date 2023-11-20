@@ -8,8 +8,46 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 {
     internal partial class GraphFunctionsClient
     {
+        [MethodDescription("Mail", "Create a new e-mail form")]
+        public Task<ChatGPTeamsAIClientResponse?> NewMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
+            [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
+            [ParameterDescription("The subject of the email")] string subject,
+            [ParameterDescription("Content in HTML format")] string html)
+        {
+            return Task.FromResult(ToChatGPTeamsAINewFormResponse(new Dictionary<string, object>()
+            {
+                    {"toAddresses",toAddresses ?? string.Empty},
+                    {"ccAddresses",ccAddresses ?? string.Empty},
+                    {"subject",subject ?? string.Empty},
+                    {"html",html ?? string.Empty}
+            }, "AddNewMail"));
+        }
+
+      /*  [MethodDescription("Mail", "Sends an email form")]
+        public async Task<ChatGPTeamsAIClientResponse?> AddNewMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
+            [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
+            [ParameterDescription("The subject of the email")] string subject,
+            [ParameterDescription("Content in HTML format")] string html)
+        {
+            return Task.FromResult(ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object>>()
+            {
+                Data = new Dictionary<string, object>()
+                {
+                    {"familyName",familyName ?? string.Empty},
+                    {"fullName",fullName ?? string.Empty},
+                    {"firstName",firstName ?? string.Empty},
+                    {"jobTitle",jobTitle ?? string.Empty},
+                    {"workPhone",workPhone ?? string.Empty},
+                    {"organizationId",organizationId ?? string.Empty},
+                    {"email",email ?? string.Empty},
+                    {"mobilePhone", mobilePhone ?? string.Empty},
+                    {"note",note ?? string.Empty},
+                }
+            }, "AddNewPerson"));
+        }*/
+
         [MethodDescription("Mail", "Sends an email from the current user")]
-        public async Task<ChatGPTeamsAIClientResponse?> SendMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
+        public async Task<ChatGPTeamsAIClientResponse?> AddNewMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
             [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
             [ParameterDescription("The subject of the email")] string subject,
             [ParameterDescription("Content in HTML format")] string html)

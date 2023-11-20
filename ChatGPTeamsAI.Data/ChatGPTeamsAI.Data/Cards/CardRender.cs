@@ -1,6 +1,7 @@
 using System.Reflection;
 using AdaptiveCards;
 using ChatGPTeamsAI.Data.Attributes;
+using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models.Output;
 using ChatGPTeamsAI.Data.Translations;
 
@@ -168,7 +169,6 @@ internal class CardRenderer : ICardRenderer
         container.Items.Add(columnSet);
     }
 
-
     private void AddLinksToContainer(AdaptiveContainer container, PropertyInfo[] typeProperties, object item, string? category = null)
     {
         var columnSet = new AdaptiveColumnSet();
@@ -199,11 +199,7 @@ internal class CardRenderer : ICardRenderer
                                     Color = AdaptiveTextColor.Accent
                                 }
                         },
-                    SelectAction = new AdaptiveOpenUrlAction
-                    {
-                        Url = new Uri(value),
-
-                    }
+                    SelectAction = value.TryGetAdaptiveOpenUrlAction()
                 });
 
                 if (chatColumnProperties.Contains(linkColumns))
