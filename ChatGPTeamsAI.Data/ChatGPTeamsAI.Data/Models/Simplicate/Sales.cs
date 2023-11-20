@@ -157,7 +157,7 @@ internal class Sales
         {
             if (Teams != null && Teams.Any())
             {
-                return "- " + string.Join("\r- ", Teams.Select(a => a.Name));
+                return string.Join(", ", Teams.Select(a => a.Name));
             }
             return string.Empty;
         }

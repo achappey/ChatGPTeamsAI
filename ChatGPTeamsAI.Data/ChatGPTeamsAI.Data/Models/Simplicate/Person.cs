@@ -159,7 +159,7 @@ internal class Person
         {
             if (LinkedAsContactToOrganization != null && LinkedAsContactToOrganization.Any())
             {
-                return "- " + string.Join("\r- ", LinkedAsContactToOrganization.Select(a => a.ToString()));
+                return string.Join(", ", LinkedAsContactToOrganization.Select(a => a.ToString()));
             }
             return string.Empty;
         }
@@ -174,7 +174,7 @@ internal class Person
         {
             if (Teams != null && Teams.Any())
             {
-                return "- " + string.Join("\r- ", Teams.Select(a => a.Name));
+                return string.Join(", ", Teams.Select(a => a.Name));
             }
             return string.Empty;
         }

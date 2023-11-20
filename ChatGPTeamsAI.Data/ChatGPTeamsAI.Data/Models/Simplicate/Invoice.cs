@@ -233,7 +233,7 @@ internal class Document
     {
         get
         {
-            return LinkedTo != null ? string.Join("\r", LinkedTo.Select(a => a.Label)) : string.Empty;
+            return LinkedTo != null ? string.Join(", ", LinkedTo.Select(a => a.Label)) : string.Empty;
         }
         set { }
     }

@@ -53,7 +53,7 @@ internal class Email
     {
         get
         {
-            return ToRecipients != null && ToRecipients.Any() ? "- " + string.Join("\r- ", ToRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
+            return ToRecipients != null && ToRecipients.Any() ? string.Join(", ", ToRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
         }
         set { }
     }
@@ -63,7 +63,7 @@ internal class Email
     {
         get
         {
-            return CcRecipients != null && CcRecipients.Any() ? "- " + string.Join("\r- ", CcRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
+            return CcRecipients != null && CcRecipients.Any() ? string.Join(", ", CcRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
         }
         set { }
     }
@@ -73,7 +73,7 @@ internal class Email
     {
         get
         {
-            return BccRecipients != null && BccRecipients.Any() ? "- " + string.Join("\r- ", BccRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
+            return BccRecipients != null && BccRecipients.Any() ? string.Join(", ", BccRecipients.Select(a => a.EmailAddress?.Name)) : string.Empty;
         }
         set { }
     }

@@ -22,7 +22,7 @@ internal class TimelineMessage
         {
             if (LinkedTo != null && LinkedTo.Any())
             {
-                return "- " + string.Join("\r- ", LinkedTo.Select(a => $"{a.Label} ({a.Type})" ));
+                return string.Join(", ", LinkedTo.Select(a => $"{a.Label} ({a.Type})" ));
             }
 
             return string.Empty;

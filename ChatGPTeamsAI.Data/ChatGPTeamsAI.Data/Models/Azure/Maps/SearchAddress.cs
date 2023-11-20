@@ -32,7 +32,7 @@ internal class SearchAddress
     {
         get
         {
-            return PointOfInterest?.Categories != null && PointOfInterest.Categories.Any() ? "- " + string.Join("\r- ", PointOfInterest.Categories) : string.Empty;
+            return PointOfInterest?.Categories != null && PointOfInterest.Categories.Any() ? string.Join(", ", PointOfInterest.Categories) : string.Empty;
         }
         set { }
     }
