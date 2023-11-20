@@ -23,29 +23,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             }, "AddNewMail"));
         }
 
-        /*  [MethodDescription("Mail", "Sends an email form")]
-          public async Task<ChatGPTeamsAIClientResponse?> AddNewMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
-              [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
-              [ParameterDescription("The subject of the email")] string subject,
-              [ParameterDescription("Content in HTML format")] string html)
-          {
-              return Task.FromResult(ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object>>()
-              {
-                  Data = new Dictionary<string, object>()
-                  {
-                      {"familyName",familyName ?? string.Empty},
-                      {"fullName",fullName ?? string.Empty},
-                      {"firstName",firstName ?? string.Empty},
-                      {"jobTitle",jobTitle ?? string.Empty},
-                      {"workPhone",workPhone ?? string.Empty},
-                      {"organizationId",organizationId ?? string.Empty},
-                      {"email",email ?? string.Empty},
-                      {"mobilePhone", mobilePhone ?? string.Empty},
-                      {"note",note ?? string.Empty},
-                  }
-              }, "AddNewPerson"));
-          }*/
-
         [MethodDescription("Mail", "Sends an email from the current user")]
         public async Task<ChatGPTeamsAIClientResponse?> AddNewMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
             [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
@@ -100,34 +77,35 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 SentDateTime = DateTime.UtcNow,
                 ToRecipients = recipients,
                 CcRecipients = ccRecipients,
-              /*  SingleValueExtendedProperties = new MessageSingleValueExtendedPropertiesCollectionPage
-            {
-                new SingleValueLegacyExtendedProperty()
-                {
-                    Id = "SystemTime 0x3FEF",
-                    Value = DateTime.UtcNow.AddMinutes(1).ToString("o")
-                }
-            }*/
             };
 
             await _graphClient.Me.SendMail(email, true)
                     .Request()
                     .PostAsync();
 
-            return new ChatGPTeamsAIClientResponse()
+            return ToChatGPTeamsAIResponse(new NoOutputResponse
             {
-                Data = JsonConvert.SerializeObject(new NoOutputResponse
-                {
-                    Status = "success",
-                    Message = "The e-mail was sent successfully.",
-                    Timestamp = DateTime.UtcNow
-                }),
-                Type = typeof(NoOutputResponse).ToString()
-            };
+                Status = "success",
+                Message = "The e-mail was sent successfully.",
+                Timestamp = DateTime.UtcNow
+            });
         }
 
-        [MethodDescription("Mail", "Replies an email using the Microsoft Graph API")]
-        public async Task<ChatGPTeamsAIClientResponse> ReplyMail(
+        [MethodDescription("Mail", "Create a reply e-mail form")]
+        public Task<ChatGPTeamsAIClientResponse?> ReplyMail([ParameterDescription("The ID of the e-mail.", isHidden: true)] string id,
+                  [ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
+                  [ParameterDescription("The comment on the email", isMultiline: true)] string comment)
+        {
+            return Task.FromResult(ToChatGPTeamsAINewFormResponse(new Dictionary<string, object>()
+            {
+                    {"toAddresses",toAddresses ?? string.Empty},
+                    {"comment",comment ?? string.Empty},
+                    {"id",id ?? string.Empty}
+            }, "AddReplyMail"));
+        }
+
+        [MethodDescription("Mail", "Replies an email")]
+        public async Task<ChatGPTeamsAIClientResponse?> AddReplyMail(
             [ParameterDescription("The ID of the e-mail.")] string id,
             [ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
             [ParameterDescription("The comment on the email")] string comment)
@@ -170,17 +148,12 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             .Request()
             .PostAsync();
 
-            return new ChatGPTeamsAIClientResponse()
+            return ToChatGPTeamsAIResponse(new NoOutputResponse
             {
-                Data = JsonConvert.SerializeObject(new NoOutputResponse
-                {
-                    Status = "success",
-                    Message = "The e-mail reply was sent successfully.",
-                    Timestamp = DateTime.UtcNow
-                }),
-                Type = typeof(NoOutputResponse).ToString()
-            };
-
+                Status = "success",
+                Message = "The e-mail reply was sent successfully.",
+                Timestamp = DateTime.UtcNow
+            });
         }
 
         [MethodDescription("Teams", "Searches the chat logs based on the provided member and chat type")]

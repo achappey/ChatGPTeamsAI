@@ -139,6 +139,14 @@ internal class Email
         get { return Id != null ? new Dictionary<string, object?>() { { "messageId", Id } } : null; }
         set { }
     }
+
+    [Ignore]
+    [ActionColumn]
+    public IDictionary<string, object>? ReplyMail
+    {
+        get { return Id != null ? new Dictionary<string, object>() { { "id", Id } } : null; }
+        set { }
+    }
 }
 
 internal class ItemBody
