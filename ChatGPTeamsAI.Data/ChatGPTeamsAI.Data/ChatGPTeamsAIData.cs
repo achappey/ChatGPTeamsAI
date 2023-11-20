@@ -86,59 +86,24 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         });
     }
 
+
     private async Task<ActionResponse> CreateExport(ChatGPTeamsAIClientResponse clientResponse)
     {
-        if (_config.GraphApiToken == null)
+        if (!clientResponse.TotalItems.HasValue)
         {
-            throw new UnauthorizedAccessException("No Microsoft Graph credentials available");
+            throw new Exception("Total items value not available");
         }
 
-        if (clientResponse.Data == null || !clientResponse.TotalItems.HasValue || clientResponse.ExecutedAction == null || clientResponse.ExecutedAction.Name == null)
-        {
-            throw new Exception("No data available");
-        }
-
-        var microsoftClient = new GraphFunctionsClient(_config.GraphApiToken, _translatorService);
-        var sanitizedDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
-        var filename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.csv";
-        var webUrl = await microsoftClient.UploadFile(filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data));
-
-        return new ActionResponse()
-        {
-            ExecutedAction = clientResponse.ExecutedAction,
-            Data = clientResponse.Data,
-            DataCard = microsoftClient.CreateExportCard(clientResponse.TotalItems.Value, filename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson()
-        };
-    }
-
-    private async Task<byte[]> CreateZipFile(IDictionary<string, byte[]> files)
-    {
-        using (var compressedFileStream = new MemoryStream())
-        {
-            //Create an archive and store the stream in memory.
-            using (var zipArchive = new ZipArchive(compressedFileStream, ZipArchiveMode.Create, false))
-            {
-                foreach (var file in files)
-                {
-                    //Create a zip entry for each attachment
-                    var zipEntry = zipArchive.CreateEntry(file.Key);
-
-                    //Get the stream of the attachment
-                    using (var originalFileStream = new MemoryStream(file.Value))
-                    using (var zipEntryStream = zipEntry.Open())
-                    {
-                        //Copy the attachment stream to the zip entry stream
-                        originalFileStream.CopyTo(zipEntryStream);
-                    }
-                }
-            }
-
-            return compressedFileStream.ToArray();
-            //  return new FileContentResult(compressedFileStream.ToArray(), "application/zip") { FileDownloadName = "Filename.zip" };
-        }
+        return await CreateActionResponse(clientResponse, "csv");
     }
 
     private async Task<ActionResponse> CreateDownload(ChatGPTeamsAIClientResponse clientResponse)
+    {
+        return await CreateActionResponse(clientResponse, "json");
+    }
+
+
+    private async Task<ActionResponse> CreateActionResponse(ChatGPTeamsAIClientResponse clientResponse, string fileExtension)
     {
         if (_config.GraphApiToken == null)
         {
@@ -152,19 +117,23 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
 
         var microsoftClient = new GraphFunctionsClient(_config.GraphApiToken, _translatorService);
         var sanitizedDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
-        var filename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.json";
-//        var zipFilename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.zip";
-  //      var zippedFile = await CreateZipFile(new Dictionary<string, byte[]>() { { filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data) } });
+        var filename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.{fileExtension}";
+        var zipFilename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.zip";
+        var zippedFile = await new Dictionary<string, byte[]>() { { filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data) } }.CreateZipFile();
 
-        var webUrl = await microsoftClient.UploadFile(filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data));
+        var webUrl = await microsoftClient.UploadFile(zipFilename, zippedFile);
 
         return new ActionResponse()
         {
             ExecutedAction = clientResponse.ExecutedAction,
             Data = clientResponse.Data,
-            DataCard = microsoftClient.CreateDownloadCard(filename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson()
+            DataCard = fileExtension == "csv" ?
+                microsoftClient.CreateExportCard(clientResponse.TotalItems != null ? clientResponse.TotalItems.Value : -1, zipFilename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson() :
+                microsoftClient.CreateDownloadCard(zipFilename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson()
         };
     }
+
+
 
     private ActionResponse ToDataResponse(ChatGPTeamsAIClientResponse clientResponse)
     {

@@ -130,9 +130,15 @@ internal class Project
         set { }
     }
 
+    private string? _note;
+
     [JsonPropertyName("note")]
     [FormColumn]
-    public string? Note { get; set; }
+    public string? Note
+    {
+        get => _note?.Replace("\n", " ").Replace("\r", " ");
+        set => _note = value;
+    }
 
     [JsonPropertyName("simplicate_url")]
     [LinkColumn]
@@ -148,7 +154,7 @@ internal class Project
     {
         get
         {
-            return Employees != null ?  "- " + string.Join("\r- ", Employees.Select(a => a.Name)) : string.Empty;
+            return Employees != null ? "- " + string.Join("\r- ", Employees.Select(a => a.Name)) : string.Empty;
         }
         set { }
     }

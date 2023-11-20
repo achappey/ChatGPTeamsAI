@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using AdaptiveCards;
 using ChatGPTeamsAI.Data.Translations;
 
@@ -48,5 +49,24 @@ internal static class AdaptiveCardExtensions
 
         return card;
     }
+    
+    public static async Task<byte[]> CreateZipFile(this IDictionary<string, byte[]> files)
+    {
+        using var compressedFileStream = new MemoryStream();
+        using (var zipArchive = new ZipArchive(compressedFileStream, ZipArchiveMode.Create, false))
+        {
+            foreach (var file in files)
+            {
+                var zipEntry = zipArchive.CreateEntry(file.Key);
+
+                using var originalFileStream = new MemoryStream(file.Value);
+                using var zipEntryStream = zipEntry.Open();
+                await originalFileStream.CopyToAsync(zipEntryStream);
+            }
+        }
+
+        return compressedFileStream.ToArray();
+    }
+
 
 }
