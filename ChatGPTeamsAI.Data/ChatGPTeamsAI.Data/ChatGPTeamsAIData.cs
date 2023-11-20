@@ -89,10 +89,10 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
 
     private async Task<ActionResponse> CreateExport(ChatGPTeamsAIClientResponse clientResponse)
     {
-        if (!clientResponse.TotalItems.HasValue)
+    /*    if (!clientResponse.TotalItems.HasValue)
         {
             throw new Exception("Total items value not available");
-        }
+        }*/
 
         return await CreateActionResponse(clientResponse, "csv");
     }
