@@ -153,10 +153,10 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         var microsoftClient = new GraphFunctionsClient(_config.GraphApiToken, _translatorService);
         var sanitizedDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
         var filename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.json";
-        var zipFilename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.zip";
-        var zippedFile = await CreateZipFile(new Dictionary<string, byte[]>() { { filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data) } });
+//        var zipFilename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.zip";
+  //      var zippedFile = await CreateZipFile(new Dictionary<string, byte[]>() { { filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data) } });
 
-        var webUrl = await microsoftClient.UploadFile(zipFilename, zippedFile);
+        var webUrl = await microsoftClient.UploadFile(filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data));
 
         return new ActionResponse()
         {
