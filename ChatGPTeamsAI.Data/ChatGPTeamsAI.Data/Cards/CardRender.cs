@@ -84,7 +84,9 @@ internal class CardRenderer : ICardRenderer
                         card.Body.Add(new AdaptiveNumberInput
                         {
                             Id = prop.Name,
-                            Placeholder = _translatorService.Translate(prop.Name),
+                            Label = _translatorService.Translate(prop.Name),
+                            Placeholder = prop.Description,
+                            //Placeholder = _translatorService.Translate(prop.Name),
                             IsVisible = !prop.IsHidden.HasValue || !prop.IsHidden.Value,
                             Value = values != null && values.ContainsKey(prop.Name) && values[prop.Name] != null ? Convert.ToDouble(values[prop.Name].ToString()) : 0,
                         });
@@ -93,9 +95,11 @@ internal class CardRenderer : ICardRenderer
                         card.Body.Add(new AdaptiveTextInput
                         {
                             Id = prop.Name,
+                            Label = _translatorService.Translate(prop.Name),
                             IsVisible = !prop.IsHidden.HasValue || !prop.IsHidden.Value,
                             IsMultiline = prop.IsMultiline.HasValue ? prop.IsMultiline.Value : false,
-                            Placeholder = _translatorService.Translate(prop.Name),
+                          //  Placeholder = _translatorService.Translate(prop.Name),
+                            Placeholder = prop.Description,
                             Value = values != null && values.ContainsKey(prop.Name) && values[prop.Name] != null ? values[prop.Name].ToString() : string.Empty,
                         });
                         break;

@@ -12,7 +12,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public Task<ChatGPTeamsAIClientResponse?> SendMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
             [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
             [ParameterDescription("The subject of the email")] string subject,
-            [ParameterDescription("Content in HTML format")] string html)
+            [ParameterDescription("Content in HTML format", true)] string html)
         {
             return Task.FromResult(ToChatGPTeamsAINewFormResponse(new Dictionary<string, object>()
             {
@@ -23,28 +23,28 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             }, "AddNewMail"));
         }
 
-      /*  [MethodDescription("Mail", "Sends an email form")]
-        public async Task<ChatGPTeamsAIClientResponse?> AddNewMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
-            [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
-            [ParameterDescription("The subject of the email")] string subject,
-            [ParameterDescription("Content in HTML format")] string html)
-        {
-            return Task.FromResult(ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object>>()
-            {
-                Data = new Dictionary<string, object>()
-                {
-                    {"familyName",familyName ?? string.Empty},
-                    {"fullName",fullName ?? string.Empty},
-                    {"firstName",firstName ?? string.Empty},
-                    {"jobTitle",jobTitle ?? string.Empty},
-                    {"workPhone",workPhone ?? string.Empty},
-                    {"organizationId",organizationId ?? string.Empty},
-                    {"email",email ?? string.Empty},
-                    {"mobilePhone", mobilePhone ?? string.Empty},
-                    {"note",note ?? string.Empty},
-                }
-            }, "AddNewPerson"));
-        }*/
+        /*  [MethodDescription("Mail", "Sends an email form")]
+          public async Task<ChatGPTeamsAIClientResponse?> AddNewMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
+              [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
+              [ParameterDescription("The subject of the email")] string subject,
+              [ParameterDescription("Content in HTML format")] string html)
+          {
+              return Task.FromResult(ToChatGPTeamsAINewFormResponse(new SimplicateResponseBase<IDictionary<string, object>>()
+              {
+                  Data = new Dictionary<string, object>()
+                  {
+                      {"familyName",familyName ?? string.Empty},
+                      {"fullName",fullName ?? string.Empty},
+                      {"firstName",firstName ?? string.Empty},
+                      {"jobTitle",jobTitle ?? string.Empty},
+                      {"workPhone",workPhone ?? string.Empty},
+                      {"organizationId",organizationId ?? string.Empty},
+                      {"email",email ?? string.Empty},
+                      {"mobilePhone", mobilePhone ?? string.Empty},
+                      {"note",note ?? string.Empty},
+                  }
+              }, "AddNewPerson"));
+          }*/
 
         [MethodDescription("Mail", "Sends an email from the current user")]
         public async Task<ChatGPTeamsAIClientResponse?> AddNewMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
@@ -87,7 +87,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                         Address = a,
                     }
                 };
-            }) : null;
+            }) : new List<Recipient>();
 
             var email = new Message
             {
@@ -100,14 +100,14 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 SentDateTime = DateTime.UtcNow,
                 ToRecipients = recipients,
                 CcRecipients = ccRecipients,
-                SingleValueExtendedProperties = new MessageSingleValueExtendedPropertiesCollectionPage
+              /*  SingleValueExtendedProperties = new MessageSingleValueExtendedPropertiesCollectionPage
             {
                 new SingleValueLegacyExtendedProperty()
                 {
                     Id = "SystemTime 0x3FEF",
                     Value = DateTime.UtcNow.AddMinutes(1).ToString("o")
                 }
-            }
+            }*/
             };
 
             await _graphClient.Me.SendMail(email, true)
@@ -116,7 +116,12 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
             return new ChatGPTeamsAIClientResponse()
             {
-                Data = JsonConvert.SerializeObject(SuccessResponse()),
+                Data = JsonConvert.SerializeObject(new NoOutputResponse
+                {
+                    Status = "success",
+                    Message = "The e-mail was sent successfully.",
+                    Timestamp = DateTime.UtcNow
+                }),
                 Type = typeof(NoOutputResponse).ToString()
             };
         }
@@ -136,7 +141,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             {
                 throw new ArgumentNullException(nameof(comment));
             }
-
 
             var recipients = toAddresses.Split(";").Select(a =>
             {
@@ -168,7 +172,12 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
             return new ChatGPTeamsAIClientResponse()
             {
-                Data = JsonConvert.SerializeObject(SuccessResponse()),
+                Data = JsonConvert.SerializeObject(new NoOutputResponse
+                {
+                    Status = "success",
+                    Message = "The e-mail reply was sent successfully.",
+                    Timestamp = DateTime.UtcNow
+                }),
                 Type = typeof(NoOutputResponse).ToString()
             };
 
