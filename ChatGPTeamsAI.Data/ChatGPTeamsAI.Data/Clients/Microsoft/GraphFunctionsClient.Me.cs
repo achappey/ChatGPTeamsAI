@@ -9,7 +9,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
     internal partial class GraphFunctionsClient
     {
         [MethodDescription("Mail", "Create a new e-mail form")]
-        public Task<ChatGPTeamsAIClientResponse?> NewMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
+        public Task<ChatGPTeamsAIClientResponse?> SendMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
             [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
             [ParameterDescription("The subject of the email")] string subject,
             [ParameterDescription("Content in HTML format")] string html)
