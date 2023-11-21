@@ -5,7 +5,26 @@ namespace ChatGPTeamsAI.Data.Models.Microsoft;
 
 internal class User
 {
+
+    [Ignore]
+    [ImageColumn]
+    public string? Logo
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Mail) || !Mail.Contains('@'))
+            {
+                return string.Empty;
+            }
+
+            var domain = Mail.Split('@')[1];
+
+            return $"https://logo.clearbit.com/{domain}";
+        }
+    }
+
     [ListColumn]
+    [TitleColumn]
     [FormColumn("Identity")]
     public string? DisplayName { get; set; }
 
@@ -26,13 +45,38 @@ internal class User
     public string? CompanyName { get; set; }
 
     [FormColumn("Contact Information")]
+    public string? StreetAddress { get; set; }
+    
+    [FormColumn("Contact Information")]
+    public string? PostalCode { get; set; }    
+
+    [FormColumn("Contact Information")]
+    public string? City { get; set; }
+
+    [FormColumn("Contact Information")]
+    public string? State { get; set; }
+
+    [FormColumn("Contact Information")]
+    public string? Country { get; set; }
+
+    [FormColumn("Settings")]
+    public string? UsageLocation { get; set; }
+
+    [FormColumn("Contact Information")]
     public string? MobilePhone { get; set; }
 
     [FormColumn("Contact Information")]
     public string? Mail { get; set; }
 
+    [LinkColumn]
+    [Ignore]
+    public string? MySite { get; set; }
+
     [FormColumn("Identity")]
     public string? AboutMe { get; set; }
+
+    [FormColumn("Settings")]
+    public string? ExternalUserState { get; set; }    
 
     [FormColumn("Identity")]
     public string? PreferredLanguage { get; set; }
@@ -79,12 +123,25 @@ internal class User
     [FormColumn("Identity")]
     public DateTimeOffset? CreatedDateTime { get; set; }
 
+    [FormColumn("Identity")]
+    public DateTimeOffset? LastPasswordChangeDateTime { get; set; }
+
     [FormColumn("Contact Information")]
     public string? AlternativeMail
     {
         get
         {
             return OtherMails?.FirstOrDefault();
+        }
+        set { }
+    }
+
+    [FormColumn("Contact Information")]
+    public string? BusinessPhone
+    {
+        get
+        {
+            return BusinessPhones?.FirstOrDefault();
         }
         set { }
     }
@@ -104,6 +161,9 @@ internal class User
 
     [Ignore]
     public IEnumerable<AssignedLicense>? AssignedLicenses { get; set; }
+
+    [Ignore]
+    public IEnumerable<string>? BusinessPhones { get; set; }
 
     [LinkColumn]
     public string? Profile

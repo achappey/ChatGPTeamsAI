@@ -37,6 +37,7 @@ internal class MicrosoftProfile : Profile
         CreateMap<Microsoft.Graph.TeamworkHardwareDetail, Models.Microsoft.HardwareDetail>();
         CreateMap<Microsoft.Graph.Message, Models.Microsoft.Resource>();
         CreateMap<Microsoft.Graph.Event, Models.Microsoft.Event>();
+        CreateMap<Microsoft.Graph.MailFolder, Models.Microsoft.EmailFolder>();
         CreateMap<Microsoft.Graph.Device, Models.Microsoft.Device>();
         CreateMap<Microsoft.Graph.ManagedDevice, Models.Microsoft.ManagedDevice>();
         CreateMap<Microsoft.Graph.SitePage, Models.Microsoft.Page>();
@@ -44,6 +45,7 @@ internal class MicrosoftProfile : Profile
         CreateMap<Microsoft.Graph.Location, Models.Microsoft.Location>();
         CreateMap<Microsoft.Graph.Attendee, Models.Microsoft.Attendee>();
         CreateMap<Microsoft.Graph.User, Models.Microsoft.User>();
+        CreateMap<Microsoft.Graph.ActivityStatistics, Models.Microsoft.ActivityStatistics>();
         CreateMap<Microsoft.Graph.ConversationMember, Models.Microsoft.User>();
         CreateMap<Microsoft.Graph.SecureScore, Models.Microsoft.SecureScore>();
         CreateMap<Microsoft.Graph.AverageComparativeScore, Models.Microsoft.AverageComparativeScore>();

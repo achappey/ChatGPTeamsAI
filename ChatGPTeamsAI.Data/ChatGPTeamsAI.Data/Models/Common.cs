@@ -1,4 +1,5 @@
 using AdaptiveCards;
+using ChatGPTeamsAI.Data.Attributes;
 using ChatGPTeamsAI.Data.Models.Output;
 
 namespace ChatGPTeamsAI.Data.Models;
@@ -7,7 +8,7 @@ internal interface IBaseClient
 {
     internal abstract Task<ChatGPTeamsAIClientResponse?> ExecuteAction(Input.Action action);
     internal abstract IEnumerable<ActionDescription> GetAvailableActions();
-    
+
 }
 
 internal class ChatGPTeamsAIClientResponse
@@ -30,7 +31,13 @@ internal class ChatGPTeamsAIClientResponse
 
 internal class NoOutputResponse
 {
+
+    [FormColumn]
     public required string Status { get; set; }
+
+    [FormColumn]
     public required string Message { get; set; }
+
+    [FormColumn]
     public DateTime Timestamp { get; set; }
 }

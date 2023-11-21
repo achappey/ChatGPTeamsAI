@@ -1,5 +1,4 @@
 ﻿using ChatGPTeamsAI.Data.Attributes;
-using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using Microsoft.Graph;
 

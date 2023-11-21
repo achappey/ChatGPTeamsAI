@@ -36,7 +36,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The ID of the message.")] string messageId,
             [ParameterDescription("The html content of the reply.")] string replyContent)
         {
-            
+
             var replyMessage = new ChatMessage
             {
                 Body = new ItemBody
@@ -85,7 +85,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
          [ParameterDescription("The ID of the user.")] string userId,
          [ParameterDescription("The ID of the team.")] string teamId)
         {
-            
+
 
             var member = new AadUserConversationMember
             {
@@ -113,7 +113,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public async Task<ChatGPTeamsAIClientResponse?> GetTeam(
             [ParameterDescription("The ID of the team.")] string teamId)
         {
-            
+
             var item = await _graphClient.Teams[teamId]
                 .Request()
                 .Select("id,displayName,description")
@@ -126,7 +126,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public async Task<ChatGPTeamsAIClientResponse?> GetTeamChannels(
             [ParameterDescription("The ID of the team.")] string teamId)
         {
-            
+
             var items = await _graphClient.Teams[teamId].Channels
                 .Request()
                 .Select("id,displayName,description")
@@ -141,7 +141,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public async Task<ChatGPTeamsAIClientResponse?> GetTeamMembers(
            [ParameterDescription("The ID of the team.")] string teamId)
         {
-            
+
             var items = await _graphClient.Teams[teamId].Members
                 .Request()
                 .Select("id,displayName")
@@ -157,7 +157,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             [ParameterDescription("The ID of the team.")] string teamId,
             [ParameterDescription("The ID of the channel.")] string channelId)
         {
-            
+
             var items = await _graphClient.Teams[teamId].Channels[channelId].Messages
                 .Request()
                 .Top(PAGESIZE)
@@ -172,7 +172,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public async Task<ChatGPTeamsAIClientResponse?> GetChatMessages(
             [ParameterDescription("The ID of the chat.")] string chatId)
         {
-            
+
             var items = await _graphClient.Chats[chatId].Messages
                 .Request()
                 .Top(25)
@@ -281,18 +281,32 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(SuccessResponse());
         }
 
-        [MethodDescription("Teams", "Creates a new channel within the specified Microsoft Teams.")]
-        public async Task<ChatGPTeamsAIClientResponse?> CreateChannel(
-            [ParameterDescription("The ID of the Microsoft Teams team to create the channel in.")] string teamId,
-            [ParameterDescription("The name of the channel.")] string channelName,
+        [MethodDescription("Teams", "Creates a new channel form for Microsoft Teams")]
+        public Task<ChatGPTeamsAIClientResponse?> NewChannel(
+            [ParameterDescription("The ID of the Microsoft Teams team to create the channel in.", isHidden: true)] string teamId,
+            [ParameterDescription("The name of the channel.")] string? channelName = null,
             [ParameterDescription("The description of the channel.")] string? channelDescription = null)
+        {
+            return Task.FromResult(ToChatGPTeamsAINewFormResponse(new Dictionary<string, object>()
+            {
+                    {"teamId",teamId ?? string.Empty},
+                    {"channelName",channelName ?? string.Empty},
+                    {"channelDescription",channelDescription ?? string.Empty}
+            }, "AddNewChannel"));
+        }
+
+        [MethodDescription("Teams", "Creates a new channel within the specified Microsoft Teams")]
+        public async Task<ChatGPTeamsAIClientResponse?> AddNewChannel(
+        [ParameterDescription("The ID of the Microsoft Teams team to create the channel in.")] string teamId,
+        [ParameterDescription("The name of the channel.")] string channelName,
+        [ParameterDescription("The description of the channel.")] string? channelDescription = null)
         {
             var newChannel = new Channel
             {
                 DisplayName = channelName,
                 Description = channelDescription
             };
-
+            
             var createdChannel = await _graphClient.Teams[teamId].Channels
                                     .Request()
                                     .AddAsync(newChannel);

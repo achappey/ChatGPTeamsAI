@@ -3,7 +3,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
 
-public class Timetable
+internal class Timetable
 {
     [JsonPropertyName("id")]
     public string? Id { get; set; }
@@ -97,14 +97,14 @@ public class Timetable
     }
 }
 
-public class TimetableEmployee
+internal class TimetableEmployee
 {
 
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 }
 
-public class Week
+internal class Week
 {
     [JsonPropertyName("day_1")]
     public Day? Day_1 { get; set; }
@@ -128,7 +128,7 @@ public class Week
     public Day? Day_7 { get; set; }
 }
 
-public class Day
+internal class Day
 {
     [JsonPropertyName("start_time")]
     public double StartTime { get; set; }

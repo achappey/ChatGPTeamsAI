@@ -1,6 +1,6 @@
 namespace ChatGPTeamsAI.Data.Translations;
 
-public class TranslationData
+internal class TranslationData
 {
     public readonly static Dictionary<string, Dictionary<string, string>> Data = new()
     {
@@ -9,7 +9,7 @@ public class TranslationData
     };
 }
 
-public static class TranslationKeys
+internal static class TranslationKeys
 {
     public const string Submit = "Submit";
     public const string ExecutingAction = "ExecutingAction";

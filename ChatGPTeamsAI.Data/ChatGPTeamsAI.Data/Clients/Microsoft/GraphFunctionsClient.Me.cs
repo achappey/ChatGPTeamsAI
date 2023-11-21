@@ -2,7 +2,6 @@
 using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Models;
 using Microsoft.Graph;
-using Newtonsoft.Json;
 
 namespace ChatGPTeamsAI.Data.Clients.Microsoft
 {
@@ -10,9 +9,9 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
     {
         [MethodDescription("Mail", "Create a new e-mail form")]
         public Task<ChatGPTeamsAIClientResponse?> SendMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
-            [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
             [ParameterDescription("The subject of the email")] string subject,
-            [ParameterDescription("Content in HTML format", true)] string html)
+            [ParameterDescription("Content in HTML format", true)] string html,
+            [ParameterDescription("The cc email addresses seperated by ;")] string? ccAddresses = null)
         {
             return Task.FromResult(ToChatGPTeamsAINewFormResponse(new Dictionary<string, object>()
             {
@@ -25,9 +24,10 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         [MethodDescription("Mail", "Sends an email from the current user")]
         public async Task<ChatGPTeamsAIClientResponse?> AddNewMail([ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
-            [ParameterDescription("The cc email addresses seperated by ;")] string ccAddresses,
             [ParameterDescription("The subject of the email")] string subject,
-            [ParameterDescription("Content in HTML format")] string html)
+            [ParameterDescription("Content in HTML format", true)] string html,
+            [ParameterDescription("The cc email addresses seperated by ;")] string? ccAddresses = null
+)
         {
             if (string.IsNullOrWhiteSpace(toAddresses))
             {
@@ -108,7 +108,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
         public async Task<ChatGPTeamsAIClientResponse?> AddReplyMail(
             [ParameterDescription("The ID of the e-mail.")] string id,
             [ParameterDescription("The email addresses to send the email to seperated by ;")] string toAddresses,
-            [ParameterDescription("The comment on the email")] string comment)
+            [ParameterDescription("The comment on the email", true)] string comment)
         {
             if (string.IsNullOrWhiteSpace(toAddresses))
             {
@@ -134,14 +134,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             var email = new Message
             {
                 ToRecipients = recipients,
-                SingleValueExtendedProperties = new MessageSingleValueExtendedPropertiesCollectionPage
-            {
-                new SingleValueLegacyExtendedProperty()
-                {
-                    Id = "SystemTime 0x3FEF",
-                    Value = DateTime.UtcNow.AddMinutes(1).ToString("o")
-                }
-            }
             };
 
             await _graphClient.Me.Messages[id].Reply(email, comment)
@@ -158,8 +150,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         [MethodDescription("Teams", "Searches the chat logs based on the provided member and chat type")]
         public async Task<ChatGPTeamsAIClientResponse?> SearchChat(
-            [ParameterDescription("The chat member to filter on")] string? member = null,
-            [ParameterDescription("The type of chat to filter on")] ChatType? chatType = null)
+            [ParameterDescription("The chat member to filter on")] string? member = null)
         {
 
             var filterQuery = string.Empty;
@@ -167,11 +158,6 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             if (!string.IsNullOrEmpty(member))
             {
                 filterQuery += $"members/any(m: contains(tolower(m/displayName), '{member.ToLower()}'))";
-            }
-
-            if (chatType.HasValue)
-            {
-                filterQuery += (string.IsNullOrEmpty(filterQuery) ? "" : " and ") + $"chatType eq '{chatType.Value}'";
             }
 
             var request = _graphClient.Me.Chats.Request();
@@ -186,6 +172,66 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             return ToChatGPTeamsAIResponse(items.Select(_mapper.Map<Models.Microsoft.TeamsChat>));
         }
 
+        [MethodDescription("Mail", "Get mail folders")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetMailFolders(
+            [ParameterDescription("The next page skip token.")] string? skipToken = null)
+        {
+            var filterOptions = new List<QueryOption>();
+
+            if (!string.IsNullOrEmpty(skipToken))
+            {
+                filterOptions.Add(new QueryOption("$skiptoken", skipToken));
+            }
+
+            var pages = await _graphClient.Me.MailFolders
+                        .Request(filterOptions)
+                        .GetAsync();
+
+            var items = pages.CurrentPage.Select(_mapper.Map<Models.Microsoft.EmailFolder>);
+
+            return ToChatGPTeamsAIResponse(items, pages.NextPageRequest?.QueryOptions.GetSkipToken());
+        }
+
+        [MethodDescription("Mail", "Gets e-mail from a mail folder")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetFolderMessages(
+            [ParameterDescription("The ID of the folder")] string folderId,
+            [ParameterDescription("The number of items to skip")] string? skip = null)
+        {
+
+            var filterOptions = new List<QueryOption>();
+
+            if (!string.IsNullOrEmpty(skip))
+            {
+                filterOptions.Add(new QueryOption("$skip", skip));
+            }
+
+            var messages = await _graphClient.Me.MailFolders[folderId].Messages
+                .Request(filterOptions)
+                .Top(PAGESIZE)
+                .GetAsync();
+
+            return ToChatGPTeamsAIResponse(messages.Select(_mapper.Map<Models.Microsoft.Email>), null, messages.NextPageRequest?.QueryOptions.GetSkip());
+        }
+
+        [MethodDescription("Analytics", "Gets activity statistics for the current user.")]
+        public async Task<ChatGPTeamsAIClientResponse?> GetActivityStatistics(
+         [ParameterDescription("The number of items to skip")] string? skip = null)
+        {
+            var filterOptions = new List<QueryOption>();
+
+            if (!string.IsNullOrEmpty(skip))
+            {
+                filterOptions.Add(new QueryOption("$skip", skip));
+            }
+
+            var messages = await _graphClient.Me.Analytics.ActivityStatistics
+                .Request(filterOptions)
+                .Top(PAGESIZE)
+                .GetAsync();
+
+            return ToChatGPTeamsAIResponse(messages.Select(_mapper.Map<Models.Microsoft.ActivityStatistics>), null, messages.NextPageRequest?.QueryOptions.GetSkip());
+        }
+
         [MethodDescription("Security", "Changes the password of the current user")]
         public async Task<ChatGPTeamsAIClientResponse?> ChangeMyPassword(
             [ParameterDescription("The new password")] string newPassword,
@@ -197,11 +243,12 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 .Request()
                 .PostAsync();
 
-            return new ChatGPTeamsAIClientResponse()
+            return ToChatGPTeamsAIResponse(new NoOutputResponse
             {
-                Data = JsonConvert.SerializeObject(SuccessResponse()),
-                Type = typeof(NoOutputResponse).ToString()
-            };
+                Status = "success",
+                Message = "The password was changed successfully.",
+                Timestamp = DateTime.UtcNow
+            });
         }
 
         [MethodDescription("Users", "Retrieves the profile of the current user")]

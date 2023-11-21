@@ -43,6 +43,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 filterOptions.Add(new QueryOption("$skiptoken", skipToken));
             }
 
+            filterOptions.Add(new QueryOption("$select", "id,externalUserState,userPrincipalName,userType,surname,usageLocation,streetAddress,skills,state,preferredLanguage,postalCode,otherMails,officeLocation,mySite,mobilePhone,mail,jobTitle,lastPasswordChangeDateTime,interests,givenName,employeeHireDate,demployeeId,isplayName,employeeHireDate,department,creationType,createdDateTime,country,companyName,city,businessPhones,birthday,assignedLicenses,accountEnabled,aboutMe"));
 
             var allUsers = new List<Models.Microsoft.User>();
             IGraphServiceUsersCollectionPage users;
@@ -69,9 +70,9 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
 
         [MethodDescription("Export", "Exports a search for users with member type")]
         public async Task<ChatGPTeamsAIClientResponse?> ExportUsers(
-            [ParameterDescription("Department")] string? department = null, 
-            [ParameterDescription("Display name")] string? displayName = null, 
-            [ParameterDescription("Jobtitle")] string? jobTitle = null, 
+            [ParameterDescription("Department")] string? department = null,
+            [ParameterDescription("Display name")] string? displayName = null,
+            [ParameterDescription("Jobtitle")] string? jobTitle = null,
             [ParameterDescription("Email")] string? mail = null)
         {
             return await RetrieveUsers(department, displayName, jobTitle, mail, null, 999, true);
@@ -121,6 +122,8 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
             {
                 filterOptions.Add(new QueryOption("$skiptoken", skipToken));
             }
+
+            filterOptions.Add(new QueryOption("$select", "id,externalUserState,userPrincipalName,userType,surname,usageLocation,streetAddress,skills,state,preferredLanguage,postalCode,otherMails,officeLocation,mySite,mobilePhone,mail,jobTitle,lastPasswordChangeDateTime,interests,givenName,employeeHireDate,demployeeId,isplayName,employeeHireDate,department,creationType,createdDateTime,country,companyName,city,businessPhones,birthday,assignedLicenses,accountEnabled,aboutMe"));
 
             var users = await _graphClient.Users
             .Request(filterOptions)
