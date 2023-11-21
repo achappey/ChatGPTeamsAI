@@ -43,7 +43,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 filterOptions.Add(new QueryOption("$skiptoken", skipToken));
             }
 
-            filterOptions.Add(new QueryOption("$select", "id,externalUserState,userPrincipalName,userType,surname,usageLocation,streetAddress,skills,state,preferredLanguage,postalCode,otherMails,officeLocation,mySite,mobilePhone,mail,jobTitle,lastPasswordChangeDateTime,interests,givenName,employeeHireDate,demployeeId,isplayName,employeeHireDate,department,creationType,createdDateTime,country,companyName,city,businessPhones,birthday,assignedLicenses,accountEnabled,aboutMe"));
+          //  filterOptions.Add(new QueryOption("$select", "id,externalUserState,userPrincipalName,userType,surname,usageLocation,streetAddress,skills,state,preferredLanguage,postalCode,otherMails,officeLocation,mySite,mobilePhone,mail,jobTitle,lastPasswordChangeDateTime,interests,givenName,employeeHireDate,demployeeId,isplayName,employeeHireDate,department,creationType,createdDateTime,country,companyName,city,businessPhones,birthday,assignedLicenses,accountEnabled,aboutMe"));
 
             var allUsers = new List<Models.Microsoft.User>();
             IGraphServiceUsersCollectionPage users;
@@ -123,7 +123,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 filterOptions.Add(new QueryOption("$skiptoken", skipToken));
             }
 
-            filterOptions.Add(new QueryOption("$select", "id,externalUserState,userPrincipalName,userType,surname,usageLocation,streetAddress,skills,state,preferredLanguage,postalCode,otherMails,officeLocation,mySite,mobilePhone,mail,jobTitle,lastPasswordChangeDateTime,interests,givenName,employeeHireDate,demployeeId,isplayName,employeeHireDate,department,creationType,createdDateTime,country,companyName,city,businessPhones,birthday,assignedLicenses,accountEnabled,aboutMe"));
+         //   filterOptions.Add(new QueryOption("$select", "id,externalUserState,userPrincipalName,userType,surname,usageLocation,streetAddress,skills,state,preferredLanguage,postalCode,otherMails,officeLocation,mySite,mobilePhone,mail,jobTitle,lastPasswordChangeDateTime,interests,givenName,employeeHireDate,demployeeId,isplayName,employeeHireDate,department,creationType,createdDateTime,country,companyName,city,businessPhones,birthday,assignedLicenses,accountEnabled,aboutMe"));
 
             var users = await _graphClient.Users
             .Request(filterOptions)
