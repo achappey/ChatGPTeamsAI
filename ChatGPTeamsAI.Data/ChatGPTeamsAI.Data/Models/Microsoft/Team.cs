@@ -6,9 +6,11 @@ namespace ChatGPTeamsAI.Data.Models.Microsoft;
 internal class Team
 {
     [ListColumn]
+    [FormColumn]
     public string? DisplayName { get; set; }
 
     [ListColumn]
+    [FormColumn]
     public string? Description { get; set; }
 
     public string? Id { get; set; }
@@ -16,6 +18,7 @@ internal class Team
     [LinkColumn]
     public string? WebUrl { get; set; }
 
+    [Ignore]
     public IEnumerable<Channel>? Channels { get; set; }
 
     [FormColumn]
@@ -48,7 +51,10 @@ internal class Team
 
 internal class TeamMember
 {
+    [ListColumn]
+    [FormColumn]
     public string? DisplayName { get; set; }
+    
     public string? Id { get; set; }
 
 }

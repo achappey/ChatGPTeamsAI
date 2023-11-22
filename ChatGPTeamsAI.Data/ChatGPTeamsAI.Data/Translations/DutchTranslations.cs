@@ -137,7 +137,7 @@ public class DutchTranslations
         [TranslationKeys.StreetNumber] = "Huisnummer",
         [TranslationKeys.CountrySubdivision] = "Provincie",
         [TranslationKeys.Invoicing] = "Facturatie",
-        [TranslationKeys.Identity] = "Identiteit",        
+        [TranslationKeys.Identity] = "Identiteit",
         [TranslationKeys.CompanyName] = "Onderneming",
         [TranslationKeys.JobInformation] = "Medewerker gegevens",
         [TranslationKeys.ContactInformation] = "Contact gegevens",
@@ -161,7 +161,16 @@ public class DutchTranslations
         [TranslationKeys.FromEmail] = "Afzender",
         [TranslationKeys.SentDateTime] = "Verstuurd op",
         [TranslationKeys.LastModifiedDateTime] = "Gewijzigd op",
-        
+        [TranslationKeys.Notice] = "Notitie",
+        [TranslationKeys.Holidays] = "Vakanties",
+        [TranslationKeys.SchoolYear] = "Schooljaar",
+        [TranslationKeys.License] = "Licentie",
+        [TranslationKeys.Language] = "Taal",
+        [TranslationKeys.Location] = "Locatie",
+        [TranslationKeys.Title] = "Titel",
+        [TranslationKeys.Region] = "Regio",
+        [TranslationKeys.LastModified] = "Gewijzigd op",
+
 
     };
 }

@@ -146,7 +146,7 @@ namespace ChatGPTeamsAI.Data.Clients.Microsoft
                 .Request()
                 .Select("id,displayName")
                 .GetAsync();
-
+                
             var result = items.CurrentPage.Select(_mapper.Map<Models.Microsoft.TeamMember>);
 
             return ToChatGPTeamsAIResponse(result);

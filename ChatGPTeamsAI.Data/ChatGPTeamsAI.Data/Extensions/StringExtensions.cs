@@ -16,6 +16,11 @@ internal static class StringExtensions
         return text is null ? string.Empty : Regex.Replace(text, "<.*?>", string.Empty);
     }
 
+    public static string Sanitize(this string? text)
+    {
+        return text is null ? string.Empty : text.Replace("\n", " ").Replace("\r", " ").Trim();
+    }
+
     public static AdaptiveOpenUrlAction? TryGetAdaptiveOpenUrlAction(this string value)
     {
 

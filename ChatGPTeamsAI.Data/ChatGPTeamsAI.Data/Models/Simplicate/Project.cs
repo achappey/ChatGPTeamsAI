@@ -4,6 +4,7 @@ namespace ChatGPTeamsAI.Data.Models.Simplicate;
 
 using System.Text.Json.Serialization;
 using ChatGPTeamsAI.Data.Attributes;
+using ChatGPTeamsAI.Data.Extensions;
 using CsvHelper.Configuration.Attributes;
 
 internal class Project
@@ -136,7 +137,7 @@ internal class Project
     [FormColumn]
     public string? Note
     {
-        get => _note?.Replace("\n", " ").Replace("\r", " ");
+        get => _note?.Sanitize();
         set => _note = value;
     }
 

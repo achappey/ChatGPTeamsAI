@@ -6,6 +6,7 @@ using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Translations;
 using ChatGPTeamsAI.Data.Clients.Azure.Maps;
 using System.IO.Compression;
+using ChatGPTeamsAI.Data.Clients.Government.NL;
 
 namespace ChatGPTeamsAI.Data;
 
@@ -52,7 +53,14 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         var azureMapsClient = new AzureMapsFunctionsClient(_config.AzureMapsSubscriptionKey, _translatorService);
         var azureMapsActions = azureMapsClient.GetAvailableActions();
 
-        return microsoftActions.Concat(simplicateActions).Concat(azureMapsActions).OrderBy(a => a.Category);
+        var governmentNLClient = new GovernmentNLFunctionsClient(null, _translatorService);
+        var governmentNLActions = governmentNLClient.GetAvailableActions();
+
+        return microsoftActions
+        .Concat(simplicateActions)
+        .Concat(azureMapsActions)
+        .Concat(governmentNLActions)
+        .OrderBy(a => a.Publisher);
     }
 
     public async Task<ActionResponse> ExecuteAction(Models.Input.Action action)
@@ -71,6 +79,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             actionResult = function.Publisher switch
             {
                 SimplicateFunctionsClient.SIMPLICATE => await ExecuteSimplicateActionAsync(action),
+                GovernmentNLFunctionsClient.GOVERNMENT_NL => await ExecuteGovernmentNLActionAsync(action),
                 GraphFunctionsClient.MICROSOFT => await ExecuteMicrosoftActionAsync(action),
                 AzureMapsFunctionsClient.AZURE_MAPS => await ExecuteAzureMapsActionAsync(action),
                 _ => throw new InvalidOperationException("Unknown publisher"),
@@ -152,6 +161,12 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         return await client.ExecuteAction(action);
     }
 
+    private async Task<ChatGPTeamsAIClientResponse?> ExecuteGovernmentNLActionAsync(Models.Input.Action action)
+    {
+        var client = new GovernmentNLFunctionsClient(null, _translatorService);
+
+        return await client.ExecuteAction(action);
+    }
 
     private async Task<ChatGPTeamsAIClientResponse?> ExecuteAzureMapsActionAsync(Models.Input.Action action)
     {

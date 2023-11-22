@@ -14,13 +14,10 @@ namespace ChatGPTeamsAI.Data.Clients.Simplicate
 
         private readonly HttpClient _httpClient;
 
-
         private const int PAGESIZE = 5;
 
         internal SimplicateFunctionsClient(SimplicateToken token, HttpClient? client = null, ITranslationService? translationService = null) : base(translationService)
         {
-            // _locale = locale ?? "en-US";
-
             _httpClient = client ?? new HttpClient();
             _httpClient.BaseAddress = new Uri($"https://{token.Environment}.simplicate.nl/api/v2/");
 

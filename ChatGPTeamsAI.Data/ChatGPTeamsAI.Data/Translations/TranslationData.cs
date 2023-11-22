@@ -120,10 +120,10 @@ internal static class TranslationKeys
     public const string GetSales = "GetSales";
     public const string GetOrganization = "GetOrganization";
 
-     public const string QuoteNumber = "QuoteNumber";
+    public const string QuoteNumber = "QuoteNumber";
     public const string QuoteDate = "QuoteDate";
     public const string QuoteSubject = "QuoteSubject";
-    public const string CreatedBy = "CreatedBy"; 
+    public const string CreatedBy = "CreatedBy";
     public const string QuoteStatusLabel = "QuoteStatusLabel";
     public const string QuoteTemplateName = "QuoteTemplateName";
     public const string Contact = "Contact";
@@ -143,41 +143,49 @@ internal static class TranslationKeys
     public const string Open = "Open";
     public const string ApprovalStatusDescription = "ApprovalStatusDescription";
     public const string ApprovalStatusLabel = "ApprovalStatusLabel";
-    public const string Categories = "Categories";    
+    public const string Categories = "Categories";
     public const string Longitude = "Longitude";
-    public const string Latitude = "Latitude";    
+    public const string Latitude = "Latitude";
     public const string FreeformAddress = "FreeformAddress";
     public const string StreetName = "StreetName";
     public const string StreetNumber = "StreetNumber";
     public const string CountrySubdivision = "CountrySubdivision";
-    public const string Invoicing = "Invoicing";   
-    public const string Identity = "Identity";   
-    public const string EmployeeId = "EmployeeId";   
-    public const string CompanyName = "CompanyName";   
-    public const string ContactInformation = "ContactInformation";   
-    public const string JobInformation = "JobInformation";   
-    public const string Settings = "Settings";   
-    public const string FromName = "FromName";   
-    public const string BodyPreview = "BodyPreview";   
-    public const string ReceivedDateTime = "ReceivedDateTime";   
-    public const string AttendeeNames = "AttendeeNames"; 
-    public const string HasAttachments = "HasAttachments"; 
-    public const string Importance = "Importance"; 
-    public const string IsDeliveryReceiptRequested = "IsDeliveryReceiptRequested"; 
-    public const string IsReadReceiptRequested = "IsReadReceiptRequested"; 
-    public const string IsRead = "IsRead"; 
-    public const string IsDraft = "IsDraft"; 
-    public const string Options = "Options"; 
-    public const string Message = "Message"; 
-    public const string CcNames = "CcNames"; 
-    public const string BccNames = "BccNames"; 
-    public const string ToNames = "ToNames"; 
-    public const string LastModifiedDateTime = "LastModifiedDateTime"; 
-    
-    public const string SentDateTime = "SentDateTime"; 
-    public const string FromEmail = "FromEmail"; 
+    public const string Invoicing = "Invoicing";
+    public const string Identity = "Identity";
+    public const string EmployeeId = "EmployeeId";
+    public const string CompanyName = "CompanyName";
+    public const string ContactInformation = "ContactInformation";
+    public const string JobInformation = "JobInformation";
+    public const string Settings = "Settings";
+    public const string FromName = "FromName";
+    public const string BodyPreview = "BodyPreview";
+    public const string ReceivedDateTime = "ReceivedDateTime";
+    public const string AttendeeNames = "AttendeeNames";
+    public const string HasAttachments = "HasAttachments";
+    public const string Importance = "Importance";
+    public const string IsDeliveryReceiptRequested = "IsDeliveryReceiptRequested";
+    public const string IsReadReceiptRequested = "IsReadReceiptRequested";
+    public const string IsRead = "IsRead";
+    public const string IsDraft = "IsDraft";
+    public const string Options = "Options";
+    public const string Message = "Message";
+    public const string CcNames = "CcNames";
+    public const string BccNames = "BccNames";
+    public const string ToNames = "ToNames";
+    public const string LastModifiedDateTime = "LastModifiedDateTime";
+    public const string SentDateTime = "SentDateTime";
+    public const string FromEmail = "FromEmail";
+    public const string Holidays = "Holidays";
+    public const string SchoolYear = "SchoolYear";
+    public const string Title = "Title";
+    public const string Notice = "Notice";
+    public const string License = "License";
+    public const string Language = "Language";
+    public const string Location = "Location";
+    public const string LastModified = "LastModified";
+    public const string Region = "Region";
 
-    
+
 }
 
 
