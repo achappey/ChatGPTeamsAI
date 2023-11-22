@@ -5,8 +5,8 @@ using ChatGPTeamsAI.Data.Clients.Microsoft;
 using ChatGPTeamsAI.Data.Extensions;
 using ChatGPTeamsAI.Data.Translations;
 using ChatGPTeamsAI.Data.Clients.Azure.Maps;
-using System.IO.Compression;
 using ChatGPTeamsAI.Data.Clients.Government.NL;
+using ChatGPTeamsAI.Data.Clients.BAG;
 
 namespace ChatGPTeamsAI.Data;
 
@@ -56,10 +56,14 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         var governmentNLClient = new GovernmentNLFunctionsClient(null, _translatorService);
         var governmentNLActions = governmentNLClient.GetAvailableActions();
 
+        var bagClient = new BAGFunctionsClient(_config.BagApiKey, null, _translatorService);
+        var bagActions = bagClient.GetAvailableActions();
+
         return microsoftActions
         .Concat(simplicateActions)
         .Concat(azureMapsActions)
         .Concat(governmentNLActions)
+        .Concat(bagActions)
         .OrderBy(a => a.Publisher);
     }
 
@@ -79,6 +83,7 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
             actionResult = function.Publisher switch
             {
                 SimplicateFunctionsClient.SIMPLICATE => await ExecuteSimplicateActionAsync(action),
+                BAGFunctionsClient.BAG => await ExecuteBagActionAsync(action),
                 GovernmentNLFunctionsClient.GOVERNMENT_NL => await ExecuteGovernmentNLActionAsync(action),
                 GraphFunctionsClient.MICROSOFT => await ExecuteMicrosoftActionAsync(action),
                 AzureMapsFunctionsClient.AZURE_MAPS => await ExecuteAzureMapsActionAsync(action),
@@ -122,18 +127,18 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         var microsoftClient = new GraphFunctionsClient(_config.GraphApiToken, _translatorService);
         var sanitizedDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
         var filename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.{fileExtension}";
-        var zipFilename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.zip";
-        var zippedFile = await new Dictionary<string, byte[]>() { { filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data) } }.CreateZipFile();
+       // var zipFilename = $"{clientResponse.ExecutedAction?.Name}-{sanitizedDateTime}.zip";
+      //  var zippedFile = await new Dictionary<string, byte[]>() { { filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data) } }.CreateZipFile();
 
-        var webUrl = await microsoftClient.UploadFile(zipFilename, zippedFile);
+        var webUrl = await microsoftClient.UploadFile(filename, System.Text.Encoding.UTF8.GetBytes(clientResponse.Data));
 
         return new ActionResponse()
         {
             ExecutedAction = clientResponse.ExecutedAction,
             Data = clientResponse.Data,
             DataCard = fileExtension == "csv" ?
-                microsoftClient.CreateExportCard(clientResponse.TotalItems != null ? clientResponse.TotalItems.Value : -1, zipFilename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson() :
-                microsoftClient.CreateDownloadCard(zipFilename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson()
+                microsoftClient.CreateExportCard(clientResponse.TotalItems != null ? clientResponse.TotalItems.Value : -1, filename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson() :
+                microsoftClient.CreateDownloadCard(filename, webUrl, clientResponse.ExecutedAction!.Name)?.ToJson()
         };
     }
 
@@ -157,6 +162,18 @@ public class ChatGPTeamsAIData : IChatGPTeamsAIData
         }
 
         var client = new SimplicateFunctionsClient(_config.SimplicateToken, null, _translatorService);
+
+        return await client.ExecuteAction(action);
+    }
+
+    private async Task<ChatGPTeamsAIClientResponse?> ExecuteBagActionAsync(Models.Input.Action action)
+    {
+        if (_config.BagApiKey == null)
+        {
+            throw new UnauthorizedAccessException("No Bag credentials available");
+        }
+
+        var client = new BAGFunctionsClient(_config.BagApiKey, null, _translatorService);
 
         return await client.ExecuteAction(action);
     }

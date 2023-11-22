@@ -1,24 +1,14 @@
 ﻿using ChatGPTeamsAI.Data.Extensions;
-using AutoMapper;
-using ChatGPTeamsAI.Data.Profiles;
 using ChatGPTeamsAI.Data.Models;
 using ChatGPTeamsAI.Data.Models.Output;
 using AdaptiveCards;
 using ChatGPTeamsAI.Data.Translations;
-using Azure.Maps.Search;
-using Azure;
-using Azure.Maps.Routing;
 
 namespace ChatGPTeamsAI.Data.Clients.Government.NL
 {
     internal partial class GovernmentNLFunctionsClient : BaseClient
     {
-        private readonly IMapper _mapper;
-
         private readonly HttpClient _httpClient;
-
-
-        private const int PAGESIZE = 5;
 
         public const string GOVERNMENT_NL = "Government NL";
 
@@ -27,10 +17,9 @@ namespace ChatGPTeamsAI.Data.Clients.Government.NL
             _httpClient = client ?? new HttpClient();
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "ChatGPTeamsAI");
             _httpClient.BaseAddress = new Uri($"https://opendata.rijksoverheid.nl/v1/infotypes/");
-
         }
 
-        private Models.Input.Action? GetExportAction(Models.Input.Action currentPageAction,
+        private static Models.Input.Action? GetExportAction(Models.Input.Action currentPageAction,
                    ActionDescription action)
         {
             if (string.IsNullOrEmpty(action.ExportAction))
@@ -67,82 +56,7 @@ namespace ChatGPTeamsAI.Data.Clients.Government.NL
             return result;
         }
 
-        public AdaptiveCard CreateDownloadCard(string fileName, string url, string name)
-        {
-            AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
-
-            card.Body.Add(new AdaptiveTextBlock
-            {
-                Text = name,
-                Weight = AdaptiveTextWeight.Bolder,
-                Size = AdaptiveTextSize.Large
-            });
-
-            AdaptiveFactSet factSet = new AdaptiveFactSet();
-            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Filename"), fileName));
-            card.Body.Add(factSet);
-
-            AdaptiveOpenUrlAction urlAction = new AdaptiveOpenUrlAction
-            {
-                Title = _translatorService.Translate(TranslationKeys.Open),
-                Url = new Uri(url)
-            };
-
-            AdaptiveSubmitAction chatAction = new AdaptiveSubmitAction
-            {
-                Title = _translatorService.Translate(TranslationKeys.AddToChat),
-                Data = new Models.Input.Action()
-                {
-                    Name = "DocumentChat",
-                    Entities = new Dictionary<string, object?>() { { url, "" } }
-                },
-            };
-
-            card.Actions.Add(urlAction);
-            card.Actions.Add(chatAction);
-
-            return card;
-        }
-
-        public AdaptiveCard CreateExportCard(int numberOfItems, string fileName, string url, string name)
-        {
-            AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
-
-            card.Body.Add(new AdaptiveTextBlock
-            {
-                Text = name,
-                Weight = AdaptiveTextWeight.Bolder,
-                Size = AdaptiveTextSize.Large
-            });
-
-            AdaptiveFactSet factSet = new AdaptiveFactSet();
-            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Items"), numberOfItems.ToString()));
-            factSet.Facts.Add(new AdaptiveFact(_translatorService.Translate("Filename"), fileName));
-            card.Body.Add(factSet);
-
-            AdaptiveOpenUrlAction urlAction = new AdaptiveOpenUrlAction
-            {
-                Title = _translatorService.Translate(TranslationKeys.Open),
-                Url = new Uri(url)
-            };
-
-            AdaptiveSubmitAction chatAction = new AdaptiveSubmitAction
-            {
-                Title = _translatorService.Translate(TranslationKeys.AddToChat),
-                Data = new Models.Input.Action()
-                {
-                    Name = "DocumentChat",
-                    Entities = new Dictionary<string, object?>() { { url, "" } }
-                },
-            };
-
-            card.Actions.Add(urlAction);
-            card.Actions.Add(chatAction);
-
-            return card;
-        }
-
-        private Models.Input.Action? GetNextPageAction(Models.Input.Action currentPageAction,
+        private static Models.Input.Action? GetNextPageAction(Models.Input.Action currentPageAction,
             ActionDescription action, long? skip)
         {
             string? pageProperty = skip != null ? "skip" : null;
@@ -155,9 +69,10 @@ namespace ChatGPTeamsAI.Data.Clients.Government.NL
             }
 
             var pageActionEntities = new Dictionary<string, object?>(
-                currentPageAction.Entities ?? new Dictionary<string, object?>());
-
-            pageActionEntities[pageProperty] = pageValue;
+                currentPageAction.Entities ?? new Dictionary<string, object?>())
+            {
+                [pageProperty] = pageValue
+            };
 
             return new Models.Input.Action
             {

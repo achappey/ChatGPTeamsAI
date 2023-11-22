@@ -3,6 +3,7 @@ namespace ChatGPTeamsAI.Data.Models;
 public class Configuration
 {
     public string? GraphApiToken { get; set; }
+    public string? BagApiKey { get; set; }
     public string? AzureMapsSubscriptionKey { get; set; }
     public string? Locale { get; set; }
     public SimplicateToken? SimplicateToken { get; set; }

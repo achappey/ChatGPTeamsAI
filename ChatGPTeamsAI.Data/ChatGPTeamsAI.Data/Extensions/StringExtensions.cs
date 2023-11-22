@@ -1,19 +1,18 @@
 
 using System.Globalization;
 using System.Text.Json;
-
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using AdaptiveCards;
 
 namespace ChatGPTeamsAI.Data.Extensions;
 
-internal static class StringExtensions
+internal static partial class StringExtensions
 {
-
+   
     public static string RemoveMarkup(this string? text)
     {
-        return text is null ? string.Empty : Regex.Replace(text, "<.*?>", string.Empty);
+        return text is null ? string.Empty : MyRegex().Replace(text, string.Empty);
     }
 
     public static string Sanitize(this string? text)
@@ -29,7 +28,7 @@ internal static class StringExtensions
         {
             uri = new Uri(value);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return null;
         }
@@ -63,4 +62,7 @@ internal static class StringExtensions
 
         return enumMemberAttribute?.Value;
     }
+
+    [GeneratedRegex("<.*?>")]
+    private static partial Regex MyRegex();
 }
